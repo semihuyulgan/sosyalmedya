@@ -327,32 +327,38 @@ export default async function GenerationPipelinePage() {
                   {job.contentItem ? `${job.contentItem.assets.length} asset baglandi` : "No outputs yet"}
                 </p>
               </div>
-              {job.contentItem?.assets.length ? (
-                <div>
-                  <strong>Output Picker</strong>
-                  <div className="output-gallery">
-                    {job.contentItem.assets.map((link) => (
-                      <div className={`output-card ${link.isSelected ? "selected" : ""}`} key={link.id}>
-                        <img alt={link.asset.fileName} className="output-thumb" src={link.asset.storageKey} />
-                        <div className="output-card-meta">
-                          <span className="asset-tag">{link.asset.source || "asset"}</span>
-                          {link.isSelected ? <span className="asset-tag">final</span> : null}
-                        </div>
-                        {!link.isSelected ? (
-                          <form action={selectFinalOutput}>
-                            <input name="contentItemId" type="hidden" value={job.contentItem.id} />
-                            <input name="contentItemAssetId" type="hidden" value={link.id} />
-                            <button className="ghost-action output-select-button" type="submit">
-                              Use As Final
-                            </button>
-                          </form>
-                        ) : (
-                          <div className="output-selected-label">Final output</div>
-                        )}
+              {job.contentItem && job.contentItem.assets.length ? (
+                (() => {
+                  const contentItem = job.contentItem;
+
+                  return (
+                    <div>
+                      <strong>Output Picker</strong>
+                      <div className="output-gallery">
+                        {contentItem.assets.map((link) => (
+                          <div className={`output-card ${link.isSelected ? "selected" : ""}`} key={link.id}>
+                            <img alt={link.asset.fileName} className="output-thumb" src={link.asset.storageKey} />
+                            <div className="output-card-meta">
+                              <span className="asset-tag">{link.asset.source || "asset"}</span>
+                              {link.isSelected ? <span className="asset-tag">final</span> : null}
+                            </div>
+                            {!link.isSelected ? (
+                              <form action={selectFinalOutput}>
+                                <input name="contentItemId" type="hidden" value={contentItem.id} />
+                                <input name="contentItemAssetId" type="hidden" value={link.id} />
+                                <button className="ghost-action output-select-button" type="submit">
+                                  Use As Final
+                                </button>
+                              </form>
+                            ) : (
+                              <div className="output-selected-label">Final output</div>
+                            )}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
+                    </div>
+                  );
+                })()
               ) : null}
               <div>
                 <strong>Planned Publish Slot</strong>
