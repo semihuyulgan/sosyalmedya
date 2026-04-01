@@ -1,0 +1,21 @@
+{
+  "name": "ai-social-autopilot",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace @autopilot/web",
+    "dev:api": "npm run start:dev --workspace @autopilot/api",
+    "build": "npm run build --workspaces",
+    "build:web": "npm run build --workspace @autopilot/web",
+    "build:api": "npm run build --workspace @autopilot/api",
+    "lint": "npm run lint --workspaces",
+    "db:generate": "npm run db:generate --workspace @autopilot/database",
+    "db:migrate": "npm run db:migrate --workspace @autopilot/database",
+    "db:generate:prod": "npm run db:generate:prod --workspace @autopilot/database",
+    "db:push:prod": "npm run db:push:prod --workspace @autopilot/database"
+  }
+}

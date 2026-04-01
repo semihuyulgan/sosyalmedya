@@ -1,0 +1,326 @@
+import Link from "next/link";
+import { saveTelegramLink, syncTelegramWebhook } from "./actions";
+
+const apiBaseUrl = process.env.API_BASE_URL || "http://127.0.0.1:4000";
+
+type WorkspaceResponse = {
+  businesses: Array<{
+    id: string;
+    name: string;
+  }>;
+};
+
+type TelegramStatusResponse = {
+  businessId: string;
+  businessName: string;
+  botConfigured: boolean;
+  webhook: {
+    envReady: boolean;
+    configured: boolean;
+    targetUrl: string;
+    currentUrl?: string;
+    pendingUpdateCount?: number;
+    lastErrorMessage?: string;
+    message: string;
+  };
+  link: {
+    id: string;
+    chatId: string;
+    chatTitle: string | null;
+    status: string;
+    createdAt: string;
+  } | null;
+  pendingApprovalCount: number;
+  recentTelegramResponses: Array<{
+    id: string;
+    source: string;
+    commandText: string;
+    intent: string;
+    actionType: string;
+    status: string;
+    responseText: string;
+    createdAt: string;
+  }>;
+  recentMediaUpdates: Array<{
+    id: string;
+    fileName: string;
+    storageKey: string;
+    source: string;
+    createdAt: string;
+    tags: Array<{
+      id: string;
+      tag: string;
+    }>;
+  }>;
+  recentGenerationBriefs: Array<{
+    id: string;
+    title: string;
+    generationMode: string;
+    createdAt: string;
+    sceneRecipe: {
+      id: string;
+      title: string;
+    } | null;
+  }>;
+  autopilotLastPlannedAt: string | null;
+  preview: {
+    text: string;
+    callbacks: string[];
+  } | null;
+};
+
+const getWorkspace = async () => {
+  const response = await fetch(`${apiBaseUrl}/api/workspaces/demo-studio/businesses`, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Workspace could not be loaded.");
+  }
+
+  return (await response.json()) as WorkspaceResponse;
+};
+
+const getTelegramStatus = async (businessId: string) => {
+  const response = await fetch(`${apiBaseUrl}/api/businesses/${businessId}/telegram-status`, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Telegram status could not be loaded.");
+  }
+
+  return (await response.json()) as TelegramStatusResponse;
+};
+
+export default async function TelegramCenterPage() {
+  const workspace = await getWorkspace();
+  const business = workspace.businesses[0];
+  const telegram = await getTelegramStatus(business.id);
+
+  return (
+    <main className="profile-shell">
+      <header className="profile-topbar">
+        <div>
+          <div className="eyebrow">Telegram Integration</div>
+          <h1>Telegram Center</h1>
+          <p className="muted">
+            Bu ekran bot hazirligini, bagli chat bilgisini ve onaya giden mesaj formatini
+            gosteriyor. Gercek bot token eklendiginde ayni approval motoru Telegram callback ile
+            calisacak.
+          </p>
+        </div>
+
+        <div className="topbar-actions">
+          <Link className="link-chip" href="/">
+            Dashboard
+          </Link>
+          <Link className="link-chip" href="/approval-center">
+            Approval Center
+          </Link>
+          <Link className="link-chip" href="/content-calendar">
+            Content Calendar
+          </Link>
+        </div>
+      </header>
+
+      <section className="asset-layout">
+        <section className="profile-card profile-form">
+          <div className="card-head">
+            <div>
+              <div className="eyebrow">Link Chat</div>
+              <h2>Telegram chat baglantisi</h2>
+            </div>
+          </div>
+
+          <form action={saveTelegramLink} className="form-grid">
+            <input name="businessId" type="hidden" value={business.id} />
+
+            <label>
+              <span>Chat ID</span>
+              <input defaultValue={telegram.link?.chatId || ""} name="chatId" placeholder="-100..." required />
+            </label>
+            <label>
+              <span>Chat title</span>
+              <input defaultValue={telegram.link?.chatTitle || ""} name="chatTitle" placeholder="Luna Bistro Owners" />
+            </label>
+            <div className="span-2">
+              <button className="primary-submit" type="submit">
+                Save Telegram Link
+              </button>
+            </div>
+          </form>
+
+          <div className="span-2">
+            <form action={syncTelegramWebhook}>
+              <button className="primary-submit" type="submit">
+                Sync Telegram Webhook
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <aside className="profile-sidebar">
+          <section className="profile-card info-card">
+            <div className="eyebrow">Integration State</div>
+            <h2>{telegram.botConfigured ? "Bot token hazir" : "Bot token eksik"}</h2>
+            <ul className="info-list">
+              <li>Linked chat: {telegram.link?.chatTitle || telegram.link?.chatId || "Bagli degil"}</li>
+              <li>Pending approvals: {telegram.pendingApprovalCount}</li>
+              <li>Status: {telegram.link?.status || "NOT_LINKED"}</li>
+              <li>Webhook: {telegram.webhook.configured ? "bagli" : "bagli degil"}</li>
+              <li>
+                Last auto replan:{" "}
+                {telegram.autopilotLastPlannedAt
+                  ? new Date(telegram.autopilotLastPlannedAt).toLocaleString("tr-TR")
+                  : "Henuz yok"}
+              </li>
+            </ul>
+          </section>
+
+          <section className="profile-card info-card">
+            <div className="eyebrow">Webhook Route</div>
+            <h2>Hazir endpoint</h2>
+            <p className="muted">
+              Telegram callback'leri icin backend endpoint'i hazir:
+              <br />
+              <code>/api/telegram/webhook</code>
+            </p>
+            <p className="muted">
+              Target webhook URL:
+              <br />
+              <code>{telegram.webhook.targetUrl || "once Railway public API URL girilmeli"}</code>
+            </p>
+            <p className="muted">
+              Webhook state: {telegram.webhook.message}
+              {telegram.webhook.currentUrl ? (
+                <>
+                  <br />
+                  Current: <code>{telegram.webhook.currentUrl}</code>
+                </>
+              ) : null}
+            </p>
+            <p className="muted">
+              Ornek medya captionlari:
+              <br />
+              <code>yeni urun ekle San Sebastian cheesecake 220 TL</code>
+              <br />
+              <code>mekan guncelleme masa sandalye degisti</code>
+            </p>
+          </section>
+        </aside>
+      </section>
+
+      <section className="calendar-list">
+        <article className="profile-card approval-center-card">
+          <div className="card-head">
+            <div>
+              <div className="eyebrow">Bot Responses</div>
+              <h2>Telegram'a donulecek son cevaplar</h2>
+            </div>
+          </div>
+
+          {telegram.recentTelegramResponses.length ? (
+            <div className="history-list">
+              {telegram.recentTelegramResponses.map((item) => (
+                <div className="history-item" key={item.id}>
+                  <strong>{item.commandText}</strong>
+                  <span>
+                    {item.intent} · {item.status}
+                  </span>
+                  <p className="muted">{item.responseText}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">Komut veya medya geldikce sistemin cevap ozetleri burada gorunecek.</p>
+          )}
+        </article>
+
+        <article className="profile-card approval-center-card">
+          <div className="card-head">
+            <div>
+              <div className="eyebrow">Outgoing Message</div>
+              <h2>Telegram preview</h2>
+            </div>
+          </div>
+
+          {telegram.preview ? (
+            <div className="telegram-preview">
+              <pre>{telegram.preview.text}</pre>
+              <div className="asset-tag-row">
+                {telegram.preview.callbacks.map((callback) => (
+                  <span className="asset-tag" key={callback}>
+                    {callback}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="muted">Bekleyen approval olmadiginda Telegram preview burada gorunecek.</p>
+          )}
+        </article>
+
+        <article className="profile-card approval-center-card">
+          <div className="card-head">
+            <div>
+              <div className="eyebrow">Media Intake</div>
+              <h2>Telegram ile gelen son gorseller</h2>
+            </div>
+          </div>
+
+          {telegram.recentMediaUpdates.length ? (
+            <div className="history-list">
+              {telegram.recentMediaUpdates.map((asset) => (
+                <div className="history-item" key={asset.id}>
+                  <strong>{asset.fileName}</strong>
+                  <span>{new Date(asset.createdAt).toLocaleString("tr-TR")}</span>
+                  <p className="muted">{asset.storageKey}</p>
+                  <div className="asset-tag-row">
+                    {asset.tags.map((tag) => (
+                      <span className="asset-tag" key={tag.id}>
+                        {tag.tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">
+              Telegram uzerinden gorsel gelince burada yeni urun veya mekan guncellemesi olarak listelenecek.
+            </p>
+          )}
+        </article>
+
+        <article className="profile-card approval-center-card">
+          <div className="card-head">
+            <div>
+              <div className="eyebrow">Auto Effects</div>
+              <h2>Son olusan intake briefleri</h2>
+            </div>
+          </div>
+
+          {telegram.recentGenerationBriefs.length ? (
+            <div className="history-list">
+              {telegram.recentGenerationBriefs.map((brief) => (
+                <div className="history-item" key={brief.id}>
+                  <strong>{brief.title}</strong>
+                  <span>{brief.generationMode}</span>
+                  <p className="muted">
+                    {brief.sceneRecipe?.title || "Scene recipe yok"} ·{" "}
+                    {new Date(brief.createdAt).toLocaleString("tr-TR")}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">
+              Telegram ile gelen urun veya mekan guncellemesi sonrasinda otomatik olusan briefler burada gorunecek.
+            </p>
+          )}
+        </article>
+      </section>
+    </main>
+  );
+}

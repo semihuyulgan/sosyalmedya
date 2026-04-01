@@ -1,0 +1,22 @@
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+COPY package.json tsconfig.base.json ./
+COPY apps/api/package.json apps/api/package.json
+COPY apps/web/package.json apps/web/package.json
+COPY packages/database/package.json packages/database/package.json
+
+RUN npm install
+
+COPY apps/api apps/api
+COPY packages/database packages/database
+
+RUN npm run db:generate:prod
+RUN npm run build:api
+
+ENV HOST=0.0.0.0
+ENV PORT=4000
+
+CMD ["sh", "-c", "npm run db:push:prod && npm run start:railway --workspace @autopilot/api"]
+

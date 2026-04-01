@@ -1,0 +1,460 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String            @id @default(uuid())
+  email            String            @unique
+  name             String
+  phone            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  memberships      WorkspaceMember[]
+  approvalActions  ApprovalAction[]
+  approvalRequests ApprovalRequest[]
+  revisionRequests RevisionRequest[]
+}
+
+model Workspace {
+  id          String            @id @default(uuid())
+  name        String
+  slug        String            @unique
+  timezone    String            @default("Europe/Istanbul")
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  members     WorkspaceMember[]
+  businesses  Business[]
+}
+
+model WorkspaceMember {
+  id          String        @id @default(uuid())
+  workspaceId String
+  userId      String
+  role        String
+  status      String        @default("ACTIVE")
+  createdAt   DateTime      @default(now())
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+}
+
+model Business {
+  id                  String               @id @default(uuid())
+  workspaceId         String
+  name                String
+  category            String
+  description         String?
+  priceSegment        String?
+  address             String?
+  city                String
+  country             String
+  phone               String?
+  websiteUrl          String?
+  primaryGoal         String
+  reservationUrl      String?
+  whatsappUrl         String?
+  publishMode         String               @default("MANUAL")
+  status              String               @default("ACTIVE")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  workspace           Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  settings            BusinessSettings?
+  brandProfiles       BrandProfile[]
+  branches            Branch[]
+  products            Product[]
+  contentPillars      ContentPillar[]
+  assets              Asset[]
+  campaigns           Campaign[]
+  contentStrategies   ContentStrategy[]
+  contentItems        ContentItem[]
+  integrationAccounts IntegrationAccount[]
+  telegramChatLinks   TelegramChatLink[]
+  insights            Insight[]
+}
+
+model Branch {
+  id               String      @id @default(uuid())
+  businessId       String
+  name             String
+  address          String?
+  city             String
+  timezone         String      @default("Europe/Istanbul")
+  openingHoursJson String?
+  isPrimary        Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  business         Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  contentItems     ContentItem[]
+}
+
+model Product {
+  id            String      @id @default(uuid())
+  businessId    String
+  name          String
+  description   String?
+  priceText     String?
+  category      String?
+  priorityScore Int         @default(0)
+  isActive      Boolean     @default(true)
+  launchDate    DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  business      Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  campaignLinks CampaignProduct[]
+}
+
+model BusinessSettings {
+  id                   String   @id @default(uuid())
+  businessId           String   @unique
+  preferredLanguage    String   @default("tr")
+  toneSummary          String?
+  ctaPreferencesJson   String?
+  forbiddenPhrasesJson String?
+  targetAudienceJson   String?
+  peakHoursJson        String?
+  seasonalNotesJson    String?
+  approvalPolicyJson   String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  business             Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}
+
+model BrandProfile {
+  id                   String   @id @default(uuid())
+  businessId           String
+  version              Int      @default(1)
+  summary              String
+  voiceGuidelines      String?
+  visualGuidelines     String?
+  customerPersonasJson String?
+  strategyNotes        String?
+  generatedBy          String   @default("system")
+  lockedAt             DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  business             Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}
+
+model ContentPillar {
+  id          String   @id @default(uuid())
+  businessId  String
+  name        String
+  description String?
+  priority    Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}
+
+model Asset {
+  id              String             @id @default(uuid())
+  businessId      String
+  storageKey      String
+  mimeType        String
+  fileName        String
+  mediaType       String
+  width           Int?
+  height          Int?
+  durationSeconds Int?
+  source          String             @default("operator_upload")
+  qualityScore    Float?
+  isFeatured      Boolean            @default(false)
+  uploadedBy      String?
+  createdAt       DateTime           @default(now())
+  business        Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  tags            AssetTag[]
+  usages          AssetUsage[]
+  contentLinks    ContentItemAsset[]
+  campaignLinks   CampaignAsset[]
+}
+
+model AssetTag {
+  id         String   @id @default(uuid())
+  assetId    String
+  tag        String
+  confidence Float?
+  createdAt  DateTime @default(now())
+  asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+}
+
+model AssetUsage {
+  id            String      @id @default(uuid())
+  assetId       String
+  contentItemId String
+  usageType     String
+  createdAt     DateTime    @default(now())
+  asset         Asset       @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  contentItem   ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+}
+
+model Campaign {
+  id           String            @id @default(uuid())
+  businessId   String
+  name         String
+  description  String?
+  objective    String?
+  startDate    DateTime?
+  endDate      DateTime?
+  status       String            @default("DRAFT")
+  priority     Int               @default(0)
+  createdBy    String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  business     Business          @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  products     CampaignProduct[]
+  assets       CampaignAsset[]
+  contentItems ContentItem[]
+}
+
+model CampaignProduct {
+  id         String   @id @default(uuid())
+  campaignId String
+  productId  String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, productId])
+}
+
+model CampaignAsset {
+  id         String   @id @default(uuid())
+  campaignId String
+  assetId    String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, assetId])
+}
+
+model ContentStrategy {
+  id               String        @id @default(uuid())
+  businessId       String
+  periodStart      DateTime
+  periodEnd        DateTime
+  strategyType     String
+  summary          String?
+  postCount        Int           @default(0)
+  reelCount        Int           @default(0)
+  storyCount       Int           @default(0)
+  generationStatus String        @default("READY")
+  createdBy        String?
+  createdAt        DateTime      @default(now())
+  business         Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  contentItems     ContentItem[]
+}
+
+model ContentItem {
+  id                  String               @id @default(uuid())
+  businessId          String
+  strategyId          String?
+  campaignId          String?
+  branchId            String?
+  type                String
+  status              String               @default("DRAFT")
+  title               String
+  pillarName          String?
+  targetAction        String?
+  plannedFor          DateTime?
+  scheduledFor        DateTime?
+  publishedAt         DateTime?
+  approvalRequired    Boolean              @default(true)
+  needsClientApproval Boolean              @default(true)
+  generatedBy         String               @default("system")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  business            Business             @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  strategy            ContentStrategy?     @relation(fields: [strategyId], references: [id], onDelete: SetNull)
+  campaign            Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  branch              Branch?              @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  variants            ContentVariant[]
+  assets              ContentItemAsset[]
+  approvals           ApprovalRequest[]
+  revisions           RevisionRequest[]
+  publishJobs         PublishJob[]
+  metricSnapshots     MetricSnapshot[]
+  performance         ContentPerformance?
+  assetUsages         AssetUsage[]
+  externalPosts       ExternalPost[]
+}
+
+model ContentVariant {
+  id            String      @id @default(uuid())
+  contentItemId String
+  variantLabel  String
+  caption       String?
+  hook          String?
+  cta           String?
+  hashtagsJson  String?
+  reelScript    String?
+  shotListJson  String?
+  coverText     String?
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  contentItem   ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+}
+
+model ContentItemAsset {
+  id            String      @id @default(uuid())
+  contentItemId String
+  assetId       String
+  role          String?
+  sortOrder     Int         @default(0)
+  contentItem   ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  asset         Asset       @relation(fields: [assetId], references: [id], onDelete: Cascade)
+}
+
+model ApprovalRequest {
+  id                  String           @id @default(uuid())
+  contentItemId       String
+  requestedFromUserId String?
+  telegramChatId      String?
+  channel             String           @default("telegram")
+  status              String           @default("PENDING")
+  requestedAt         DateTime         @default(now())
+  expiresAt           DateTime?
+  resolvedAt          DateTime?
+  contentItem         ContentItem      @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  requestedFromUser   User?            @relation(fields: [requestedFromUserId], references: [id], onDelete: SetNull)
+  actions             ApprovalAction[]
+}
+
+model ApprovalAction {
+  id                String          @id @default(uuid())
+  approvalRequestId String
+  actorUserId       String?
+  channel           String          @default("telegram")
+  action            String
+  note              String?
+  metadataJson      String?
+  createdAt         DateTime        @default(now())
+  approvalRequest   ApprovalRequest @relation(fields: [approvalRequestId], references: [id], onDelete: Cascade)
+  actorUser         User?           @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+}
+
+model RevisionRequest {
+  id                String      @id @default(uuid())
+  contentItemId     String
+  requestedByUserId String?
+  source            String      @default("telegram")
+  reasonCode        String?
+  note              String?
+  status            String      @default("OPEN")
+  createdAt         DateTime    @default(now())
+  resolvedAt        DateTime?
+  contentItem       ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  requestedByUser   User?       @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
+}
+
+model IntegrationAccount {
+  id                String         @id @default(uuid())
+  businessId        String
+  provider          String
+  accountName       String
+  externalAccountId String?
+  status            String         @default("CONNECTED")
+  metadataJson      String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  business          Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  publishJobs       PublishJob[]
+}
+
+model TelegramChatLink {
+  id             String   @id @default(uuid())
+  businessId     String
+  chatId         String
+  chatTitle      String?
+  linkedByUserId String?
+  status         String   @default("ACTIVE")
+  createdAt      DateTime @default(now())
+  business       Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, chatId])
+}
+
+model PublishJob {
+  id                   String             @id @default(uuid())
+  contentItemId        String
+  integrationAccountId String
+  scheduledFor         DateTime
+  status               String             @default("QUEUED")
+  retryCount           Int                @default(0)
+  lastError            String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  contentItem          ContentItem        @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id], onDelete: Cascade)
+  attempts             PublishAttempt[]
+}
+
+model PublishAttempt {
+  id              String     @id @default(uuid())
+  publishJobId    String
+  attemptedAt     DateTime   @default(now())
+  status          String
+  responseCode    String?
+  responseSummary String?
+  publishJob      PublishJob @relation(fields: [publishJobId], references: [id], onDelete: Cascade)
+}
+
+model ExternalPost {
+  id                String      @id @default(uuid())
+  contentItemId     String
+  provider          String
+  externalPostId    String
+  externalPermalink String?
+  publishedAt       DateTime
+  contentItem       ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+}
+
+model MetricSnapshot {
+  id              String      @id @default(uuid())
+  contentItemId   String
+  provider        String
+  snapshotAt      DateTime    @default(now())
+  reach           Int         @default(0)
+  impressions     Int         @default(0)
+  likes           Int         @default(0)
+  comments        Int         @default(0)
+  shares          Int         @default(0)
+  saves           Int         @default(0)
+  profileVisits   Int         @default(0)
+  linkClicks      Int         @default(0)
+  dmClicks        Int         @default(0)
+  whatsappClicks  Int         @default(0)
+  videoViews      Int         @default(0)
+  avgWatchSeconds Float?
+  contentItem     ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+}
+
+model ContentPerformance {
+  id                    String      @id @default(uuid())
+  contentItemId         String      @unique
+  performanceScore      Float       @default(0)
+  engagementRate        Float       @default(0)
+  conversionSignalScore Float       @default(0)
+  bestTimeScore         Float       @default(0)
+  ctaScore              Float       @default(0)
+  updatedAt             DateTime    @updatedAt
+  contentItem           ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+}
+
+model Insight {
+  id          String   @id @default(uuid())
+  businessId  String
+  periodStart DateTime
+  periodEnd   DateTime
+  insightType String
+  title       String
+  body        String
+  dataJson    String?
+  createdAt   DateTime @default(now())
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}

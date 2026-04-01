@@ -1,0 +1,19 @@
+{
+  "name": "@autopilot/database",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:generate:prod": "prisma generate --schema prisma/schema.postgres.prisma",
+    "db:push:prod": "prisma db push --schema prisma/schema.postgres.prisma",
+    "lint": "prisma validate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.20.0",
+    "typescript": "^5.6.3"
+  }
+}

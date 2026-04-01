@@ -1,0 +1,14 @@
+.DS_Store
+.git
+.next
+node_modules
+npm-debug.log
+dist
+coverage
+.env
+apps/web/.next
+apps/web/node_modules
+apps/api/node_modules
+packages/database/node_modules
+__MACOSX
+
