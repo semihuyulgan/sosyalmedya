@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import fastifyStatic from "@fastify/static";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -1148,6 +1149,13 @@ const getTelegramConfig = () => {
   };
 };
 
+const getPublicApiBaseUrl = () =>
+  (
+    process.env.API_PUBLIC_BASE_URL ||
+    process.env.TELEGRAM_WEBHOOK_BASE_URL ||
+    (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : "")
+  ).replace(/\/+$/, "");
+
 const getTelegramApiUrl = (token: string, method: string) => {
   return `https://api.telegram.org/bot${token}/${method}`;
 };
@@ -1996,7 +2004,7 @@ const slugify = (value: string) =>
     .replace(/^-+|-+$/g, "")
     .slice(0, 60);
 
-const resolveGeneratedDir = () => path.join(WORKSPACE_ROOT, "apps", "web", "public", "generated");
+const resolveGeneratedDir = () => process.env.GENERATED_ASSET_DIR || path.join(process.cwd(), "generated-assets");
 
 const resolvePublicAssetPath = (storageKey: string) => {
   const normalized = storageKey.replace(/^\/+/, "");
@@ -2274,7 +2282,9 @@ const loadAssetAsFile = async (asset: {
   storageKey: string;
 }) => {
   if (asset.storageKey.startsWith("http://") || asset.storageKey.startsWith("https://")) {
-    const response = await fetch(asset.storageKey);
+    const response = await fetch(asset.storageKey, {
+      signal: AbortSignal.timeout(30_000),
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch remote asset: ${asset.storageKey}`);
@@ -2298,8 +2308,10 @@ const saveGeneratedImage = async (buffer: Buffer, extension = "png") => {
 
   await writeFile(absolutePath, buffer);
 
+  const publicApiBaseUrl = getPublicApiBaseUrl();
+
   return {
-    storageKey: `/generated/${fileName}`,
+    storageKey: publicApiBaseUrl ? `${publicApiBaseUrl}/generated/${fileName}` : `/generated/${fileName}`,
     fileName,
   };
 };
@@ -2343,6 +2355,7 @@ const generateImagesWithOpenAI = async (input: {
       Authorization: `Bearer ${apiKey}`,
     },
     body: form,
+    signal: AbortSignal.timeout(120_000),
   });
 
   if (!response.ok) {
@@ -5654,6 +5667,12 @@ const start = async () => {
       origin: true,
       methods: ["GET", "POST", "PATCH", "OPTIONS"],
       credentials: false,
+    });
+
+    await app.register(fastifyStatic, {
+      root: resolveGeneratedDir(),
+      prefix: "/generated/",
+      decorateReply: false,
     });
 
     await ensureDemoWorkspace();
