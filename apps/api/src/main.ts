@@ -1152,6 +1152,16 @@ const getTelegramApiUrl = (token: string, method: string) => {
   return `https://api.telegram.org/bot${token}/${method}`;
 };
 
+const TELEGRAM_COMMANDS = [
+  { command: "yardim", description: "Hazir komutlari goster" },
+  { command: "durum", description: "Yayin ve onay durumunu ozetle" },
+  { command: "yeniurun", description: "Yeni urun ekle: /yeniurun ad fiyat" },
+  { command: "mekanguncelle", description: "Mekan guncellemesi icin foto gonder" },
+  { command: "one_cikar", description: "Odak belirle: /one_cikar tatli" },
+  { command: "yayinmodu", description: "Mod degistir: /yayinmodu auto" },
+  { command: "onaymodu", description: "Onay modu: /onaymodu manual" },
+];
+
 const sendTelegramText = async (chatId: string, text: string) => {
   const config = getTelegramConfig();
 
@@ -1194,6 +1204,31 @@ const answerTelegramCallback = async (callbackQueryId: string, text?: string) =>
       body: JSON.stringify({
         callback_query_id: callbackQueryId,
         text: text || undefined,
+      }),
+    });
+
+    const payload = (await response.json().catch(() => null)) as { ok?: boolean } | null;
+    return { ok: Boolean(response.ok && payload?.ok) };
+  } catch {
+    return { ok: false };
+  }
+};
+
+const syncTelegramCommands = async () => {
+  const config = getTelegramConfig();
+
+  if (!config.token) {
+    return { ok: false };
+  }
+
+  try {
+    const response = await fetch(getTelegramApiUrl(config.token, "setMyCommands"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        commands: TELEGRAM_COMMANDS,
       }),
     });
 
@@ -1384,6 +1419,8 @@ const syncTelegramWebhook = async () => {
   if (!response.ok || !payload.ok) {
     throw new Error(payload.description || "Telegram webhook could not be updated.");
   }
+
+  await syncTelegramCommands();
 
   return {
     ok: true,
@@ -2709,8 +2746,29 @@ const buildTelegramActionResponse = (input: {
   status: string;
   result: Record<string, unknown>;
 }) => {
+  if (input.intent === "HELP") {
+    return [
+      "Hazir komutlar:",
+      "/yardim",
+      "/durum",
+      "/yeniurun San Sebastian cheesecake 220 TL",
+      "/mekanguncelle",
+      "/one_cikar tatli",
+      "/yayinmodu auto",
+      "/onaymodu manual",
+    ].join("\n");
+  }
+
+  if (input.intent === "STATUS_SUMMARY") {
+    return `Durum ozeti:\nYayin modu: ${String(input.result.publishMode || "MANUAL")}\nOnay modu: ${String(input.result.approvalMode || "MANUAL")}\nBekleyen onay: ${String(input.result.pendingApprovalCount || 0)}`;
+  }
+
   if (input.intent === "PUBLISH_MODE_CHANGE" && input.status === "APPLIED") {
     return `Yayin modu guncellendi. Yeni mod: ${String(input.result.publishMode || "MANUAL")}.`;
+  }
+
+  if (input.intent === "APPROVAL_MODE_CHANGE" && input.status === "APPLIED") {
+    return `Onay modu guncellendi. Yeni mod: ${String(input.result.approvalMode || "MANUAL")}.`;
   }
 
   if (input.intent === "PRODUCT_UPDATE" && input.status === "APPLIED") {
@@ -2729,6 +2787,10 @@ const buildTelegramActionResponse = (input: {
 
   if (input.intent === "CONTENT_STYLE_SHIFT" && input.status === "APPLIED") {
     return "Icerik karmasi guncellendi. Mekan ve atmosfer agirligi yeni planlara yansitilacak.";
+  }
+
+  if (input.intent === "VISUAL_WORLD_UPDATE" && input.status === "NEEDS_INPUT") {
+    return "Mekan guncellemesi icin bir foto gonder ve caption'a kisaca neyin degistigini yaz. Ornek: mekan guncelleme masa sandalye degisti";
   }
 
   if (input.status === "NEEDS_INPUT") {
@@ -2936,6 +2998,13 @@ const createTelegramMediaIntake = async (input: {
 };
 
 const telegramCommandPresets = [
+  "/yardim",
+  "/durum",
+  "/yeniurun San Sebastian cheesecake 220 TL",
+  "/mekanguncelle",
+  "/one_cikar tatli",
+  "/yayinmodu auto",
+  "/onaymodu manual",
   "bu hafta tatliyi one cikar",
   "yarin kampanya baslat",
   "sadece onaya gonder",
@@ -2944,8 +3013,125 @@ const telegramCommandPresets = [
   "yeni urun ekle",
 ];
 
+const parseSlashCommand = (command: string) => {
+  const trimmed = command.trim();
+
+  if (!trimmed.startsWith("/")) {
+    return null;
+  }
+
+  const [firstToken, ...rest] = trimmed.split(/\s+/);
+  const normalizedCommand = firstToken.toLowerCase().replace(/^\/+/, "").split("@")[0];
+  const args = rest.join(" ").trim();
+
+  return {
+    name: normalizedCommand,
+    args,
+  };
+};
+
 const interpretTelegramCommand = (command: string) => {
   const normalized = command.toLowerCase().trim();
+  const slash = parseSlashCommand(command);
+
+  if (slash?.name === "yardim") {
+    return {
+      intent: "HELP",
+      summary: "Hazir Telegram komutlari istendi.",
+      suggestedAction: {
+        type: "SHOW_HELP",
+        payload: {
+          commands: TELEGRAM_COMMANDS,
+        },
+      },
+    };
+  }
+
+  if (slash?.name === "durum") {
+    return {
+      intent: "STATUS_SUMMARY",
+      summary: "Yayin ve onay durumu ozeti istendi.",
+      suggestedAction: {
+        type: "SHOW_STATUS",
+        payload: {},
+      },
+    };
+  }
+
+  if (slash?.name === "yeniurun") {
+    return {
+      intent: "PRODUCT_UPDATE",
+      summary: "Yeni urun ekleme akisi tetiklenmeli.",
+      suggestedAction: {
+        type: "START_PRODUCT_INTAKE",
+        payload: {
+          requestedFromCommand: command,
+          slashArgs: slash.args,
+        },
+      },
+    };
+  }
+
+  if (slash?.name === "mekanguncelle") {
+    return {
+      intent: "VISUAL_WORLD_UPDATE",
+      summary: "Mekan guncellemesi icin gorsel bekleniyor.",
+      suggestedAction: {
+        type: "REQUEST_VENUE_PHOTO",
+        payload: {},
+      },
+    };
+  }
+
+  if (slash?.name === "one_cikar") {
+    return {
+      intent: "CONTENT_PRIORITY_SHIFT",
+      summary: "Belirli bir kategori one cikarilmak istendi.",
+      suggestedAction: {
+        type: "UPDATE_WEEKLY_PRIORITY",
+        payload: {
+          pillar: slash.args || "general",
+          boost: true,
+        },
+      },
+    };
+  }
+
+  if (slash?.name === "yayinmodu") {
+    return {
+      intent: "PUBLISH_MODE_CHANGE",
+      summary: "Yayin modu slash komutla degistirilmek istendi.",
+      suggestedAction: {
+        type: "SET_PUBLISH_MODE",
+        payload: {
+          publishMode:
+            slash.args.toLowerCase() === "auto"
+              ? "AUTO"
+              : slash.args.toLowerCase() === "smart"
+                ? "SMART"
+                : "MANUAL",
+        },
+      },
+    };
+  }
+
+  if (slash?.name === "onaymodu") {
+    return {
+      intent: "APPROVAL_MODE_CHANGE",
+      summary: "Onay modu slash komutla degistirilmek istendi.",
+      suggestedAction: {
+        type: "SET_APPROVAL_MODE",
+        payload: {
+          approvalMode:
+            slash.args.toLowerCase() === "auto"
+              ? "AUTO"
+              : slash.args.toLowerCase() === "smart"
+                ? "SMART"
+                : "MANUAL",
+        },
+      },
+    };
+  }
 
   if (normalized.includes("tatli") && normalized.includes("one")) {
     return {
@@ -3104,6 +3290,26 @@ const applyTelegramCommand = async (input: {
         approvalMode,
         allowAutoPublishing: publishMode === "AUTO",
       };
+    } else if (actionType === "SET_APPROVAL_MODE") {
+      const approvalMode = String(payload.approvalMode || "MANUAL");
+
+      await tx.autopilotPolicy.upsert({
+        where: { businessId: input.businessId },
+        create: {
+          businessId: input.businessId,
+          approvalMode,
+          allowAutoPublishing: approvalMode === "AUTO",
+        },
+        update: {
+          approvalMode,
+          allowAutoPublishing: approvalMode === "AUTO",
+        },
+      });
+
+      result = {
+        applied: true,
+        approvalMode,
+      };
     } else if (actionType === "UPDATE_WEEKLY_PRIORITY") {
       const currentMix = parseJsonObject(business.autopilotPolicy?.contentMixJson);
       const priorityFocus = {
@@ -3173,7 +3379,7 @@ const applyTelegramCommand = async (input: {
         campaignName: campaign.name,
       };
     } else if (actionType === "START_PRODUCT_INTAKE") {
-      const productName = extractProductNameFromCommand(input.command);
+      const productName = extractProductNameFromCommand(String(payload.slashArgs || input.command));
 
       if (productName) {
         const product = await tx.product.create({
@@ -3198,9 +3404,35 @@ const applyTelegramCommand = async (input: {
           applied: false,
           mode: "PRODUCT_DETAILS_REQUIRED",
           message: "Yeni urun icin isim ve tercihen fiyat/foto bilgisi gerekli.",
-          suggestedReply: "ornek: yeni urun ekle San Sebastian cheesecake 220 TL",
+          suggestedReply: "ornek: /yeniurun San Sebastian cheesecake 220 TL",
         };
       }
+    } else if (actionType === "REQUEST_VENUE_PHOTO") {
+      status = "NEEDS_INPUT";
+      result = {
+        applied: false,
+        mode: "VENUE_PHOTO_REQUIRED",
+        message: "Mekan guncellemesi icin bir foto ve kisa aciklama gerekli.",
+      };
+    } else if (actionType === "SHOW_HELP") {
+      result = {
+        applied: true,
+        commands: TELEGRAM_COMMANDS,
+      };
+    } else if (actionType === "SHOW_STATUS") {
+      const pendingApprovalCount = await tx.approvalRequest.count({
+        where: {
+          contentItem: { businessId: input.businessId },
+          status: { in: ["PENDING", "SENT"] },
+        },
+      });
+
+      result = {
+        applied: true,
+        publishMode: business.publishMode,
+        approvalMode: business.autopilotPolicy?.approvalMode || "MANUAL",
+        pendingApprovalCount,
+      };
     } else if (actionType === "ESCALATE_TO_OPERATOR") {
       status = "ESCALATED";
       result = {
