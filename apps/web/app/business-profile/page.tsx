@@ -97,7 +97,7 @@ export default async function BusinessProfilePage() {
     <main className="profile-shell">
       <header className="profile-topbar">
         <div>
-          <div className="eyebrow">Business Card</div>
+          <div className="eyebrow">İşletme Kartı</div>
           <h1>Isletme kartini olustur</h1>
           <p className="muted">
             Burasi artik ayar sayfasi degil. Once isletmeyi net tarif ediyoruz, sonra gorselleri ve
@@ -107,20 +107,20 @@ export default async function BusinessProfilePage() {
 
         <div className="topbar-actions">
           <Link className="link-chip" href="/">
-            Dashboard
+            Ana Sayfa
           </Link>
           <Link className="link-chip" href="/asset-library">
-            Asset Library
+            Görsel Kütüphanesi
           </Link>
           <Link className="link-chip" href="/generate-studio">
-            Generate Studio
+            Üretim Stüdyosu
           </Link>
         </div>
       </header>
 
       <section className="visual-hero">
         <div className="profile-card visual-hero-card">
-          <div className="eyebrow">Onboarding Status</div>
+          <div className="eyebrow">Kurulum Durumu</div>
           <h2>{business.name}</h2>
           <p className="muted">
             Ilk hedefimiz bu isletmenin kim oldugunu, kime hitap ettigini ve nasil gorunmesi
@@ -129,11 +129,11 @@ export default async function BusinessProfilePage() {
           <div className="visual-stat-row">
             <div className="visual-stat">
               <strong>{setupScore}/6</strong>
-              <span>Ana alanlar dolu</span>
+              <span>Ana bilgiler tamam</span>
             </div>
             <div className="visual-stat">
               <strong>{business.contentPillars.length}</strong>
-              <span>Icerik ayagi</span>
+              <span>İçerik ayağı</span>
             </div>
             <div className="visual-stat">
               <strong>{countJsonItems(settings?.targetAudienceJson)}</strong>
@@ -141,7 +141,7 @@ export default async function BusinessProfilePage() {
             </div>
             <div className="visual-stat">
               <strong>{countJsonItems(settings?.peakHoursJson)}</strong>
-              <span>Onemli saat</span>
+              <span>Önemli saat</span>
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@ export default async function BusinessProfilePage() {
           <div className="card-head">
             <div>
               <div className="eyebrow">1. Kim Bu Isletme?</div>
-              <h2>Temel kart bilgileri</h2>
+              <h2>Temel işletme bilgileri</h2>
             </div>
             <button className="primary-submit" type="submit">
               Kaydet
@@ -188,7 +188,7 @@ export default async function BusinessProfilePage() {
               <textarea
                 defaultValue={business.description || ""}
                 name="description"
-                placeholder="Bu mekan nasil bir yer, ne satıyor, neden tercih ediliyor?"
+                placeholder="Bu işletme nasıl bir yer, ne satıyor, neden tercih ediliyor?"
                 rows={4}
               />
             </label>
@@ -229,25 +229,25 @@ export default async function BusinessProfilePage() {
                 defaultValue={prettyJson(settings?.targetAudienceJson)}
                 name="targetAudienceJson"
                 rows={6}
-                placeholder='["25-35 beyaz yaka", "hafta sonu brunch ciftleri"]'
+                placeholder='["25-35 beyaz yaka", "hafta sonu brunch çiftleri"]'
               />
             </label>
             <label className="span-2">
-              <span>Kullanmak istedigin CTA&apos;lar</span>
+              <span>Kullanmak istediğin çağrılar</span>
               <textarea
                 defaultValue={prettyJson(settings?.ctaPreferencesJson)}
                 name="ctaPreferencesJson"
                 rows={5}
-                placeholder='["Hemen rezervasyon olustur", "DM ile bilgi al"]'
+                placeholder='["Hemen rezervasyon oluştur", "DM ile bilgi al"]'
               />
             </label>
             <label className="span-2">
-              <span>Kullanmak istemedigin kaliplar</span>
+              <span>Kullanmak istemediğin ifadeler</span>
               <textarea
                 defaultValue={prettyJson(settings?.forbiddenPhrasesJson)}
                 name="forbiddenPhrasesJson"
                 rows={5}
-                placeholder='["son sans", "inanilmaz firsat"]'
+                placeholder='["son şans", "inanılmaz fırsat"]'
               />
             </label>
           </div>
@@ -266,25 +266,25 @@ export default async function BusinessProfilePage() {
                 defaultValue={brandProfile?.summary || ""}
                 name="brandSummary"
                 rows={4}
-                placeholder="Mekanin enerjisi, servis hissi, urun dunyasi, insanlarin neden geldigi..."
+                placeholder="Mekanın enerjisi, servis hissi, ürün dünyası, insanların neden geldiği..."
               />
             </label>
             <label className="span-2">
-              <span>Yazi dili notlari</span>
+              <span>Yazı dili notları</span>
               <textarea
                 defaultValue={brandProfile?.voiceGuidelines || ""}
                 name="voiceGuidelines"
                 rows={4}
-                placeholder="Kisa cumleler, daha sicak, daha premium, daha net CTA..."
+                placeholder="Kısa cümleler, daha sıcak, daha premium, daha net çağrı..."
               />
             </label>
             <label className="span-2">
-              <span>Gorsel dil notlari</span>
+              <span>Görsel dil notları</span>
               <textarea
                 defaultValue={brandProfile?.visualGuidelines || ""}
                 name="visualGuidelines"
                 rows={4}
-                placeholder="Sicak isik, yakin plan urun, koyu ahsap masa, duvar tonu korunmali..."
+                placeholder="Sıcak ışık, yakın plan ürün, koyu ahşap masa, duvar tonu korunmalı..."
               />
             </label>
           </div>
@@ -302,15 +302,15 @@ export default async function BusinessProfilePage() {
               <input defaultValue={settings?.preferredLanguage || "tr"} name="preferredLanguage" />
             </label>
             <label>
-              <span>Yayin modu</span>
+              <span>Yayın modu</span>
               <select defaultValue={business.publishMode} name="publishMode">
                 <option value="MANUAL">Manuel onay</option>
-                <option value="SMART">Akilli onay</option>
-                <option value="AUTO">Otomatik yayin</option>
+                <option value="SMART">Akıllı onay</option>
+                <option value="AUTO">Otomatik yayın</option>
               </select>
             </label>
             <label>
-              <span>Calisma modu</span>
+              <span>Çalışma modu</span>
               <select defaultValue={business.operatingMode} name="operatingMode">
                 <option value="SELF_SERVE">Self-Serve</option>
                 <option value="MANAGED">Managed</option>
@@ -334,7 +334,7 @@ export default async function BusinessProfilePage() {
               <input defaultValue={business.whatsappUrl || ""} name="whatsappUrl" />
             </label>
             <label>
-              <span>Onemli saatler</span>
+              <span>Önemli saatler</span>
               <textarea
                 defaultValue={prettyJson(settings?.peakHoursJson)}
                 name="peakHoursJson"
@@ -357,7 +357,7 @@ export default async function BusinessProfilePage() {
                 name="dashboardAccessEnabled"
                 type="checkbox"
               />
-              <span>Dashboard kullanabilsin</span>
+              <span>Paneli kullanabilsin</span>
             </label>
             <label className="asset-checkbox">
               <input
@@ -365,19 +365,19 @@ export default async function BusinessProfilePage() {
                 name="telegramControlEnabled"
                 type="checkbox"
               />
-              <span>Telegram uzerinden yonetebilsin</span>
+              <span>Telegram üzerinden yönetebilsin</span>
             </label>
           </div>
         </form>
 
         <aside className="profile-sidebar">
           <section className="profile-card info-card">
-            <div className="eyebrow">Isletme Karti</div>
+            <div className="eyebrow">İşletme Özeti</div>
             <h2>{business.name}</h2>
             <p>{business.description || "Isletme aciklamasi henuz girilmedi."}</p>
             <div className="detail-stack">
               <div>
-                <strong>Sektor</strong>
+                <strong>Sektör</strong>
                 <p className="muted">{business.category}</p>
               </div>
               <div>
@@ -392,8 +392,8 @@ export default async function BusinessProfilePage() {
           </section>
 
           <section className="profile-card info-card">
-            <div className="eyebrow">Icerik Ayaklari</div>
-            <h2>Su an neyi one cikariyoruz?</h2>
+            <div className="eyebrow">İçerik Başlıkları</div>
+            <h2>Şu an neyi öne çıkarıyoruz?</h2>
             <div className="pillar-list">
               {business.contentPillars.map((pillar) => (
                 <div className="pillar-item" key={pillar.id}>
@@ -408,20 +408,20 @@ export default async function BusinessProfilePage() {
           </section>
 
           <section className="profile-card info-card">
-            <div className="eyebrow">Sonraki Adim</div>
-            <h2>Simdi ne yapacagiz?</h2>
+            <div className="eyebrow">Sonraki Adım</div>
+            <h2>Şimdi ne yapacağız?</h2>
             <ul className="info-list">
               <li>1. Bu karti doldur ve kaydet.</li>
-              <li>2. [Asset Library](/Users/semihmacbook/Documents/New%20project/apps/web/app/asset-library/page.tsx) ekranindan mekan ve urun gorsellerini ekle.</li>
-              <li>3. [Generate Studio](/Users/semihmacbook/Documents/New%20project/apps/web/app/generate-studio/page.tsx) ekranindan ilk gercek uretimi baslat.</li>
+              <li>2. [Görsel Kütüphanesi](/Users/semihmacbook/Documents/New%20project/apps/web/app/asset-library/page.tsx) ekranından mekan ve ürün görsellerini ekle.</li>
+              <li>3. [Üretim Stüdyosu](/Users/semihmacbook/Documents/New%20project/apps/web/app/generate-studio/page.tsx) ekranından ilk gerçek üretimi başlat.</li>
               <li>4. Sonra gerekirse Telegram ile yeni urun ve mekan guncellemesi yap.</li>
             </ul>
             <div className="topbar-actions" style={{ marginTop: 16 }}>
               <Link className="ghost-action" href="/asset-library">
-                Gorsel Yukle
+                Görsel Yükle
               </Link>
               <Link className="ghost-action" href="/generate-studio">
-                Uretime Gec
+                Üretime Geç
               </Link>
             </div>
           </section>
