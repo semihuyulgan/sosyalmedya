@@ -9,6 +9,25 @@ const getValue = (formData: FormData, key: string) => {
   return typeof value === "string" ? value.trim() : "";
 };
 
+const toJsonList = (value: string) => {
+  const items = value
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return items.length ? JSON.stringify(items) : undefined;
+};
+
+const toPeakHoursJson = (value: string) => {
+  const normalized = value.trim();
+  return normalized ? JSON.stringify([normalized]) : undefined;
+};
+
+const toWhatsappUrl = (value: string) => {
+  const normalized = value.replace(/\D/g, "");
+  return normalized ? `https://wa.me/${normalized}` : undefined;
+};
+
 export const updateBusinessProfile = async (formData: FormData) => {
   const businessId = getValue(formData, "businessId");
 
@@ -27,7 +46,7 @@ export const updateBusinessProfile = async (formData: FormData) => {
     phone: getValue(formData, "phone") || undefined,
     websiteUrl: getValue(formData, "websiteUrl") || undefined,
     reservationUrl: getValue(formData, "reservationUrl") || undefined,
-    whatsappUrl: getValue(formData, "whatsappUrl") || undefined,
+    whatsappUrl: toWhatsappUrl(getValue(formData, "whatsappUrl")),
     primaryGoal: getValue(formData, "primaryGoal"),
     operatingMode: getValue(formData, "operatingMode"),
     dashboardAccessEnabled: getValue(formData, "dashboardAccessEnabled") === "on",
@@ -38,10 +57,10 @@ export const updateBusinessProfile = async (formData: FormData) => {
     brandSummary: getValue(formData, "brandSummary") || undefined,
     voiceGuidelines: getValue(formData, "voiceGuidelines") || undefined,
     visualGuidelines: getValue(formData, "visualGuidelines") || undefined,
-    ctaPreferencesJson: getValue(formData, "ctaPreferencesJson") || undefined,
-    forbiddenPhrasesJson: getValue(formData, "forbiddenPhrasesJson") || undefined,
-    targetAudienceJson: getValue(formData, "targetAudienceJson") || undefined,
-    peakHoursJson: getValue(formData, "peakHoursJson") || undefined,
+    ctaPreferencesJson: toJsonList(getValue(formData, "ctaPreferencesJson")),
+    forbiddenPhrasesJson: toJsonList(getValue(formData, "forbiddenPhrasesJson")),
+    targetAudienceJson: toJsonList(getValue(formData, "targetAudienceJson")),
+    peakHoursJson: toPeakHoursJson(getValue(formData, "peakHoursJson")),
     seasonalNotesJson: getValue(formData, "seasonalNotesJson") || undefined,
   };
 

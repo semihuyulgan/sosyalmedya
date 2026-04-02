@@ -36,14 +36,59 @@ type WorkspaceResponse = {
       voiceGuidelines: string | null;
       visualGuidelines: string | null;
     }>;
-    contentPillars: Array<{
-      id: string;
-      name: string;
-      description: string | null;
-      priority: number;
-    }>;
   }>;
 };
+
+const sektorler = [
+  "Restoran",
+  "Kafe",
+  "Pastane",
+  "Fırın",
+  "Otel",
+  "Güzellik Merkezi",
+  "Kuaför",
+  "Diş Kliniği",
+  "Sağlık Kliniği",
+  "Spor Salonu",
+  "Butik Mağaza",
+  "Emlak Ofisi",
+  "Ajans",
+  "Eğitim Kurumu",
+];
+
+const fiyatSegmentleri = [
+  { value: "Ekonomik", label: "Ekonomik" },
+  { value: "Orta", label: "Orta" },
+  { value: "Orta-Üst", label: "Orta-Üst" },
+  { value: "Premium", label: "Premium" },
+  { value: "Lüks", label: "Lüks" },
+];
+
+const hedefler = [
+  { value: "RESERVATION", label: "Rezervasyon" },
+  { value: "ORDER", label: "Sipariş" },
+  { value: "PROFILE_TRAFFIC", label: "Profil ziyareti" },
+  { value: "AWARENESS", label: "Bilinirlik" },
+];
+
+const yayinModlari = [
+  { value: "MANUAL", label: "Ben onaylayayım" },
+  { value: "SMART", label: "Akıllı onay" },
+  { value: "AUTO", label: "Otomatik yayın" },
+];
+
+const calismaModlari = [
+  { value: "SELF_SERVE", label: "Kendim kullanacağım" },
+  { value: "MANAGED", label: "İşletme yönetimini firmaya bırakıyorum" },
+];
+
+const saatler = Array.from({ length: 48 }, (_, index) => {
+  const hour = Math.floor(index / 2)
+    .toString()
+    .padStart(2, "0");
+  const minute = index % 2 === 0 ? "00" : "30";
+  return `${hour}:${minute}`;
+});
 
 const getWorkspaceBusiness = async () => {
   const response = await fetch(`${apiBaseUrl}/api/workspaces/demo-studio/businesses`, {
@@ -58,107 +103,109 @@ const getWorkspaceBusiness = async () => {
   return workspace.businesses[0];
 };
 
-const prettyJson = (value: string | null | undefined) => {
+const parseJsonLines = (value: string | null | undefined) => {
   if (!value) return "";
 
   try {
-    return JSON.stringify(JSON.parse(value), null, 2);
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.map(String).join("\n") : "";
   } catch {
     return value;
   }
 };
 
-const countJsonItems = (value: string | null | undefined) => {
-  if (!value) return 0;
+const firstJsonValue = (value: string | null | undefined) => {
+  if (!value) return "";
 
   try {
     const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed.length : 0;
+    return Array.isArray(parsed) && parsed.length ? String(parsed[0]) : "";
   } catch {
-    return 0;
+    return "";
   }
 };
+
+const goalLabel = (value: string) => hedefler.find((item) => item.value === value)?.label || value;
 
 export default async function BusinessProfilePage() {
   const business = await getWorkspaceBusiness();
   const brandProfile = business.brandProfiles[0];
   const settings = business.settings;
 
-  const setupScore = [
-    business.name,
-    business.category,
-    business.description,
-    settings?.toneSummary,
-    brandProfile?.summary,
-    settings?.targetAudienceJson,
-  ].filter(Boolean).length;
-
   return (
-    <main className="profile-shell">
-      <header className="profile-topbar">
+    <main className="customer-shell">
+      <header className="customer-topbar">
         <div>
           <div className="eyebrow">İşletme Kartı</div>
-          <h1>İşletme kartını oluştur</h1>
-          <p className="muted">
-            Burası artık teknik bir ayar sayfası değil. Önce işletmeni net tarif ediyoruz, sonra
-            görselleri ve ürünleri ekleyip gerçek üretim testlerine geçiyoruz.
+          <h1>İşletmeni birkaç adımda tanıtalım.</h1>
+          <p>
+            Bu bilgiler sayesinde sistem işletmeni daha iyi tanır, daha doğru içerik üretir ve
+            sosyal medyanı daha doğru yönetir.
           </p>
         </div>
 
-        <div className="topbar-actions">
-          <Link className="link-chip" href="/">
-            Ana Sayfa
+        <div className="customer-topbar-actions">
+          <Link className="ghost-action" href="/musteri-paneli">
+            Müşteri Paneli
           </Link>
-          <Link className="link-chip" href="/asset-library">
-            Görsel Kütüphanesi
+          <Link className="ghost-action" href="/asset-library">
+            Görseller
           </Link>
-          <Link className="link-chip" href="/generate-studio">
-            Üretim Stüdyosu
+          <Link className="solid-action" href="/generate-studio">
+            Sonraki Adım: Üretim
           </Link>
         </div>
       </header>
 
-      <section className="visual-hero">
-        <div className="profile-card visual-hero-card">
-          <div className="eyebrow">Kurulum Durumu</div>
-          <h2>{business.name}</h2>
-          <p className="muted">
-            İlk hedefimiz bu işletmenin kim olduğunu, kime hitap ettiğini ve nasıl görünmesi
-            gerektiğini netleştirmek. Ondan sonra görsel yükleyip yapay zekâ üretimine geçeceğiz.
-          </p>
-          <div className="visual-stat-row">
-            <div className="visual-stat">
-              <strong>{setupScore}/6</strong>
-              <span>Ana bilgiler tamam</span>
-            </div>
-            <div className="visual-stat">
-              <strong>{business.contentPillars.length}</strong>
-              <span>İçerik ayağı</span>
-            </div>
-            <div className="visual-stat">
-              <strong>{countJsonItems(settings?.targetAudienceJson)}</strong>
-              <span>Hedef kitle notu</span>
-            </div>
-            <div className="visual-stat">
-              <strong>{countJsonItems(settings?.peakHoursJson)}</strong>
-              <span>Önemli saat</span>
-            </div>
-          </div>
+      <section className="customer-summary-grid simple-summary-grid">
+        <article className="customer-summary-card">
+          <span>İşletme</span>
+          <strong>{business.name}</strong>
+          <p>İşletmenin temel kimliği ve hedefi burada tanımlanır.</p>
+        </article>
+        <article className="customer-summary-card">
+          <span>Sektör</span>
+          <strong>{business.category}</strong>
+          <p>Sistemin seni hangi örneklerle kıyaslayacağını belirler.</p>
+        </article>
+        <article className="customer-summary-card">
+          <span>Ana hedef</span>
+          <strong>{goalLabel(business.primaryGoal)}</strong>
+          <p>İçeriklerin hangi sonuca hizmet edeceğini buradan anlarız.</p>
+        </article>
+        <article className="customer-summary-card">
+          <span>İletişim</span>
+          <strong>{business.telegramControlEnabled ? "Telegram açık" : "Panel odaklı"}</strong>
+          <p>İstersen panelden, istersen Telegram üzerinden ilerleyebilirsin.</p>
+        </article>
+      </section>
+
+      <section className="workflow-strip">
+        <div className="workflow-step current">
+          <strong>1. İşletmeni anlat</strong>
+          <p>İşletmenin ne olduğunu ve nasıl konuştuğunu seç.</p>
+        </div>
+        <div className="workflow-step">
+          <strong>2. İletişim bilgilerini ekle</strong>
+          <p>Müşterilerin sana nasıl ulaşacağını belirt.</p>
+        </div>
+        <div className="workflow-step">
+          <strong>3. Yayın tercihlerini seç</strong>
+          <p>Yayın saati ve kullanım şeklini belirle.</p>
         </div>
       </section>
 
-      <section className="profile-grid">
-        <form action={updateBusinessProfile} className="profile-card profile-form">
+      <section className="simple-library-layout">
+        <form action={updateBusinessProfile} className="customer-card simple-upload-card">
           <input name="businessId" type="hidden" value={business.id} />
+          <input name="seasonalNotesJson" type="hidden" value="" />
 
-          <div className="card-head">
+          <div className="section-heading compact-heading">
             <div>
-              <div className="eyebrow">1. Kim Bu İşletme?</div>
-              <h2>Temel işletme bilgileri</h2>
+              <div className="eyebrow">1. Temel Bilgiler</div>
+              <h2>İşletmeni tanımla</h2>
+              <p>Bu bölüm, sistemin senin ne tür bir işletme olduğunu anlamasını sağlar.</p>
             </div>
-            <button className="primary-submit" type="submit">
-              Kaydet
-            </button>
           </div>
 
           <div className="form-grid">
@@ -166,50 +213,71 @@ export default async function BusinessProfilePage() {
               <span>İşletme adı</span>
               <input defaultValue={business.name} name="name" required />
             </label>
+
             <label>
               <span>Sektör</span>
-              <input defaultValue={business.category} name="category" required />
+              <select defaultValue={business.category} name="category" required>
+                {sektorler.map((sektor) => (
+                  <option key={sektor} value={sektor}>
+                    {sektor}
+                  </option>
+                ))}
+              </select>
             </label>
+
             <label>
               <span>Fiyat segmenti</span>
-              <input defaultValue={business.priceSegment || ""} name="priceSegment" placeholder="Orta, premium, butik..." />
+              <select defaultValue={business.priceSegment || "Orta"} name="priceSegment">
+                {fiyatSegmentleri.map((segment) => (
+                  <option key={segment.value} value={segment.value}>
+                    {segment.label}
+                  </option>
+                ))}
+              </select>
             </label>
+
             <label>
               <span>Ana hedef</span>
               <select defaultValue={business.primaryGoal} name="primaryGoal">
-                <option value="RESERVATION">Rezervasyon</option>
-                <option value="ORDER">Sipariş</option>
-                <option value="PROFILE_TRAFFIC">Profil trafiği</option>
-                <option value="AWARENESS">Bilinirlik</option>
+                {hedefler.map((hedef) => (
+                  <option key={hedef.value} value={hedef.value}>
+                    {hedef.label}
+                  </option>
+                ))}
               </select>
             </label>
+
             <label className="span-2">
               <span>İşletmeyi kısaca anlat</span>
               <textarea
                 defaultValue={business.description || ""}
                 name="description"
-                placeholder="Bu işletme nasıl bir yer, ne satıyor, neden tercih ediliyor?"
+                placeholder="Örnek: Modern şehir restoranı. Akşam yemeği ve hafta sonu brunch için tercih ediliyor."
                 rows={4}
               />
             </label>
+
             <label className="span-2">
               <span>Adres</span>
               <input defaultValue={business.address || ""} name="address" />
             </label>
+
             <label>
               <span>Şehir</span>
               <input defaultValue={business.city} name="city" required />
             </label>
+
             <label>
               <span>Ülke</span>
               <input defaultValue={business.country} name="country" required />
             </label>
           </div>
 
-          <div className="card-head compact">
+          <div className="section-heading compact-heading business-section-gap">
             <div>
-              <div className="eyebrow">2. Müşteri ve Ton</div>
-              <h2>Kime konuşuyoruz?</h2>
+              <div className="eyebrow">2. Müşteri ve Üslup</div>
+              <h2>Nasıl konuşalım?</h2>
+              <p>Burada yapay zekâya nasıl bir dil kullanması gerektiğini anlatırsın.</p>
             </div>
           </div>
 
@@ -220,42 +288,46 @@ export default async function BusinessProfilePage() {
                 defaultValue={settings?.toneSummary || ""}
                 name="toneSummary"
                 rows={3}
-                placeholder="Samimi, premium, enerjik, rahat, mahalle hissi..."
+                placeholder="Örnek: Samimi, şehirli, premium ama ulaşılabilir."
               />
             </label>
+
             <label className="span-2">
-              <span>Hedef kitle</span>
+              <span>Kime hitap ediyoruz?</span>
               <textarea
-                defaultValue={prettyJson(settings?.targetAudienceJson)}
+                defaultValue={parseJsonLines(settings?.targetAudienceJson)}
                 name="targetAudienceJson"
-                rows={6}
-                placeholder='["25-35 beyaz yaka", "hafta sonu brunch çiftleri"]'
+                rows={4}
+                placeholder={"Her satıra bir örnek yaz.\nÖrnek:\n25-40 yaş çalışan profesyoneller\nHafta sonu çiftleri\nAileler"}
               />
             </label>
+
             <label className="span-2">
               <span>Kullanmak istediğin çağrılar</span>
               <textarea
-                defaultValue={prettyJson(settings?.ctaPreferencesJson)}
+                defaultValue={parseJsonLines(settings?.ctaPreferencesJson)}
                 name="ctaPreferencesJson"
-                rows={5}
-                placeholder='["Hemen rezervasyon oluştur", "DM ile bilgi al"]'
+                rows={4}
+                placeholder={"Her satıra bir örnek yaz.\nÖrnek:\nHemen rezervasyon oluştur\nDM ile bilgi al\nArkadaşınla paylaş"}
               />
             </label>
+
             <label className="span-2">
               <span>Kullanmak istemediğin ifadeler</span>
               <textarea
-                defaultValue={prettyJson(settings?.forbiddenPhrasesJson)}
+                defaultValue={parseJsonLines(settings?.forbiddenPhrasesJson)}
                 name="forbiddenPhrasesJson"
-                rows={5}
-                placeholder='["son şans", "inanılmaz fırsat"]'
+                rows={4}
+                placeholder={"Her satıra bir örnek yaz.\nÖrnek:\nSon şans\nİnanılmaz fırsat\nKaçırma"}
               />
             </label>
           </div>
 
-          <div className="card-head compact">
+          <div className="section-heading compact-heading business-section-gap">
             <div>
-              <div className="eyebrow">3. Marka Hafızası</div>
+              <div className="eyebrow">3. Marka Notları</div>
               <h2>Yapay zekâ bu markayı nasıl hatırlasın?</h2>
+              <p>Burada markanın özünü ve içeriklerde korunmasını istediğin hissi anlatırsın.</p>
             </div>
           </div>
 
@@ -266,165 +338,164 @@ export default async function BusinessProfilePage() {
                 defaultValue={brandProfile?.summary || ""}
                 name="brandSummary"
                 rows={4}
-                placeholder="Mekanın enerjisi, servis hissi, ürün dünyası, insanların neden geldiği..."
+                placeholder="Örnek: Günün her saatinde rahat hissettiren, kaliteli ama ulaşılabilir bir mekân. İnsanlar lezzet, servis ve atmosfer için geliyor."
               />
             </label>
+
             <label className="span-2">
               <span>Yazı dili notları</span>
               <textarea
                 defaultValue={brandProfile?.voiceGuidelines || ""}
                 name="voiceGuidelines"
                 rows={4}
-                placeholder="Kısa cümleler, daha sıcak, daha premium, daha net çağrı..."
+                placeholder="Örnek: Kısa cümleler kullan. Samimi ama özensiz olma. Çağrı cümleleri net olsun."
               />
             </label>
+
             <label className="span-2">
               <span>Görsel dil notları</span>
               <textarea
                 defaultValue={brandProfile?.visualGuidelines || ""}
                 name="visualGuidelines"
                 rows={4}
-                placeholder="Sıcak ışık, yakın plan ürün, koyu ahşap masa, duvar tonu korunmalı..."
+                placeholder="Örnek: Sıcak ışık, temiz kadraj, yakın plan ürün çekimi ve doğal masa düzeni öne çıksın."
               />
             </label>
           </div>
 
-          <div className="card-head compact">
+          <div className="section-heading compact-heading business-section-gap">
             <div>
-              <div className="eyebrow">4. Operasyon Bilgisi</div>
-              <h2>Ne zaman ve nasıl yayın yapılsın?</h2>
+              <div className="eyebrow">4. İletişim ve Yayın</div>
+              <h2>İletişim bilgileri ve kullanım şekli</h2>
+              <p>Burada müşterilerin sana nasıl ulaşacağını ve sistemin nasıl çalışacağını seçersin.</p>
             </div>
           </div>
 
           <div className="form-grid">
             <label>
               <span>Tercih edilen dil</span>
-              <input defaultValue={settings?.preferredLanguage || "tr"} name="preferredLanguage" />
+              <select defaultValue="tr" name="preferredLanguage">
+                <option value="tr">Türkçe</option>
+                <option value="en" disabled>
+                  İngilizce (yakında)
+                </option>
+              </select>
             </label>
+
             <label>
               <span>Yayın modu</span>
               <select defaultValue={business.publishMode} name="publishMode">
-                <option value="MANUAL">Manuel onay</option>
-                <option value="SMART">Akıllı onay</option>
-                <option value="AUTO">Otomatik yayın</option>
+                {yayinModlari.map((mod) => (
+                  <option key={mod.value} value={mod.value}>
+                    {mod.label}
+                  </option>
+                ))}
               </select>
             </label>
+
             <label>
               <span>Çalışma modu</span>
-              <select defaultValue={business.operatingMode} name="operatingMode">
-                <option value="SELF_SERVE">Kendi kullanan işletme</option>
-                <option value="MANAGED">Bizim yönettiğimiz işletme</option>
-                <option value="HYBRID">Hibrit kullanım</option>
+              <select defaultValue={business.operatingMode === "MANAGED" ? "MANAGED" : "SELF_SERVE"} name="operatingMode">
+                {calismaModlari.map((mod) => (
+                  <option key={mod.value} value={mod.value}>
+                    {mod.label}
+                  </option>
+                ))}
               </select>
             </label>
+
             <label>
-              <span>Telefon</span>
-              <input defaultValue={business.phone || ""} name="phone" />
+              <span>Telefon numarası</span>
+              <input defaultValue={business.phone || ""} name="phone" placeholder="+90 5.." />
             </label>
+
             <label>
-              <span>Website</span>
-              <input defaultValue={business.websiteUrl || ""} name="websiteUrl" />
+              <span>Web sitesi</span>
+              <input defaultValue={business.websiteUrl || ""} name="websiteUrl" placeholder="Varsa ekle" />
             </label>
+
             <label>
               <span>Rezervasyon linki</span>
-              <input defaultValue={business.reservationUrl || ""} name="reservationUrl" />
+              <input defaultValue={business.reservationUrl || ""} name="reservationUrl" placeholder="Varsa ekle" />
             </label>
+
             <label>
-              <span>WhatsApp linki</span>
-              <input defaultValue={business.whatsappUrl || ""} name="whatsappUrl" />
-            </label>
-            <label>
-              <span>Önemli saatler</span>
-              <textarea
-                defaultValue={prettyJson(settings?.peakHoursJson)}
-                name="peakHoursJson"
-                rows={5}
-                placeholder='["12:30", "19:30", "21:00"]'
-              />
-            </label>
-            <label>
-              <span>Sezonsal notlar</span>
-              <textarea
-                defaultValue={prettyJson(settings?.seasonalNotesJson)}
-                name="seasonalNotesJson"
-                rows={5}
-                placeholder='["yazın teras öne çıksın", "hafta sonu brunch vurgusu"]'
-              />
-            </label>
-            <label className="asset-checkbox">
+              <span>WhatsApp numarası</span>
               <input
-                defaultChecked={business.dashboardAccessEnabled}
-                name="dashboardAccessEnabled"
-                type="checkbox"
+                defaultValue={
+                  business.whatsappUrl?.replace("https://wa.me/", "").replace(/\D/g, "") ||
+                  business.phone ||
+                  ""
+                }
+                name="whatsappUrl"
+                placeholder="90555..."
               />
-              <span>Paneli kullanabilsin</span>
             </label>
+
+            <label>
+              <span>Yayın saati</span>
+              <select defaultValue={firstJsonValue(settings?.peakHoursJson) || "19:00"} name="peakHoursJson">
+                {saatler.map((saat) => (
+                  <option key={saat} value={saat}>
+                    {saat}
+                  </option>
+                ))}
+              </select>
+            </label>
+
             <label className="asset-checkbox">
               <input
                 defaultChecked={business.telegramControlEnabled}
                 name="telegramControlEnabled"
                 type="checkbox"
               />
-              <span>Telegram üzerinden yönetebilsin</span>
+              <span>Telegram üzerinden yönetebileyim</span>
             </label>
+
+            <label className="asset-checkbox">
+              <input
+                defaultChecked={business.dashboardAccessEnabled}
+                name="dashboardAccessEnabled"
+                type="checkbox"
+              />
+              <span>Paneli de kullanabileyim</span>
+            </label>
+          </div>
+
+          <div className="business-form-footer">
+            <button className="solid-action" type="submit">
+              Kaydet ve devam et
+            </button>
           </div>
         </form>
 
-        <aside className="profile-sidebar">
-          <section className="profile-card info-card">
-            <div className="eyebrow">İşletme Özeti</div>
-            <h2>{business.name}</h2>
-            <p>{business.description || "İşletme açıklaması henüz girilmedi."}</p>
-            <div className="detail-stack">
-              <div>
-                <strong>Sektör</strong>
-                <p className="muted">{business.category}</p>
-              </div>
-              <div>
-                <strong>Ana hedef</strong>
-                <p className="muted">{business.primaryGoal}</p>
-              </div>
-              <div>
-                <strong>Ton</strong>
-                <p className="muted">{settings?.toneSummary || "Ton özeti henüz yok."}</p>
-              </div>
-            </div>
-          </section>
+        <aside className="customer-card simple-help-card">
+          <span className="customer-card-tag">Bu bilgiler ne işe yarar?</span>
+          <h2>Sistem bu karttan ne öğrenir?</h2>
+          <p>Bu kart sayesinde yapay zekâ işletmenin tarzını, hedefini ve müşterisini tanır.</p>
+          <ul className="simple-help-list">
+            <li>Hangi sektörde olduğunu anlar</li>
+            <li>Nasıl bir dil kullanması gerektiğini öğrenir</li>
+            <li>Hangi hedefe odaklanacağını bilir</li>
+            <li>Yayınlarda hangi iletişim bilgisini kullanacağını görür</li>
+          </ul>
 
-          <section className="profile-card info-card">
-            <div className="eyebrow">İçerik Başlıkları</div>
-            <h2>Şu an neyi öne çıkarıyoruz?</h2>
-            <div className="pillar-list">
-              {business.contentPillars.map((pillar) => (
-                <div className="pillar-item" key={pillar.id}>
-                  <span className="pillar-order">0{pillar.priority}</span>
-                  <div>
-                    <strong>{pillar.name}</strong>
-                    <p className="muted">{pillar.description || "Açıklama yok."}</p>
-                  </div>
-                </div>
-              ))}
+          <div className="section-heading compact-heading business-side-note">
+            <div>
+              <div className="eyebrow">Sonraki Adım</div>
+              <h2>Buradan sonra ne yapacaksın?</h2>
+              <p>Bu kartı kaydettikten sonra önce görsellerini yükle, sonra ilk üretimi başlat.</p>
             </div>
-          </section>
+          </div>
 
-          <section className="profile-card info-card">
-            <div className="eyebrow">Sonraki Adım</div>
-            <h2>Şimdi ne yapacağız?</h2>
-            <ul className="info-list">
-              <li>1. Bu kartı doldur ve kaydet.</li>
-              <li>2. [Görsel Kütüphanesi](/Users/semihmacbook/Documents/New%20project/apps/web/app/asset-library/page.tsx) ekranından mekan ve ürün görsellerini ekle.</li>
-              <li>3. [Üretim Stüdyosu](/Users/semihmacbook/Documents/New%20project/apps/web/app/generate-studio/page.tsx) ekranından ilk gerçek üretimi başlat.</li>
-              <li>4. Sonra gerekirse Telegram ile yeni ürün ve mekân güncellemesi yap.</li>
-            </ul>
-            <div className="topbar-actions" style={{ marginTop: 16 }}>
-              <Link className="ghost-action" href="/asset-library">
-                Görsel Yükle
-              </Link>
-              <Link className="ghost-action" href="/generate-studio">
-                Üretime Geç
-              </Link>
-            </div>
-          </section>
+          <div className="customer-hero-actions">
+            <Link className="ghost-action" href="/asset-library">
+              Görselleri Yükle
+            </Link>
+            <Link className="solid-action" href="/generate-studio">
+              Üretime Geç
+            </Link>
+          </div>
         </aside>
       </section>
     </main>

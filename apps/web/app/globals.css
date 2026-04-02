@@ -2029,6 +2029,20 @@ textarea {
   align-items: flex-start;
 }
 
+.business-section-gap {
+  margin-top: 26px;
+}
+
+.business-form-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+}
+
+.business-side-note {
+  margin-top: 22px;
+}
+
 .marketing-shell .solid-action,
 .customer-shell .solid-action {
   background: #c7f08d;
