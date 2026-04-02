@@ -44,6 +44,8 @@ body {
 
 body {
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -638,6 +640,7 @@ textarea {
   color: #203330;
   font-weight: 800;
   font-size: 1.3rem;
+  letter-spacing: -0.02em;
 }
 
 .landing-brand-mark {
@@ -661,6 +664,7 @@ textarea {
 .landing-nav a {
   color: #44544f;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .landing-nav-link,
@@ -706,8 +710,8 @@ textarea {
 .landing-section-kicker {
   display: inline-block;
   color: #7b925a;
-  letter-spacing: 0.12em;
-  font-size: 0.92rem;
+  letter-spacing: 0.1em;
+  font-size: 0.88rem;
   font-weight: 800;
   text-transform: uppercase;
 }
@@ -718,8 +722,10 @@ textarea {
 .landing-faq-title {
   margin: 12px 0 16px;
   color: #223530;
-  letter-spacing: -0.05em;
-  line-height: 0.94;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  font-weight: 800;
+  text-wrap: balance;
 }
 
 .landing-hero-copy h1 {
@@ -732,7 +738,8 @@ textarea {
 .landing-band-copy p,
 .landing-testimonial p {
   color: #53635c;
-  line-height: 1.7;
+  line-height: 1.75;
+  letter-spacing: -0.01em;
 }
 
 .landing-hero-copy p {
@@ -852,6 +859,8 @@ textarea {
 .landing-app-card strong {
   display: block;
   color: #243732;
+  letter-spacing: -0.02em;
+  line-height: 1.16;
 }
 
 .landing-app-board-head p,
@@ -975,6 +984,8 @@ textarea {
 .landing-pricing-card h3 {
   margin: 0 0 10px;
   color: #223530;
+  letter-spacing: -0.02em;
+  line-height: 1.16;
 }
 
 .landing-recommended {
@@ -1002,7 +1013,7 @@ textarea {
 
 .landing-price-row strong {
   font-size: 3rem;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.03em;
 }
 
 .landing-price-row span {
@@ -1131,9 +1142,10 @@ textarea {
   margin: 0 auto 16px;
   max-width: 920px;
   font-size: clamp(2rem, 3vw, 3.4rem);
-  line-height: 1.08;
-  letter-spacing: -0.04em;
+  line-height: 1.14;
+  letter-spacing: -0.025em;
   color: #203330;
+  text-wrap: balance;
 }
 
 .landing-testimonial p {
@@ -1168,6 +1180,7 @@ textarea {
   color: #f6fbf4;
   border-bottom: 1px solid rgba(255, 255, 255, 0.18);
   font-size: 1.08rem;
+  letter-spacing: -0.015em;
 }
 
 .marketing-shell,
