@@ -1908,6 +1908,87 @@ const materializeAutopilotPlans = async (businessId: string, limit: number) => {
   };
 };
 
+const createImmediateGenerationJobForBrief = async (input: {
+  businessId: string;
+  generationBriefId: string;
+  title: string;
+  targetAction?: string | null;
+  contentType?: string;
+}) => {
+  const business = await prisma.business.findUnique({
+    where: { id: input.businessId },
+    include: {
+      autopilotPolicy: true,
+    },
+  });
+
+  if (!business) {
+    return null;
+  }
+
+  const brief = await prisma.generationBrief.findUnique({
+    where: { id: input.generationBriefId },
+  });
+
+  if (!brief) {
+    return null;
+  }
+
+  const approvalMode = business.autopilotPolicy?.approvalMode || business.publishMode;
+
+  return prisma.$transaction(async (tx) => {
+    const contentItem = await tx.contentItem.create({
+      data: {
+        businessId: input.businessId,
+        title: input.title,
+        type: input.contentType || "POST",
+        status: inferContentItemStatus(approvalMode),
+        pillarName: "Telegram Intake",
+        targetAction: input.targetAction || business.primaryGoal,
+        plannedFor: new Date(),
+        approvalRequired: approvalMode !== "AUTO",
+        needsClientApproval: approvalMode === "MANUAL",
+        generatedBy: "telegram_intake",
+      },
+    });
+
+    const job = await tx.generationJob.create({
+      data: {
+        businessId: input.businessId,
+        generationBriefId: brief.id,
+        contentItemId: contentItem.id,
+        title: `${input.title} generation`,
+        jobType: brief.generationMode,
+        status: "QUEUED",
+        provider: "telegram_intake",
+        queuedFor: new Date(),
+        promptSnapshotJson: JSON.stringify({
+          title: brief.title,
+          promptDirection: brief.promptDirection,
+          subjectDirection: brief.subjectDirection,
+          remixInstruction: brief.remixInstruction,
+        }),
+        referenceSnapshotJson: JSON.stringify({
+          selectedReferenceIds: brief.selectedReferenceIdsJson ? JSON.parse(brief.selectedReferenceIdsJson) : [],
+          selectedAssetIds: brief.selectedAssetIdsJson ? JSON.parse(brief.selectedAssetIdsJson) : [],
+          keepElements: brief.keepElementsJson ? JSON.parse(brief.keepElementsJson) : [],
+        }),
+        resultSummaryJson: JSON.stringify({
+          outputType: brief.outputType,
+          aspectRatio: brief.aspectRatio,
+          variationCount: brief.variationCount,
+          source: "telegram_intake",
+        }),
+      },
+    });
+
+    return {
+      contentItemId: contentItem.id,
+      generationJobId: job.id,
+    };
+  });
+};
+
 const slugify = (value: string) =>
   value
     .toLowerCase()
@@ -2809,16 +2890,18 @@ const buildTelegramMediaResponse = (input: {
   productId: string | null;
   generatedBriefId: string | null;
   replanGeneratedCount: number;
+  generationStarted: boolean;
+  generatedAssetCount: number;
 }) => {
   if (input.intakeType === "PRODUCT_UPDATE") {
-    return `Yeni urun gorseli kaydedildi. Urun intake'i acildi, yeni brief olusturuldu ve ${input.replanGeneratedCount} slot yeniden planlandi.`;
+    return `Yeni urun gorseli kaydedildi. Urun intake'i acildi, yeni brief olusturuldu ve ${input.replanGeneratedCount} slot yeniden planlandi.${input.generationStarted ? ` Ilk gorsel uretimi baslatildi${input.generatedAssetCount > 0 ? ` ve ${input.generatedAssetCount} output olustu` : ""}.` : ""}`;
   }
 
   if (input.intakeType === "VISUAL_WORLD_UPDATE") {
-    return `Mekan guncellemesi kaydedildi. Visual World referansi yenilendi ve ${input.replanGeneratedCount} slot yeniden planlandi.`;
+    return `Mekan guncellemesi kaydedildi. Visual World referansi yenilendi ve ${input.replanGeneratedCount} slot yeniden planlandi.${input.generationStarted ? ` Yeni referansla ilk gorsel uretimi baslatildi${input.generatedAssetCount > 0 ? ` ve ${input.generatedAssetCount} output olustu` : ""}.` : ""}`;
   }
 
-  return `Gorsel guncelleme kaydedildi. Sistem yeni referansi sonraki uretimlerde kullanacak.`;
+  return `Gorsel guncelleme kaydedildi. Sistem yeni referansi sonraki uretimlerde kullanacak.${input.generationStarted ? " Ayrica bir uretim isi baslatildi." : ""}`;
 };
 
 const classifyTelegramMediaCaption = (caption: string) => {
@@ -2956,11 +3039,50 @@ const createTelegramMediaIntake = async (input: {
 
   const replanResult = await regenerateAutopilotWeek(input.businessId);
 
+  let generationJobId: string | null = null;
+  let contentItemId: string | null = null;
+  let generatedAssetCount = 0;
+
+  if (generatedBrief?.id) {
+    const immediateJob = await createImmediateGenerationJobForBrief({
+      businessId: input.businessId,
+      generationBriefId: generatedBrief.id,
+      title:
+        created.intakeType === "PRODUCT_UPDATE"
+          ? "Telegram intake · yeni urun gorseli"
+          : created.intakeType === "VISUAL_WORLD_UPDATE"
+            ? "Telegram intake · mekan guncelleme gorseli"
+            : "Telegram intake · gorsel guncelleme",
+      targetAction: created.intakeType === "PRODUCT_UPDATE" ? "PROFILE_TRAFFIC" : "AWARENESS",
+      contentType: "POST",
+    });
+
+    generationJobId = immediateJob?.generationJobId || null;
+    contentItemId = immediateJob?.contentItemId || null;
+
+    if (generationJobId) {
+      const runResult = await runQueuedGenerationJobs(input.businessId, 1);
+
+      if (runResult?.completedJobIds.includes(generationJobId)) {
+        const generatedCount = await prisma.contentItemAsset.count({
+          where: {
+            contentItemId: contentItemId || undefined,
+            role: "generated_output",
+          },
+        });
+
+        generatedAssetCount = generatedCount;
+      }
+    }
+  }
+
   const responseText = buildTelegramMediaResponse({
     intakeType: created.intakeType,
     productId: created.productId,
     generatedBriefId: generatedBrief?.id || null,
     replanGeneratedCount: replanResult?.generatedCount || 0,
+    generationStarted: Boolean(generationJobId),
+    generatedAssetCount,
   });
 
   await prisma.telegramCommandRun.create({
@@ -2984,6 +3106,9 @@ const createTelegramMediaIntake = async (input: {
         visualReferenceId: created.visualReferenceId,
         generatedBriefId: generatedBrief?.id || null,
         replanGeneratedCount: replanResult?.generatedCount || 0,
+        generationJobId,
+        contentItemId,
+        generatedAssetCount,
         responseText,
       }),
     },
@@ -2993,6 +3118,9 @@ const createTelegramMediaIntake = async (input: {
     ...created,
     generatedBriefId: generatedBrief?.id || null,
     replanGeneratedCount: replanResult?.generatedCount || 0,
+    generationJobId,
+    contentItemId,
+    generatedAssetCount,
     responseText,
   };
 };
