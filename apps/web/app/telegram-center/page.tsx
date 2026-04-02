@@ -101,9 +101,52 @@ const getTelegramStatus = async (businessId: string) => {
 };
 
 export default async function TelegramCenterPage() {
-  const workspace = await getWorkspace();
-  const business = workspace.businesses[0];
-  const telegram = await getTelegramStatus(business.id);
+  let workspace: WorkspaceResponse | null = null;
+  let telegram: TelegramStatusResponse | null = null;
+  let pageError = "";
+
+  try {
+    workspace = await getWorkspace();
+
+    if (!workspace.businesses.length) {
+      pageError = "Bu workspace icin henuz isletme bulunamadi.";
+    } else {
+      telegram = await getTelegramStatus(workspace.businesses[0].id);
+    }
+  } catch (error) {
+    pageError = error instanceof Error ? error.message : "Telegram Center yuklenemedi.";
+  }
+
+  const business = workspace?.businesses[0];
+
+  if (!business || !telegram) {
+    return (
+      <main className="profile-shell">
+        <header className="profile-topbar">
+          <div>
+            <div className="eyebrow">Telegram Integration</div>
+            <h1>Telegram Center</h1>
+            <p className="muted">
+              Bu ekran gecici olarak acilamadi. Asagidaki teknik durumu gorup tekrar deneyebiliriz.
+            </p>
+          </div>
+        </header>
+
+        <section className="profile-card info-card">
+          <div className="eyebrow">Runtime Error</div>
+          <h2>Ekran verisi yuklenemedi</h2>
+          <p className="muted">
+            {pageError || "Bilinmeyen bir hata olustu."}
+          </p>
+          <p className="muted">
+            API base URL:
+            <br />
+            <code>{apiBaseUrl}</code>
+          </p>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="profile-shell">
