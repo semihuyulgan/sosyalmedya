@@ -1151,6 +1151,100 @@ const getTelegramApiUrl = (token: string, method: string) => {
   return `https://api.telegram.org/bot${token}/${method}`;
 };
 
+const getTelegramBotIdentity = async () => {
+  const config = getTelegramConfig();
+
+  if (!config.token) {
+    return {
+      ready: false,
+      username: "",
+      displayName: "",
+      connectUrl: "",
+      message: "TELEGRAM_BOT_TOKEN missing.",
+    };
+  }
+
+  try {
+    const response = await fetch(getTelegramApiUrl(config.token, "getMe"));
+    const payload = (await response.json()) as {
+      ok?: boolean;
+      result?: {
+        username?: string;
+        first_name?: string;
+      };
+      description?: string;
+    };
+
+    const username = payload.result?.username || process.env.TELEGRAM_BOT_USERNAME || "";
+    const displayName = payload.result?.first_name || username;
+
+    return {
+      ready: payload.ok && Boolean(username),
+      username,
+      displayName,
+      connectUrl: username ? `https://t.me/${username}` : "",
+      message: payload.ok ? "Bot identity fetched." : payload.description || "Bot identity fetch failed.",
+    };
+  } catch (error) {
+    return {
+      ready: false,
+      username: process.env.TELEGRAM_BOT_USERNAME || "",
+      displayName: "",
+      connectUrl: process.env.TELEGRAM_BOT_USERNAME ? `https://t.me/${process.env.TELEGRAM_BOT_USERNAME}` : "",
+      message: error instanceof Error ? error.message : "Bot identity fetch failed.",
+    };
+  }
+};
+
+const buildTelegramConnectUrl = (username: string, businessId: string) => {
+  if (!username) {
+    return "";
+  }
+
+  return `https://t.me/${username}?start=connect_${businessId}`;
+};
+
+const buildTelegramChatTitle = (chat: {
+  title?: string;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+}) => {
+  const fullName = [chat.first_name, chat.last_name].filter(Boolean).join(" ").trim();
+  return chat.title || fullName || (chat.username ? `@${chat.username}` : null);
+};
+
+const upsertTelegramChatLink = async (input: {
+  businessId: string;
+  chatId: string;
+  chatTitle?: string | null;
+}) => {
+  const existingLink = await prisma.telegramChatLink.findFirst({
+    where: { businessId: input.businessId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (existingLink) {
+    return prisma.telegramChatLink.update({
+      where: { id: existingLink.id },
+      data: {
+        chatId: input.chatId,
+        chatTitle: input.chatTitle || null,
+        status: "ACTIVE",
+      },
+    });
+  }
+
+  return prisma.telegramChatLink.create({
+    data: {
+      businessId: input.businessId,
+      chatId: input.chatId,
+      chatTitle: input.chatTitle || null,
+      status: "ACTIVE",
+    },
+  });
+};
+
 const fetchTelegramWebhookInfo = async () => {
   const config = getTelegramConfig();
 
@@ -4400,11 +4494,19 @@ app.get("/api/businesses/:businessId/telegram-status", async (request, reply) =>
     : null;
 
   const webhook = await fetchTelegramWebhookInfo();
+  const bot = await getTelegramBotIdentity();
 
   return {
     businessId: business.id,
     businessName: business.name,
     botConfigured: Boolean(process.env.TELEGRAM_BOT_TOKEN),
+    bot: {
+      username: bot.username,
+      displayName: bot.displayName,
+      connectUrl: buildTelegramConnectUrl(bot.username, business.id),
+      ready: bot.ready,
+      message: bot.message,
+    },
     webhook,
     link: latestLink,
     pendingApprovalCount: await prisma.approvalRequest.count({
@@ -4450,28 +4552,11 @@ app.post("/api/businesses/:businessId/telegram-link", async (request, reply) => 
   const { businessId } = paramsSchema.parse(request.params);
   const body = telegramLinkSchema.parse(request.body);
 
-  const existingLink = await prisma.telegramChatLink.findFirst({
-    where: { businessId },
-    orderBy: { createdAt: "desc" },
+  const link = await upsertTelegramChatLink({
+    businessId,
+    chatId: body.chatId,
+    chatTitle: body.chatTitle || null,
   });
-
-  const link = existingLink
-    ? await prisma.telegramChatLink.update({
-        where: { id: existingLink.id },
-        data: {
-          chatId: body.chatId,
-          chatTitle: body.chatTitle || null,
-          status: "ACTIVE",
-        },
-      })
-    : await prisma.telegramChatLink.create({
-        data: {
-          businessId,
-          chatId: body.chatId,
-          chatTitle: body.chatTitle || null,
-          status: "ACTIVE",
-        },
-      });
 
   reply.code(201);
   return link;
@@ -4948,7 +5033,13 @@ app.post("/api/telegram/webhook", async (request) => {
             mime_type?: string;
             file_name?: string;
           };
-          chat?: { id?: number | string; title?: string };
+          chat?: {
+            id?: number | string;
+            title?: string;
+            username?: string;
+            first_name?: string;
+            last_name?: string;
+          };
         };
         callback_query?: {
           data?: string;
@@ -4962,6 +5053,42 @@ app.post("/api/telegram/webhook", async (request) => {
   const incomingText = body?.message?.text?.trim();
   const incomingCaption = body?.message?.caption?.trim() || "";
   const chatId = String(body?.message?.chat?.id || body?.callback_query?.message?.chat?.id || "");
+  const startPayload =
+    incomingText?.match(/^\/start(?:@\w+)?\s+(.+)$/)?.[1]?.trim() ||
+    incomingText?.match(/^\/start(?:@\w+)?$/)?.[0]?.trim() ||
+    "";
+
+  if (chatId) {
+    const connectBusinessId =
+      startPayload.match(/^connect_([0-9a-f-]{36})$/i)?.[1] ||
+      startPayload.match(/^([0-9a-f-]{36})$/i)?.[1] ||
+      "";
+
+    if (connectBusinessId) {
+      const business = await prisma.business.findUnique({
+        where: { id: connectBusinessId },
+        select: { id: true, name: true },
+      });
+
+      if (business) {
+        const link = await upsertTelegramChatLink({
+          businessId: business.id,
+          chatId,
+          chatTitle: buildTelegramChatTitle(body?.message?.chat || {}),
+        });
+
+        return {
+          ok: true,
+          handled: true,
+          mode: "AUTO_LINK",
+          businessId: business.id,
+          chatId,
+          linkId: link.id,
+          responseText: `${business.name} icin Telegram baglantisi tamamlandi.`,
+        };
+      }
+    }
+  }
 
   if (chatId) {
     const linkedChat = await prisma.telegramChatLink.findFirst({

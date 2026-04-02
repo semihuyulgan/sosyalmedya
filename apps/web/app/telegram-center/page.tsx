@@ -14,6 +14,13 @@ type TelegramStatusResponse = {
   businessId: string;
   businessName: string;
   botConfigured: boolean;
+  bot: {
+    username: string;
+    displayName: string;
+    connectUrl: string;
+    ready: boolean;
+    message: string;
+  };
   webhook: {
     envReady: boolean;
     configured: boolean;
@@ -128,8 +135,47 @@ export default async function TelegramCenterPage() {
         <section className="profile-card profile-form">
           <div className="card-head">
             <div>
-              <div className="eyebrow">Link Chat</div>
-              <h2>Telegram chat baglantisi</h2>
+              <div className="eyebrow">Quick Connect</div>
+              <h2>Telegram hesabini bagla</h2>
+            </div>
+          </div>
+
+          <p className="muted">
+            Müşteriden chat id istemiyoruz. Bu işletmeye özel bağlantı linkiyle bota gidip
+            <code> /start</code> demesi yeterli; sistem özel sohbeti otomatik bağlar.
+          </p>
+
+          {telegram.bot.connectUrl ? (
+            <div className="span-2">
+              <a className="primary-submit" href={telegram.bot.connectUrl} rel="noreferrer" target="_blank">
+                Telegram&apos;da baglanti baslat
+              </a>
+            </div>
+          ) : (
+            <p className="muted">
+              Bot kullanıcı adı henüz okunamadı. Önce webhook&apos;u senkronize edip sayfayı yenilemeyi dene.
+            </p>
+          )}
+
+          <div className="history-list">
+            <div className="history-item">
+              <strong>1. Adim</strong>
+              <span>Bağlantı linkine tıkla ve bot sohbetini aç.</span>
+            </div>
+            <div className="history-item">
+              <strong>2. Adim</strong>
+              <span>Botta <code>/start</code> mesajını gönder.</span>
+            </div>
+            <div className="history-item">
+              <strong>3. Adim</strong>
+              <span>Sayfayı yenile; linked chat alanı otomatik dolacak.</span>
+            </div>
+          </div>
+
+          <div className="card-head">
+            <div>
+              <div className="eyebrow">Advanced Fallback</div>
+              <h2>Manuel baglanti</h2>
             </div>
           </div>
 
@@ -165,6 +211,7 @@ export default async function TelegramCenterPage() {
             <div className="eyebrow">Integration State</div>
             <h2>{telegram.botConfigured ? "Bot token hazir" : "Bot token eksik"}</h2>
             <ul className="info-list">
+              <li>Bot username: {telegram.bot.username ? `@${telegram.bot.username}` : "Henuz okunamadi"}</li>
               <li>Linked chat: {telegram.link?.chatTitle || telegram.link?.chatId || "Bagli degil"}</li>
               <li>Pending approvals: {telegram.pendingApprovalCount}</li>
               <li>Status: {telegram.link?.status || "NOT_LINKED"}</li>
@@ -190,6 +237,11 @@ export default async function TelegramCenterPage() {
               Target webhook URL:
               <br />
               <code>{telegram.webhook.targetUrl || "once Railway public API URL girilmeli"}</code>
+            </p>
+            <p className="muted">
+              Connect URL:
+              <br />
+              <code>{telegram.bot.connectUrl || "bot username hazir oldugunda olusacak"}</code>
             </p>
             <p className="muted">
               Webhook state: {telegram.webhook.message}

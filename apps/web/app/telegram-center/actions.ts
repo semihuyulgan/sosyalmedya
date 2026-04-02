@@ -31,7 +31,8 @@ export const saveTelegramLink = async (formData: FormData) => {
   });
 
   if (!response.ok) {
-    throw new Error("Telegram link could not be saved.");
+    const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(payload?.message || "Telegram link could not be saved.");
   }
 
   revalidatePath("/telegram-center");
@@ -46,7 +47,8 @@ export const syncTelegramWebhook = async () => {
   });
 
   if (!response.ok) {
-    throw new Error("Telegram webhook could not be synced.");
+    const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(payload?.message || "Telegram webhook could not be synced.");
   }
 
   revalidatePath("/telegram-center");
