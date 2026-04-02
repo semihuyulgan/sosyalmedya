@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createAsset, updateAsset } from "./actions";
+import { createAsset } from "./actions";
 
 const apiBaseUrl = process.env.API_BASE_URL || "http://127.0.0.1:4000";
 
@@ -54,51 +54,91 @@ const getAssets = async (businessId: string) => {
   return (await response.json()) as AssetResponse;
 };
 
-const tagText = (tags: Array<{ tag: string }>) => tags.map((tag) => tag.tag).join(", ");
-
 export default async function AssetLibraryPage() {
   const workspace = await getWorkspace();
   const business = workspace.businesses[0];
   const assetLibrary = await getAssets(business.id);
+  const featuredCount = assetLibrary.assets.filter((asset) => asset.isFeatured).length;
+  const imageCount = assetLibrary.assets.filter((asset) => asset.mediaType === "IMAGE").length;
+  const videoCount = assetLibrary.assets.filter((asset) => asset.mediaType === "VIDEO").length;
 
   return (
-    <main className="profile-shell">
-      <header className="profile-topbar">
+    <main className="customer-shell">
+      <header className="customer-topbar">
         <div>
           <div className="eyebrow">Görsel Sistemi</div>
           <h1>Görsel Kütüphanesi</h1>
-          <p className="muted">
-            Buraya işletmeni anlatan görselleri ekliyorsun. Mekân, ürün, detay ve atmosfer
-            fotoğrafları ne kadar iyi olursa yapay zekâ da o kadar iyi üretim yapar.
+          <p>
+            Burada sadece işletmeni anlatan görselleri eklersin. Karmaşık ayarları arkada biz
+            hallediyoruz; sen sadece doğru fotoğrafları yükle.
           </p>
         </div>
 
-        <div className="topbar-actions">
-          <Link className="link-chip" href="/">
+        <div className="customer-topbar-actions">
+          <Link className="ghost-action" href="/musteri-paneli">
+            Müşteri Paneli
+          </Link>
+          <Link className="ghost-action" href="/">
             Ana Sayfa
           </Link>
-          <Link className="link-chip" href="/business-profile">
-            İşletme Kartı
+          <Link className="solid-action" href="/generate-studio">
+            Sonraki Adım: Üretime Geç
           </Link>
         </div>
       </header>
 
-      <section className="asset-layout">
-        <section className="profile-card profile-form">
-          <div className="card-head">
+      <section className="customer-summary-grid simple-summary-grid">
+        <article className="customer-summary-card">
+          <span>Toplam kayıt</span>
+          <strong>{assetLibrary.assets.length}</strong>
+          <p>Kütüphanedeki tüm görsel ve video sayısı.</p>
+        </article>
+        <article className="customer-summary-card">
+          <span>Öne çıkan</span>
+          <strong>{featuredCount}</strong>
+          <p>Markanı en iyi anlatan seçili görseller.</p>
+        </article>
+        <article className="customer-summary-card">
+          <span>Görsel</span>
+          <strong>{imageCount}</strong>
+          <p>Yapay zekânın üretimde kullanacağı fotoğraflar.</p>
+        </article>
+        <article className="customer-summary-card">
+          <span>Video</span>
+          <strong>{videoCount}</strong>
+          <p>Kısa video ve reels kaynakları.</p>
+        </article>
+      </section>
+
+      <section className="workflow-strip">
+        <div className="workflow-step current">
+          <strong>1. Görsellerini ekle</strong>
+          <p>Mekân, ürün, detay ve atmosfer fotoğraflarını yükle.</p>
+        </div>
+        <div className="workflow-step">
+          <strong>2. Telegram&apos;ı bağla</strong>
+          <p>İstersen güncellemeleri Telegram üzerinden yap.</p>
+        </div>
+        <div className="workflow-step">
+          <strong>3. İlk üretimi başlat</strong>
+          <p>Yapay zekâ işletmene uygun yeni görseller oluştursun.</p>
+        </div>
+      </section>
+
+      <section className="simple-library-layout">
+        <section className="customer-card simple-upload-card">
+          <div className="section-heading compact-heading">
             <div>
-              <div className="eyebrow">Yeni Kayıt</div>
+              <div className="eyebrow">Yeni Yükleme</div>
               <h2>Yeni görsel veya video ekle</h2>
             </div>
           </div>
 
           <form action={createAsset} className="form-grid">
             <input type="hidden" name="businessId" value={business.id} />
-
-            <label>
-              <span>Dosya adı</span>
-              <input name="fileName" placeholder="imza-burger.jpg" required />
-            </label>
+            <input type="hidden" name="mimeType" value="image/jpeg" />
+            <input type="hidden" name="source" value="panel_upload" />
+            <input type="hidden" name="qualityScore" value="80" />
             <label>
               <span>Dosya yükle</span>
               <input accept="image/*,video/*" name="assetFile" type="file" />
@@ -110,61 +150,55 @@ export default async function AssetLibraryPage() {
                 <option value="VIDEO">Video</option>
               </select>
             </label>
-            <label className="span-2">
-              <span>Medya bağlantısı</span>
-              <input name="storageKey" placeholder="/uploads/... veya https://..." />
-            </label>
             <label>
-              <span>Dosya tipi</span>
-              <input defaultValue="image/jpeg" name="mimeType" required />
-            </label>
-            <label>
-              <span>Kaynak</span>
-              <input defaultValue="operator_upload" name="source" />
-            </label>
-            <label>
-              <span>Kalite puanı</span>
-              <input defaultValue="80" name="qualityScore" type="number" min="0" max="100" />
+              <span>Kısa ad</span>
+              <input name="fileName" placeholder="örn. imza kahve, salon, vitrin" />
             </label>
             <label className="span-2">
               <span>Etiketler</span>
               <input name="tags" placeholder="ürün, menü, mekân, detay, atmosfer" />
             </label>
             <div className="span-2">
-              <button className="primary-submit" type="submit">
-                Kaydı Ekle
+              <button className="solid-action" type="submit">
+                Görseli Yükle
               </button>
             </div>
           </form>
         </section>
 
-        <aside className="profile-sidebar">
-          <section className="profile-card info-card">
-            <div className="eyebrow">Kütüphane Özeti</div>
-            <h2>{assetLibrary.assets.length} medya kaydı aktif</h2>
-            <ul className="info-list">
-              <li>Öne çıkan kayıt: {assetLibrary.assets.filter((asset) => asset.isFeatured).length}</li>
-              <li>Görsel sayısı: {assetLibrary.assets.filter((asset) => asset.mediaType === "IMAGE").length}</li>
-              <li>Video sayısı: {assetLibrary.assets.filter((asset) => asset.mediaType === "VIDEO").length}</li>
-            </ul>
-          </section>
-
-          <section className="profile-card info-card">
-            <div className="eyebrow">Neden Önemli?</div>
-            <h2>Üretim için temel alan</h2>
-            <ul className="info-list">
-              <li>Etiketler sayesinde yapay zekâ hangi görselin hangi içerikte kullanılacağını anlar.</li>
-              <li>Öne çıkan kayıtlar markanın ana görsel hafızasını oluşturur.</li>
-              <li>Ürün, mekân, detay ve atmosfer gibi etiketler üretimde kullanılır.</li>
-            </ul>
-          </section>
+        <aside className="customer-card simple-help-card">
+          <span className="customer-card-tag">Nasıl seçmeliyim?</span>
+          <h2>En iyi sonuç için bunları yükle</h2>
+          <p>Mekânın genel görünümü, ürün yakın planları, masa düzeni ve atmosfer fotoğrafları en çok işimize yarar.</p>
+          <ul className="simple-help-list">
+            <li>İşletmenin dışı veya giriş alanı</li>
+            <li>En çok satan ürünlerin net fotoğrafları</li>
+            <li>Mekân içinden birkaç farklı açı</li>
+            <li>Işık ve ambiyansı gösteren kareler</li>
+          </ul>
+          <div className="customer-hero-actions">
+            <Link className="ghost-action" href="/business-profile">
+              İşletme Kartını Aç
+            </Link>
+            <Link className="solid-action" href="/generate-studio">
+              Üretime Geç
+            </Link>
+          </div>
         </aside>
       </section>
 
-      <section className="asset-grid">
+      <section className="section-heading simple-gallery-heading">
+        <div>
+          <div className="eyebrow">Son Yüklenenler</div>
+          <h2>Kütüphanendeki görseller</h2>
+          <p>Burada sadece yüklediğin görselleri görürsün. Karmaşık ayar alanlarını gizledik.</p>
+        </div>
+      </section>
+
+      <section className="simple-gallery-grid">
         {assetLibrary.assets.map((asset) => (
-          <article className="profile-card asset-card" key={asset.id}>
-            <div className="asset-preview-wrap">
+          <article className="customer-card simple-asset-card" key={asset.id}>
+            <div className="simple-asset-visual">
               {asset.mediaType === "IMAGE" ? (
                 <img alt={asset.fileName} className="asset-preview" src={asset.storageKey} />
               ) : (
@@ -175,17 +209,19 @@ export default async function AssetLibraryPage() {
               )}
             </div>
 
-            <div className="asset-card-body">
-              <div className="asset-card-top">
-                <div>
-                  <strong>{asset.fileName}</strong>
-                  <p className="muted">
-                    {asset.mediaType === "IMAGE" ? "Görsel" : "Video"} · {asset.source}
-                  </p>
-                </div>
-                {asset.isFeatured ? <span className="soft-pill">Öne Çıkan</span> : null}
+            <div className="simple-asset-body">
+              <div className="simple-asset-head">
+                <strong>{asset.fileName}</strong>
+                {asset.isFeatured ? <span className="customer-card-tag">Öne çıkan</span> : null}
               </div>
-
+              <p className="muted">
+                {asset.mediaType === "IMAGE" ? "Görsel" : "Video"} ·{" "}
+                {asset.source === "telegram_upload"
+                  ? "Telegram'dan geldi"
+                  : asset.source === "openai_generated"
+                    ? "Yapay zekâ tarafından üretildi"
+                    : "Panelden yüklendi"}
+              </p>
               <div className="asset-tag-row">
                 {asset.tags.map((tag) => (
                   <span className="asset-tag" key={tag.id}>
@@ -193,60 +229,9 @@ export default async function AssetLibraryPage() {
                   </span>
                 ))}
               </div>
-
-              <form action={updateAsset} className="asset-form">
-                <input type="hidden" name="assetId" value={asset.id} />
-                <label>
-                  <span>Dosya adı</span>
-                  <input defaultValue={asset.fileName} name="fileName" required />
-                </label>
-                <label>
-                  <span>Dosyayı değiştir</span>
-                  <input accept="image/*,video/*" name="assetFile" type="file" />
-                </label>
-                <label>
-                  <span>Medya türü</span>
-                  <select defaultValue={asset.mediaType} name="mediaType">
-                    <option value="IMAGE">Görsel</option>
-                    <option value="VIDEO">Video</option>
-                  </select>
-                </label>
-                <label className="span-2">
-                  <span>Medya bağlantısı</span>
-                  <input defaultValue={asset.storageKey} name="storageKey" required />
-                </label>
-                <label>
-                  <span>Dosya tipi</span>
-                  <input defaultValue={asset.mimeType} name="mimeType" required />
-                </label>
-                <label>
-                  <span>Kaynak</span>
-                  <input defaultValue={asset.source} name="source" />
-                </label>
-                <label>
-                  <span>Kalite puanı</span>
-                  <input
-                    defaultValue={asset.qualityScore ?? 0}
-                    name="qualityScore"
-                    type="number"
-                    min="0"
-                    max="100"
-                  />
-                </label>
-                <label className="span-2">
-                  <span>Etiketler</span>
-                  <input defaultValue={tagText(asset.tags)} name="tags" />
-                </label>
-                <label className="asset-checkbox span-2">
-                  <input defaultChecked={asset.isFeatured} name="isFeatured" type="checkbox" />
-                  <span>Öne çıkan görsel yap</span>
-                </label>
-                <div className="span-2">
-                  <button className="ghost-action" type="submit">
-                    Kaydı Güncelle
-                  </button>
-                </div>
-              </form>
+              <span className="simple-asset-date">
+                {new Date(asset.createdAt).toLocaleDateString("tr-TR")}
+              </span>
             </div>
           </article>
         ))}

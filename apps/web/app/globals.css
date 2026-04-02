@@ -1846,6 +1846,189 @@ textarea {
   line-height: 1.72;
 }
 
+.customer-shell input,
+.customer-shell textarea,
+.customer-shell select {
+  border: 1px solid rgba(19, 34, 56, 0.12);
+  background: rgba(255, 255, 255, 0.96);
+  color: #203330;
+}
+
+.customer-shell input:focus,
+.customer-shell textarea:focus,
+.customer-shell select:focus {
+  border-color: rgba(56, 103, 255, 0.34);
+  background: #ffffff;
+}
+
+.customer-shell .form-grid label {
+  color: #203330;
+}
+
+.customer-shell .form-grid label span,
+.customer-shell .asset-checkbox span {
+  color: #5d6d89;
+}
+
+.workflow-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.workflow-step {
+  padding: 18px 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(19, 34, 56, 0.08);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 18px 40px rgba(18, 34, 59, 0.05);
+}
+
+.workflow-step.current {
+  border-color: rgba(168, 216, 92, 0.34);
+  background: linear-gradient(180deg, rgba(223, 244, 182, 0.72), rgba(255, 255, 255, 0.96));
+}
+
+.workflow-step strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #203330;
+}
+
+.workflow-step p {
+  margin: 0;
+  color: #5d6d89;
+  line-height: 1.6;
+}
+
+.simple-summary-grid {
+  margin-bottom: 18px;
+}
+
+.simple-library-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.72fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.simple-upload-card,
+.simple-help-card {
+  padding: 26px;
+}
+
+.compact-heading {
+  margin-bottom: 18px;
+}
+
+.compact-heading h2 {
+  margin: 8px 0 0;
+  color: #203330;
+}
+
+.simple-help-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+  color: #5d6d89;
+}
+
+.simple-gallery-heading {
+  margin-bottom: 18px;
+}
+
+.simple-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.simple-asset-card {
+  padding: 14px;
+  gap: 14px;
+}
+
+.simple-asset-visual {
+  overflow: hidden;
+  border-radius: 22px;
+  background: #f7f5ef;
+}
+
+.simple-asset-body {
+  display: grid;
+  gap: 12px;
+  padding: 4px 6px 10px;
+}
+
+.simple-asset-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.simple-asset-head strong {
+  color: #223530;
+}
+
+.simple-asset-date {
+  color: #7a8a84;
+  font-size: 0.9rem;
+}
+
+.customer-shell .asset-tag {
+  border-color: rgba(56, 103, 255, 0.12);
+  background: rgba(56, 103, 255, 0.06);
+  color: #3152ba;
+}
+
+.customer-shell .asset-video-placeholder {
+  background: linear-gradient(180deg, #eef3f6 0%, #f7fafc 100%);
+  border-color: rgba(19, 34, 56, 0.08);
+}
+
+.customer-shell .asset-video-placeholder strong,
+.customer-shell .asset-video-placeholder span {
+  color: #3152ba;
+}
+
+.setup-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.setup-card {
+  min-height: 220px;
+}
+
+.setup-step-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(56, 103, 255, 0.08);
+  color: #3152ba;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.support-links-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.support-link-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
 .marketing-shell .solid-action,
 .customer-shell .solid-action {
   background: #c7f08d;
@@ -1896,7 +2079,12 @@ textarea {
   .marketing-pricing-grid,
   .marketing-step-grid,
   .customer-summary-grid,
-  .customer-card-grid {
+  .customer-card-grid,
+  .workflow-strip,
+  .simple-library-layout,
+  .simple-gallery-grid,
+  .setup-card-grid,
+  .support-links-strip {
     grid-template-columns: 1fr;
   }
 

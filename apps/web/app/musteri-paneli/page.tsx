@@ -1,54 +1,47 @@
 import Link from "next/link";
 
-const kartlar = [
+const adimlar = [
   {
-    baslik: "İşletme Kartı",
-    aciklama: "İşletmenin temel bilgilerini, marka dilini ve hedefini düzenle.",
+    sıra: "1",
+    baslik: "İşletme bilgilerini tamamla",
+    aciklama: "İşletmenin ne yaptığını, tarzını ve hedefini sisteme anlat.",
     href: "/business-profile",
-    cta: "Kartı Aç",
-    etiket: "Kurulum",
+    cta: "İşletme Kartını Aç",
   },
   {
-    baslik: "Görsel Kütüphanesi",
-    aciklama: "Mekân ve ürün fotoğraflarını ekle, düzenle ve kullanıma hazırla.",
+    sıra: "2",
+    baslik: "Görsellerini yükle",
+    aciklama: "Mekân, ürün ve atmosfer fotoğraflarını tek ekrandan ekle.",
     href: "/asset-library",
-    cta: "Görselleri Yönet",
-    etiket: "Görseller",
+    cta: "Görselleri Yükle",
   },
   {
-    baslik: "Görsel Üret",
-    aciklama: "Yapay zekâdan bu işletmeye uygun yeni görseller üretmesini iste.",
-    href: "/generate-studio",
-    cta: "Üretime Git",
-    etiket: "Yapay zekâ",
-  },
-  {
-    baslik: "Onaylar",
-    aciklama: "Yayınlanmadan önce sana gelen içerikleri tek yerden onayla.",
-    href: "/approval-center",
-    cta: "Onayları Gör",
-    etiket: "Kontrol",
-  },
-  {
-    baslik: "İçerik Takvimi",
-    aciklama: "Hazırlanan ve yayınlanacak içerikleri sade bir takvimde gör.",
-    href: "/content-calendar",
-    cta: "Takvimi Aç",
-    etiket: "Plan",
-  },
-  {
-    baslik: "Telegram Bağlantısı",
-    aciklama: "Telegram komutlarını ve hızlı yönetim bağlantısını buradan aç.",
+    sıra: "3",
+    baslik: "Telegram’ı bağla",
+    aciklama: "İstersen onayları ve hızlı komutları Telegram’dan yönet.",
     href: "/telegram-center",
-    cta: "Telegram’ı Aç",
-    etiket: "İletişim",
+    cta: "Telegram’ı Bağla",
+  },
+  {
+    sıra: "4",
+    baslik: "İlk üretimi başlat",
+    aciklama: "Yapay zekâ senin için ilk içerik görsellerini oluştursun.",
+    href: "/generate-studio",
+    cta: "Üretime Geç",
   },
 ];
 
-const akış = [
-  "Önce işletme kartını tamamla.",
-  "Sonra görsellerini ekle.",
-  "Ardından ilk üretimi başlat.",
+const yardimciBaglantilar = [
+  {
+    baslik: "Onaylar",
+    aciklama: "Yayına çıkmadan önce son onayı burada verirsin.",
+    href: "/approval-center",
+  },
+  {
+    baslik: "İçerik Takvimi",
+    aciklama: "Hazırlanan içeriklerin yayın sırasını burada görürsün.",
+    href: "/content-calendar",
+  },
 ];
 
 export default function MusteriPaneliPage() {
@@ -57,10 +50,9 @@ export default function MusteriPaneliPage() {
       <header className="customer-topbar">
         <div>
           <div className="eyebrow">Müşteri Paneli</div>
-          <h1>Hoş geldin. İşletmen için gerekli olan her şey burada.</h1>
+          <h1>Hoş geldin. Buradan adım adım ilerleyebilirsin.</h1>
           <p>
-            Teknik detayları arkada tuttuk. Buradan işletme kartını düzenleyebilir, görsellerini
-            ekleyebilir ve ilk üretimi başlatabilirsin.
+            Karmaşık ayarları arkaya aldık. Aşağıdaki 4 adımı sırayla tamamlaman yeterli.
           </p>
         </div>
 
@@ -76,30 +68,30 @@ export default function MusteriPaneliPage() {
 
       <section className="customer-hero-grid">
         <article className="customer-hero-card">
-          <span className="customer-hero-kicker">Hazırsın</span>
-          <h2>İlk görsel üretimine geçmek için sadece birkaç adım kaldı.</h2>
+          <span className="customer-hero-kicker">Hızlı Başlangıç</span>
+          <h2>Önce işletmeni tanıtalım, sonra yapay zekâ senin için üretmeye başlasın.</h2>
           <p>
-            Sistem işletmeni tanıdıktan sonra içerik fikirlerini ve görselleri senin yerine
-            oluşturmaya başlar.
+            İşletme bilgilerini ve görsellerini ekledikten sonra sistem senin yerine içerik ve
+            görsel üretmeye başlar.
           </p>
 
           <div className="customer-hero-actions">
-            <Link className="solid-action" href="/generate-studio">
-              İlk Üretimi Başlat
+            <Link className="solid-action" href="/business-profile">
+              1. Adımı Başlat
             </Link>
             <Link className="ghost-action" href="/asset-library">
-              Görselleri Ekle
+              Görselleri Yükle
             </Link>
           </div>
         </article>
 
         <aside className="customer-progress-card">
-          <span className="customer-progress-title">Hızlı başlangıç</span>
+          <span className="customer-progress-title">Sırayla yap</span>
           <div className="customer-progress-list">
-            {akış.map((adım, index) => (
-              <div className="customer-progress-item" key={adım}>
-                <span>{index + 1}</span>
-                <p>{adım}</p>
+            {adimlar.map((adim) => (
+              <div className="customer-progress-item" key={adim.baslik}>
+                <span>{adim.sıra}</span>
+                <p>{adim.baslik}</p>
               </div>
             ))}
           </div>
@@ -110,7 +102,7 @@ export default function MusteriPaneliPage() {
         <article className="customer-summary-card">
           <span>Durum</span>
           <strong>Kurulum hazır</strong>
-          <p>Temel alanlar tamamlanınca ilk görsel üretimine hemen geçilir.</p>
+          <p>Dört temel adım tamamlandığında sistem tam çalışmaya başlar.</p>
         </article>
         <article className="customer-summary-card">
           <span>Yönetim</span>
@@ -119,19 +111,34 @@ export default function MusteriPaneliPage() {
         </article>
         <article className="customer-summary-card">
           <span>Sonraki adım</span>
-          <strong>Görsel ekle</strong>
-          <p>Mekân ve ürün fotoğraflarını ekle, sonra yapay zekâya ilk üretimi yaptır.</p>
+          <strong>İşletme kartı</strong>
+          <p>İlk olarak işletme kartını doldur; sonra sistem seni sırayla yönlendirsin.</p>
         </article>
       </section>
 
-      <section className="customer-card-grid">
-        {kartlar.map((kart) => (
-          <article className="customer-card" key={kart.baslik}>
-            <span className="customer-card-tag">{kart.etiket}</span>
-            <h2>{kart.baslik}</h2>
-            <p>{kart.aciklama}</p>
-            <Link className="ghost-action" href={kart.href}>
-              {kart.cta}
+      <section className="setup-card-grid">
+        {adimlar.map((adim) => (
+          <article className="customer-card setup-card" key={adim.baslik}>
+            <span className="setup-step-badge">Adım {adim.sıra}</span>
+            <h2>{adim.baslik}</h2>
+            <p>{adim.aciklama}</p>
+            <Link className="solid-action" href={adim.href}>
+              {adim.cta}
+            </Link>
+          </article>
+        ))}
+      </section>
+
+      <section className="support-links-strip">
+        {yardimciBaglantilar.map((item) => (
+          <article className="customer-card support-link-card" key={item.baslik}>
+            <div>
+              <span className="customer-card-tag">Yardımcı ekran</span>
+              <h2>{item.baslik}</h2>
+              <p>{item.aciklama}</p>
+            </div>
+            <Link className="ghost-action" href={item.href}>
+              Aç
             </Link>
           </article>
         ))}
