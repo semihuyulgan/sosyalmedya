@@ -613,10 +613,9 @@ textarea {
   min-height: 100vh;
   padding: 28px 28px 64px;
   background:
-    radial-gradient(circle at top left, rgba(125, 211, 252, 0.16), transparent 28%),
-    radial-gradient(circle at top right, rgba(94, 234, 212, 0.14), transparent 22%),
-    linear-gradient(180deg, #f5f8ff 0%, #eef4ff 100%);
-  color: #132238;
+    radial-gradient(circle at top left, rgba(237, 247, 199, 0.75), transparent 28%),
+    linear-gradient(180deg, #fbf7ef 0%, #fffdf8 100%);
+  color: #1f342d;
 }
 
 .marketing-topbar,
@@ -625,6 +624,7 @@ textarea {
   justify-content: space-between;
   gap: 20px;
   align-items: flex-start;
+  padding: 8px 0 22px;
 }
 
 .marketing-brand {
@@ -641,7 +641,7 @@ textarea {
   place-items: center;
   font-weight: 800;
   color: #03111b;
-  background: linear-gradient(135deg, var(--sky), var(--aqua));
+  background: linear-gradient(135deg, #1f342d, #35594b);
 }
 
 .marketing-brand strong,
@@ -672,7 +672,7 @@ textarea {
 }
 
 .marketing-nav a:not(.ghost-action):not(.solid-action) {
-  color: #4f6080;
+  color: #3c4b45;
   font-weight: 600;
 }
 
@@ -682,11 +682,11 @@ textarea {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
   gap: 20px;
-  padding: 36px;
-  border-radius: 32px;
-  border: 1px solid rgba(19, 34, 56, 0.08);
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 24px 70px rgba(18, 34, 59, 0.08);
+  padding: 26px 0 12px;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .marketing-copy h1,
@@ -699,14 +699,16 @@ textarea {
 }
 
 .marketing-copy h1 {
-  font-size: clamp(2.7rem, 5vw, 4.8rem);
-  line-height: 0.95;
-  max-width: 760px;
+  font-size: clamp(3.4rem, 6vw, 5.8rem);
+  line-height: 0.92;
+  max-width: 680px;
+  color: #203330;
 }
 
 .marketing-copy p {
-  max-width: 680px;
-  font-size: 1.04rem;
+  max-width: 560px;
+  font-size: 1.14rem;
+  color: #4f5f58;
 }
 
 .marketing-copy .eyebrow,
@@ -726,6 +728,15 @@ textarea {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 18px;
+}
+
+.marketing-kicker {
+  color: #6f8c4f;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 14px;
 }
 
 .marketing-pills span,
@@ -748,13 +759,14 @@ textarea {
 }
 
 .marketing-trust-row span {
-  color: #50617f;
+  color: #5b6e66;
   font-size: 0.92rem;
 }
 
-.marketing-highlight {
-  display: grid;
-  gap: 16px;
+.marketing-showcase {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .marketing-mini-card,
@@ -766,6 +778,145 @@ textarea {
   border: 1px solid rgba(19, 34, 56, 0.08);
   background: rgba(255, 255, 255, 0.94);
   box-shadow: 0 18px 40px rgba(18, 34, 59, 0.06);
+}
+
+.marketing-screen {
+  width: 100%;
+  max-width: 680px;
+  padding: 18px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, #d7f6ab 0%, #c5f28f 100%);
+  box-shadow: 0 30px 70px rgba(122, 164, 74, 0.18);
+}
+
+.marketing-screen-topbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.screen-badge,
+.screen-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #334742;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.screen-tab.active {
+  background: #ffffff;
+}
+
+.marketing-screen-body {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 40px rgba(41, 69, 53, 0.08);
+}
+
+.screen-sidebar {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding-top: 6px;
+}
+
+.screen-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #d9e4de;
+}
+
+.screen-dot.active {
+  background: #b6eb77;
+}
+
+.screen-dot.brand {
+  background: #ff91b3;
+}
+
+.screen-calendar {
+  display: grid;
+  gap: 14px;
+}
+
+.calendar-head strong,
+.calendar-card strong {
+  display: block;
+  color: #243732;
+}
+
+.calendar-head span,
+.calendar-card p {
+  color: #6a7a74;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.calendar-card {
+  min-height: 150px;
+  padding: 16px;
+  border-radius: 18px;
+  background: #fffdf8;
+  border: 1px solid rgba(34, 52, 45, 0.08);
+}
+
+.calendar-card.tall {
+  min-height: 200px;
+}
+
+.calendar-card.wide {
+  grid-column: span 2;
+  min-height: 120px;
+}
+
+.calendar-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  background: #e9f5ff;
+  color: #3872d9;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.calendar-badge.teal {
+  background: #e7fbf7;
+  color: #188a74;
+}
+
+.calendar-badge.gold {
+  background: #fff3d8;
+  color: #b27b1a;
+}
+
+.marketing-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 12px 0 28px;
+  padding: 18px 0 8px;
+  border-top: 1px solid rgba(31, 52, 45, 0.08);
+}
+
+.marketing-strip span {
+  color: #61716a;
+  font-weight: 600;
 }
 
 .marketing-mini-card,
@@ -893,9 +1044,25 @@ textarea {
 
 .marketing-shell .solid-action,
 .customer-shell .solid-action {
-  background: #3867ff;
-  color: #ffffff;
-  box-shadow: 0 14px 30px rgba(56, 103, 255, 0.22);
+  background: #c7f08d;
+  color: #1f342d;
+  box-shadow: 0 14px 30px rgba(168, 216, 92, 0.28);
+}
+
+.marketing-topbar .solid-action,
+.marketing-topbar .ghost-action {
+  min-height: 52px;
+  border-radius: 999px;
+}
+
+.marketing-topbar .ghost-action {
+  background: transparent;
+  border-color: rgba(31, 52, 45, 0.24);
+}
+
+.marketing-shell .solid-action:hover,
+.customer-shell .solid-action:hover {
+  transform: translateY(-1px);
 }
 
 .marketing-shell .ghost-action,
@@ -905,11 +1072,17 @@ textarea {
   border: 1px solid rgba(19, 34, 56, 0.12);
 }
 
-.marketing-shell .ghost-action:hover,
-.customer-shell .ghost-action:hover,
-.marketing-shell .solid-action:hover,
-.customer-shell .solid-action:hover {
-  transform: translateY(-1px);
+.section-heading h2 {
+  max-width: 620px;
+  color: #203330;
+}
+
+.marketing-section {
+  padding-top: 22px;
+}
+
+.marketing-price-card.featured {
+  color: #ffffff;
 }
 
 @media (max-width: 1100px) {
@@ -926,6 +1099,10 @@ textarea {
   .marketing-topbar,
   .customer-topbar {
     flex-direction: column;
+  }
+
+  .marketing-showcase {
+    justify-content: flex-start;
   }
 }
 
@@ -951,6 +1128,22 @@ textarea {
 
   .marketing-copy h1 {
     font-size: 2.3rem;
+  }
+
+  .marketing-screen-body {
+    grid-template-columns: 1fr;
+  }
+
+  .screen-sidebar {
+    grid-auto-flow: column;
+  }
+
+  .calendar-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-card.wide {
+    grid-column: span 1;
   }
 }
 

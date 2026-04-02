@@ -86,6 +86,7 @@ export default function HomePage() {
 
         <nav className="marketing-nav">
           <a href="#neler-yapar">Neler Yapar?</a>
+          <a href="#kanallar">Kanallar</a>
           <a href="#paketler">Paketler</a>
           <a href="#nasil-calisir">Nasil Calisir?</a>
           <Link className="ghost-action" href="/musteri-paneli">
@@ -99,11 +100,11 @@ export default function HomePage() {
 
       <section className="marketing-hero">
         <div className="marketing-copy">
-          <div className="eyebrow">Sosyal medya artik daha kolay</div>
-          <h1>Isletmen icin gorsel ureten ve paylasim surecini yoneten sade bir panel.</h1>
+          <div className="marketing-kicker">YAYINLA</div>
+          <h1>Isletmen icin sosyal medyayi tek yerden yonet.</h1>
           <p>
-            Mekanini tanir, urunlerini ogrenir ve sana uygun icerikler hazirlar. Istersen panelden,
-            istersen Telegram uzerinden yonetirsin.
+            Mekanini tanir, urunlerini ogrenir ve sana uygun gorseller hazirlar. Icerik planlama,
+            onay ve Telegram yonetimi tek bir sade panelde bulusur.
           </p>
 
           <div className="marketing-actions">
@@ -128,23 +129,57 @@ export default function HomePage() {
           </div>
         </div>
 
-        <aside className="marketing-highlight">
-          <div className="marketing-mini-card">
-            <span className="mini-label">Bugun</span>
-            <strong>1 yeni urun eklendi</strong>
-            <p>Yapay zeka yeni urun icin gorsel hazirliyor.</p>
-          </div>
-          <div className="marketing-mini-card">
-            <span className="mini-label">Telegram</span>
-            <strong>Onay ve guncelleme tek sohbetten</strong>
-            <p>“Bu hafta tatliyi one cikar” gibi hizli komutlarla sistemi yonet.</p>
-          </div>
-          <div className="marketing-mini-card marketing-note-card">
-            <span className="mini-label">Baslangic</span>
-            <strong>Ilk hedef: isletme karti ve gorsel kutuphanesi</strong>
-            <p>Kurulum bittikten sonra ilk uretim testine dakikalar icinde gecilir.</p>
+        <aside className="marketing-showcase">
+          <div className="marketing-screen">
+            <div className="marketing-screen-topbar">
+              <span className="screen-badge">Tum Kanallar</span>
+              <span className="screen-tab active">Takvim</span>
+              <span className="screen-tab">Liste</span>
+            </div>
+
+            <div className="marketing-screen-body">
+              <div className="screen-sidebar">
+                <span className="screen-dot active"></span>
+                <span className="screen-dot"></span>
+                <span className="screen-dot"></span>
+                <span className="screen-dot"></span>
+                <span className="screen-dot brand"></span>
+              </div>
+
+              <div className="screen-calendar">
+                <div className="calendar-head">
+                  <strong>Bu hafta</strong>
+                  <span>Instagram + Telegram onay akisi</span>
+                </div>
+
+                <div className="calendar-grid">
+                  <div className="calendar-card tall">
+                    <div className="calendar-badge">Post</div>
+                    <strong>Yeni urun paylasimi</strong>
+                    <p>Bugun 18:30</p>
+                  </div>
+                  <div className="calendar-card">
+                    <div className="calendar-badge teal">Story</div>
+                    <strong>Tatli vitrin serisi</strong>
+                    <p>Yarin 12:00</p>
+                  </div>
+                  <div className="calendar-card wide">
+                    <div className="calendar-badge gold">Onay</div>
+                    <strong>Telegram uzerinden onay bekliyor</strong>
+                    <p>Isletme sahibine gonderildi</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </aside>
+      </section>
+
+      <section className="marketing-strip" id="kanallar">
+        <span>Instagram</span>
+        <span>Telegram</span>
+        <span>Yapay zeka gorsel uretimi</span>
+        <span>Onay ve yayin akisi</span>
       </section>
 
       <section className="marketing-section" id="neler-yapar">
