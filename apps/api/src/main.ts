@@ -2539,6 +2539,33 @@ const buildVariantCopy = (input: {
   };
 };
 
+const prioritizeQueuedGenerationJobs = <
+  T extends {
+    title: string;
+    provider: string | null;
+    createdAt: Date;
+    queuedFor: Date | null;
+  },
+>(
+  jobs: T[],
+  limit: number,
+) =>
+  [...jobs]
+    .sort((left, right) => {
+      const leftTelegram = left.title.toLowerCase().includes("telegram") || left.provider === "telegram_intake";
+      const rightTelegram = right.title.toLowerCase().includes("telegram") || right.provider === "telegram_intake";
+
+      if (leftTelegram !== rightTelegram) {
+        return leftTelegram ? -1 : 1;
+      }
+
+      const leftQueuedTime = left.queuedFor ? left.queuedFor.getTime() : left.createdAt.getTime();
+      const rightQueuedTime = right.queuedFor ? right.queuedFor.getTime() : right.createdAt.getTime();
+
+      return leftQueuedTime - rightQueuedTime;
+    })
+    .slice(0, limit);
+
 const runQueuedGenerationJobs = async (businessId: string, limit: number) => {
   const business = await prisma.business.findUnique({
     where: { id: businessId },
@@ -2552,7 +2579,7 @@ const runQueuedGenerationJobs = async (businessId: string, limit: number) => {
       generationJobs: {
         where: { status: "QUEUED" },
         orderBy: [{ queuedFor: "asc" }, { createdAt: "asc" }],
-        take: limit,
+        take: Math.max(limit * 8, 20),
         include: {
           generationBrief: true,
           contentItem: {
@@ -2574,9 +2601,10 @@ const runQueuedGenerationJobs = async (businessId: string, limit: number) => {
     return null;
   }
 
+  const prioritizedJobs = prioritizeQueuedGenerationJobs(business.generationJobs, limit);
   const completedJobIds: string[] = [];
 
-  for (const job of business.generationJobs) {
+  for (const job of prioritizedJobs) {
     const brief = job.generationBrief;
     const contentItem = job.contentItem;
 
