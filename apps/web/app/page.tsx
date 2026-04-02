@@ -105,6 +105,37 @@ const sıkSorulanlar = [
   "Yeni ürün geldiğinde sistemi nasıl güncelliyorum?",
 ];
 
+const örnekSektörler = [
+  {
+    sektör: "Restoran",
+    etiket: "Yemek ve içecek",
+    başlık: "Yeni menü görseli ve akşam rezervasyon postu",
+    açıklama: "Mekân fotoğrafları ve ürün detaylarına göre sıcak, iştah açıcı bir seri oluşturur.",
+    ton: "peach",
+  },
+  {
+    sektör: "Güzellik Merkezi",
+    etiket: "Hizmet sektörü",
+    başlık: "Bakım paketi tanıtımı ve kampanya duyurusu",
+    açıklama: "Premium, temiz ve güven veren bir görsel dil ile hizmeti öne çıkarır.",
+    ton: "lilac",
+  },
+  {
+    sektör: "Diş Kliniği",
+    etiket: "Sağlık",
+    başlık: "Bilgilendirici carousel ve güven odaklı paylaşım",
+    açıklama: "Kurumsal ama soğuk olmayan bir anlatımla uzmanlık ve güven hissi üretir.",
+    ton: "blue",
+  },
+  {
+    sektör: "Butik Otel",
+    etiket: "Turizm",
+    başlık: "Hafta sonu konaklama paketi için ilgi çekici görseller",
+    açıklama: "Mekân atmosferi, oda detayları ve deneyim hissi öne çıkarılır.",
+    ton: "green",
+  },
+];
+
 export default function HomePage() {
   return (
     <main className="landing-shell">
@@ -131,10 +162,10 @@ export default function HomePage() {
       <section className="landing-hero">
         <div className="landing-hero-copy">
           <span className="landing-kicker">YAYINLA</span>
-          <h1>İşletmen için sosyal medyayı tek bir basit panelden yönetin.</h1>
+          <h1>Senin yerine düşünen, karar veren ve sosyal medyanı yöneten otomatik sistem.</h1>
           <p>
-            Görsel üretimi, içerik planlama, onay süreci ve Telegram yönetimini tek yerde toplayan
-            Türkçe bir sosyal medya çalışma alanı.
+            İşletmeni tanır, ürünlerini öğrenir, hedef kitleni anlar. Sana uygun içerikleri ve
+            görselleri üretir, en doğru akışla sosyal medyanı en iyi şekilde yürütür.
           </p>
 
           <div className="landing-hero-actions">
@@ -147,9 +178,9 @@ export default function HomePage() {
           </div>
 
           <ul className="landing-hero-points">
-            <li>İçerikleri önceden planla</li>
-            <li>Telegram’dan yönlendir</li>
-            <li>Görselleri yapay zekâ ile üret</li>
+            <li>İşletmeni öğrenir</li>
+            <li>İçeriğe kendi karar verir</li>
+            <li>Görselleri yapay zekâ ile üretir</li>
           </ul>
         </div>
 
@@ -225,6 +256,38 @@ export default function HomePage() {
             <article className="landing-feature-card" key={özellik.başlık}>
               <h3>{özellik.başlık}</h3>
               <p>{özellik.açıklama}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="landing-gallery-section">
+        <div className="landing-section-heading">
+          <span className="landing-section-kicker">ÖRNEK ÜRETİMLER</span>
+          <h2>Farklı sektörler için üretilmiş örnek görsel dünyaları.</h2>
+          <p>
+            Sadece restoranlar için değil; güzellik, sağlık, konaklama ve daha birçok sektöre uygun
+            yapay zekâ görselleri oluşturabilir.
+          </p>
+        </div>
+
+        <div className="landing-gallery-grid">
+          {örnekSektörler.map((örnek) => (
+            <article className={`landing-gallery-card ${örnek.ton}`} key={örnek.sektör}>
+              <div className="landing-gallery-visual">
+                <div className="gallery-main-shot"></div>
+                <div className="gallery-side-stack">
+                  <div className="gallery-mini-shot"></div>
+                  <div className="gallery-mini-shot alt"></div>
+                </div>
+              </div>
+
+              <div className="landing-gallery-copy">
+                <span>{örnek.etiket}</span>
+                <h3>{örnek.sektör}</h3>
+                <strong>{örnek.başlık}</strong>
+                <p>{örnek.açıklama}</p>
+              </div>
             </article>
           ))}
         </div>
