@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AI Social Autopilot",
-  description: "Instagram-first content ops dashboard for restaurants and small businesses.",
+  description: "İşletmeler için Türkçe sosyal medya üretim ve yönetim platformu.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -13,4 +13,3 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
-
