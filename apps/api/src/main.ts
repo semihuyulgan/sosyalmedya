@@ -1152,6 +1152,58 @@ const getTelegramApiUrl = (token: string, method: string) => {
   return `https://api.telegram.org/bot${token}/${method}`;
 };
 
+const sendTelegramText = async (chatId: string, text: string) => {
+  const config = getTelegramConfig();
+
+  if (!config.token || !chatId || !text.trim()) {
+    return { ok: false };
+  }
+
+  try {
+    const response = await fetch(getTelegramApiUrl(config.token, "sendMessage"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+      }),
+    });
+
+    const payload = (await response.json().catch(() => null)) as { ok?: boolean } | null;
+    return { ok: Boolean(response.ok && payload?.ok) };
+  } catch {
+    return { ok: false };
+  }
+};
+
+const answerTelegramCallback = async (callbackQueryId: string, text?: string) => {
+  const config = getTelegramConfig();
+
+  if (!config.token || !callbackQueryId) {
+    return { ok: false };
+  }
+
+  try {
+    const response = await fetch(getTelegramApiUrl(config.token, "answerCallbackQuery"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        callback_query_id: callbackQueryId,
+        text: text || undefined,
+      }),
+    });
+
+    const payload = (await response.json().catch(() => null)) as { ok?: boolean } | null;
+    return { ok: Boolean(response.ok && payload?.ok) };
+  } catch {
+    return { ok: false };
+  }
+};
+
 const getTelegramBotIdentity = async () => {
   const config = getTelegramConfig();
 
@@ -5043,6 +5095,7 @@ app.post("/api/telegram/webhook", async (request) => {
           };
         };
         callback_query?: {
+          id?: string;
           data?: string;
           message?: {
             chat?: { id?: number | string };
@@ -5077,6 +5130,8 @@ app.post("/api/telegram/webhook", async (request) => {
           chatId,
           chatTitle: buildTelegramChatTitle(body?.message?.chat || {}),
         });
+
+        await sendTelegramText(chatId, `${business.name} icin Telegram baglantisi tamamlandi. Artik buradan komut verebilirsin.`);
 
         return {
           ok: true,
@@ -5119,6 +5174,8 @@ app.post("/api/telegram/webhook", async (request) => {
               `telegram-${Date.now()}${document?.mime_type === "image/png" ? ".png" : ".jpg"}`,
           });
 
+          await sendTelegramText(chatId, created.responseText);
+
           return {
             ok: true,
             handled: true,
@@ -5131,6 +5188,7 @@ app.post("/api/telegram/webhook", async (request) => {
             replanGeneratedCount: created.replanGeneratedCount,
           };
         } catch {
+          await sendTelegramText(chatId, "Gorsel alindi ama islenirken bir sorun olustu. Lutfen tekrar dene.");
           return { ok: true, handled: false };
         }
       }
@@ -5142,6 +5200,10 @@ app.post("/api/telegram/webhook", async (request) => {
             command: incomingText,
             source: "telegram",
           });
+          await sendTelegramText(
+            chatId,
+            String(applied.application.responseText || "Talebin alindi, sistem guncellendi."),
+          );
 
           return {
             ok: true,
@@ -5151,6 +5213,7 @@ app.post("/api/telegram/webhook", async (request) => {
             status: applied.application.status,
           };
         } catch {
+          await sendTelegramText(chatId, "Komut alindi ama uygulanirken bir sorun olustu. Lutfen tekrar dene.");
           return { ok: true, handled: false };
         }
       }
@@ -5178,7 +5241,21 @@ app.post("/api/telegram/webhook", async (request) => {
       `telegram callback from chat ${body?.callback_query?.message?.chat?.id ?? "unknown"}`,
     );
   } catch {
+    await answerTelegramCallback(String(body?.callback_query?.id || ""), "Islem tamamlanamadi.");
     return { ok: true, handled: false };
+  }
+
+  await answerTelegramCallback(String(body?.callback_query?.id || ""), "Secimin kaydedildi.");
+
+  if (result && chatId) {
+    const actionLabel =
+      action.toUpperCase() === "APPROVE"
+        ? "onaylandi"
+        : action.toUpperCase() === "REVISE"
+          ? "revizyona gonderildi"
+          : "reddedildi";
+
+    await sendTelegramText(chatId, `Icerik ${actionLabel}.`);
   }
 
   return { ok: true, handled: Boolean(result) };
