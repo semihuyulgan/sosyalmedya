@@ -59,24 +59,6 @@ const prisma = new PrismaClient();
 const app = Fastify({ logger: true });
 const DEMO_WORKSPACE_SLUG = "demo-studio";
 
-const getAllowedOrigins = () => {
-  const defaults = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    process.env.WEB_PUBLIC_BASE_URL || "",
-    process.env.NEXT_PUBLIC_APP_URL || "",
-  ];
-
-  return Array.from(
-    new Set(
-      defaults
-        .concat((process.env.CORS_ALLOWED_ORIGINS || "").split(","))
-        .map((item) => item.trim())
-        .filter(Boolean),
-    ),
-  );
-};
-
 const createBusinessSchema = z.object({
   workspaceId: z.string().uuid(),
   name: z.string().min(2),
@@ -5204,17 +5186,8 @@ app.post("/api/telegram/webhook", async (request) => {
 
 const start = async () => {
   try {
-    const allowedOrigins = getAllowedOrigins();
-
     await app.register(cors, {
-      origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-          return;
-        }
-
-        callback(new Error(`Origin not allowed: ${origin}`), false);
-      },
+      origin: true,
       methods: ["GET", "POST", "PATCH", "OPTIONS"],
       credentials: false,
     });
