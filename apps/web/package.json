@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "start:railway": "node .next/standalone/server.js",
+    "start:railway": "node .next/standalone/apps/web/server.js",
     "lint": "next lint"
   },
   "dependencies": {
