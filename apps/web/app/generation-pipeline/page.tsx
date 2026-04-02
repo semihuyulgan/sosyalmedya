@@ -219,26 +219,25 @@ export default async function GenerationPipelinePage() {
     <main className="profile-shell">
       <header className="profile-topbar">
         <div>
-          <div className="eyebrow">Execution Queue</div>
-          <h1>Generation Pipeline</h1>
+          <div className="eyebrow">Üretim Kuyruğu</div>
+          <h1>Üretim Takibi</h1>
           <p className="muted">
-            Burasi artik teknik kuyruk degil, “son gorsel uretimi ne oldu?” ekranı. En ustte sadece
-            ihtiyac duydugun seyleri goruyorsun.
+            Burası artık teknik kuyruk değil. “Son görsel üretimi ne oldu?” sorusunun kısa cevabını burada görüyorsun.
           </p>
         </div>
 
         <div className="topbar-actions">
           <Link className="link-chip" href="/">
-            Dashboard
+            Ana Sayfa
           </Link>
           <Link className="link-chip" href="/telegram-center">
-            Telegram Center
+            Telegram
           </Link>
           <Link className="link-chip" href="/content-calendar">
-            Content Calendar
+            İçerik Takvimi
           </Link>
           <Link className="link-chip" href="/approval-center">
-            Approval Center
+            Onay Merkezi
           </Link>
         </div>
       </header>
@@ -250,19 +249,19 @@ export default async function GenerationPipelinePage() {
           <div className="visual-stat-row">
             <div className="visual-stat">
               <strong>{telegramJobs.filter((job) => job.status === "COMPLETED").length}</strong>
-              <span>Basarili Telegram uretimi</span>
+              <span>Başarılı Telegram üretimi</span>
             </div>
             <div className="visual-stat">
               <strong>{telegramJobs.filter((job) => job.status === "QUEUED" || job.status === "RUNNING").length}</strong>
-              <span>Bekleyen Telegram isi</span>
+              <span>Bekleyen Telegram işi</span>
             </div>
             <div className="visual-stat">
               <strong>{pipeline.generationJobs.filter((job) => job.status === "QUEUED").length}</strong>
-              <span>Toplam bekleyen job</span>
+              <span>Toplam bekleyen iş</span>
             </div>
             <div className="visual-stat">
               <strong>{pipeline.generationJobs.filter((job) => job.contentItem?.status === "WAITING_APPROVAL").length}</strong>
-              <span>Onay bekleyen icerik</span>
+              <span>Onay bekleyen içerik</span>
             </div>
           </div>
         </div>
@@ -270,16 +269,16 @@ export default async function GenerationPipelinePage() {
 
       <section className="visual-reference-grid">
         {renderSummaryCard({
-          eyebrow: "Son Basarili Uretim",
-          title: latestCompletedTelegramJob ? "Gorsel hazir" : "Henuz hazir gorsel yok",
-          description: "Son tamamlanan Telegram uretimi burada gorunur.",
+          eyebrow: "Son Başarılı Üretim",
+          title: latestCompletedTelegramJob ? "Görsel hazır" : "Henüz hazır görsel yok",
+          description: "Son tamamlanan Telegram üretimi burada görünür.",
           job: latestCompletedTelegramJob,
         })}
 
         {renderSummaryCard({
-          eyebrow: "Siradaki Is",
-          title: latestQueuedTelegramJob ? "Kuyrukta bekliyor" : "Bekleyen Telegram isi yok",
-          description: "Yeni gelen Telegram uretimi varsa burada gorunur.",
+          eyebrow: "Sıradaki İş",
+          title: latestQueuedTelegramJob ? "Kuyrukta bekliyor" : "Bekleyen Telegram işi yok",
+          description: "Yeni gelen Telegram üretimi varsa burada görünür.",
           job: latestQueuedTelegramJob,
         })}
       </section>
@@ -287,7 +286,7 @@ export default async function GenerationPipelinePage() {
       {latestFailedTelegramJob ? (
         <section className="profile-card info-card" style={{ marginBottom: 28 }}>
           <div className="eyebrow">Son Hata</div>
-          <h2>Duzenlenmesi gereken son Telegram isi</h2>
+          <h2>Düzenlenmesi gereken son Telegram işi</h2>
           <p className="muted">{latestFailedTelegramJob.title}</p>
           <p className="muted" style={{ color: "#ffb4b4" }}>
             {latestFailedTelegramJob.errorMessage}
@@ -299,8 +298,8 @@ export default async function GenerationPipelinePage() {
         <section className="profile-card profile-form">
           <div className="card-head">
             <div>
-              <div className="eyebrow">Hizli Aksiyon</div>
-              <h2>Kuyrugu calistir</h2>
+              <div className="eyebrow">Hızlı İşlem</div>
+              <h2>Kuyruğu çalıştır</h2>
             </div>
           </div>
 
@@ -308,12 +307,12 @@ export default async function GenerationPipelinePage() {
             <input type="hidden" name="businessId" value={business.id} />
 
             <label>
-              <span>Bir seferde kac is calissin?</span>
+              <span>Bir seferde kaç iş çalışsın?</span>
               <input defaultValue="3" min="1" max="30" name="limit" type="number" />
             </label>
             <div className="span-2">
               <button className="primary-submit" type="submit">
-                Bekleyen Gorselleri Calistir
+                Bekleyen Görselleri Çalıştır
               </button>
             </div>
           </form>
@@ -321,7 +320,7 @@ export default async function GenerationPipelinePage() {
           <div className="card-head compact">
             <div>
               <div className="eyebrow">Gerekirse</div>
-              <h2>Autopilot planlarini tekrar kuyruga al</h2>
+              <h2>Planları tekrar kuyruğa al</h2>
             </div>
           </div>
 
@@ -334,7 +333,7 @@ export default async function GenerationPipelinePage() {
             </label>
             <div className="span-2">
               <button className="ghost-action" type="submit">
-                Planlari Yeniden Kuyruga Al
+                Planları Yeniden Kuyruğa Al
               </button>
             </div>
           </form>
@@ -342,13 +341,13 @@ export default async function GenerationPipelinePage() {
 
         <aside className="profile-sidebar">
           <section className="profile-card info-card">
-            <div className="eyebrow">Calisma Modu</div>
-            <h2>Su an sistem nasil davraniyor?</h2>
+            <div className="eyebrow">Çalışma Modu</div>
+            <h2>Şu an sistem nasıl davranıyor?</h2>
             <ul className="info-list">
               <li>Approval: {pipeline.autopilotPolicy?.approvalMode || pipeline.publishMode}</li>
               <li>Auto publish: {pipeline.autopilotPolicy?.allowAutoPublishing ? "Acik" : "Kapali"}</li>
-              <li>Toplam brief: {pipeline.generationBriefs.length}</li>
-              <li>Toplam job: {pipeline.generationJobs.length}</li>
+              <li>Toplam talep: {pipeline.generationBriefs.length}</li>
+              <li>Toplam iş: {pipeline.generationJobs.length}</li>
             </ul>
           </section>
         </aside>
@@ -399,7 +398,7 @@ export default async function GenerationPipelinePage() {
                   <p className="muted">
                     {job.contentItem
                       ? `${job.contentItem.title} · ${job.contentItem.type} · ${job.contentItem.status}`
-                      : "Icerik olusmadi"}
+                      : "İçerik oluşmadı"}
                   </p>
                 </div>
                 <div>

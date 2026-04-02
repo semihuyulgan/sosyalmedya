@@ -124,51 +124,51 @@ export default async function GenerateStudioPage() {
     <main className="profile-shell">
       <header className="profile-topbar">
         <div>
-          <div className="eyebrow">AI Generation Ops</div>
-          <h1>Generate Studio</h1>
+          <div className="eyebrow">Yapay Zeka Üretimi</div>
+          <h1>Üretim Stüdyosu</h1>
           <p className="muted">
-            Burasi prompt yazma alani degil; mekan hafizasi, referans kareler ve scene recipe&apos;leri
-            kullanarak kontrollu uretim briefleri olusturdugun operasyon masasi.
+            Burası prompt yazma alanı değil; mekan hafızası, referans görseller ve sahne reçeteleri
+            ile kontrollü üretim talepleri oluşturduğun yer.
           </p>
         </div>
 
         <div className="topbar-actions">
           <Link className="link-chip" href="/">
-            Dashboard
+            Ana Sayfa
           </Link>
           <Link className="link-chip" href="/visual-world">
-            Visual World
+            Görsel Dünya
           </Link>
           <Link className="link-chip" href="/asset-library">
-            Asset Library
+            Görsel Kütüphanesi
           </Link>
         </div>
       </header>
 
       <section className="visual-hero">
         <div className="profile-card visual-hero-card">
-          <div className="eyebrow">Generation Queue</div>
+          <div className="eyebrow">Üretim Özeti</div>
           <h2>{studio.name}</h2>
           <p className="muted">
-            Bir generation brief; scene recipe, referans secimi, asset secimi ve korunacak
-            ogeleri ayni kayitta birlestirir.
+            Bir üretim talebi; sahne reçetesi, referans seçimi, görsel seçimi ve korunacak
+            öğeleri aynı yerde birleştirir.
           </p>
           <div className="visual-stat-row">
             <div className="visual-stat">
               <strong>{studio.generationBriefs.length}</strong>
-              <span>Total briefs</span>
+              <span>Toplam üretim talebi</span>
             </div>
             <div className="visual-stat">
               <strong>{studio.generationBriefs.filter((item) => item.status === "READY_FOR_GENERATION").length}</strong>
-              <span>Ready to run</span>
+              <span>Üretime hazır</span>
             </div>
             <div className="visual-stat">
               <strong>{profile?.references.filter((item) => item.isAnchor).length || 0}</strong>
-              <span>Anchor refs</span>
+              <span>Ana referans</span>
             </div>
             <div className="visual-stat">
               <strong>{profile?.sceneRecipes.length || 0}</strong>
-              <span>Recipe library</span>
+              <span>Sahne reçetesi</span>
             </div>
           </div>
         </div>
@@ -180,32 +180,32 @@ export default async function GenerateStudioPage() {
 
           <div className="card-head">
             <div>
-              <div className="eyebrow">New Brief</div>
-              <h2>Yeni uretim istegi olustur</h2>
+              <div className="eyebrow">Yeni Talep</div>
+              <h2>Yeni üretim isteği oluştur</h2>
             </div>
             <button className="primary-submit" type="submit">
-              Create Brief
+              Talep Oluştur
             </button>
           </div>
 
           <div className="form-grid">
             <label className="span-2">
-              <span>Title</span>
-              <input defaultValue="Mekan icinde premium urun hikayesi" name="title" required />
+              <span>Başlık</span>
+              <input defaultValue="Mekan içinde premium ürün hikayesi" name="title" required />
             </label>
             <label>
-              <span>Generation mode</span>
+              <span>Üretim türü</span>
               <select defaultValue="PRODUCT_IN_CONTEXT" name="generationMode">
-                <option value="REMIX">REMIX</option>
-                <option value="SCENE_EXPANSION">SCENE_EXPANSION</option>
-                <option value="PRODUCT_IN_CONTEXT">PRODUCT_IN_CONTEXT</option>
-                <option value="NARRATIVE_LIFESTYLE">NARRATIVE_LIFESTYLE</option>
+                <option value="REMIX">Mevcut görseli geliştir</option>
+                <option value="SCENE_EXPANSION">Sahneyi genişlet</option>
+                <option value="PRODUCT_IN_CONTEXT">Ürünü mekan içinde göster</option>
+                <option value="NARRATIVE_LIFESTYLE">Yaşam tarzı sahnesi üret</option>
               </select>
             </label>
             <label>
-              <span>Scene recipe</span>
+              <span>Sahne reçetesi</span>
               <select defaultValue="" name="sceneRecipeId">
-                <option value="">No recipe</option>
+                <option value="">Reçete seçilmedi</option>
                 {profile?.sceneRecipes.map((recipe) => (
                   <option key={recipe.id} value={recipe.id}>
                     {recipe.title}
@@ -214,28 +214,28 @@ export default async function GenerateStudioPage() {
               </select>
             </label>
             <label>
-              <span>Objective</span>
+              <span>Hedef</span>
               <input defaultValue="PROFILE_TRAFFIC" name="objective" />
             </label>
             <label>
-              <span>Status</span>
+              <span>Durum</span>
               <select defaultValue="DRAFT" name="status">
-                <option value="DRAFT">DRAFT</option>
-                <option value="READY_FOR_GENERATION">READY_FOR_GENERATION</option>
-                <option value="GENERATING">GENERATING</option>
-                <option value="COMPLETED">COMPLETED</option>
+                <option value="DRAFT">Taslak</option>
+                <option value="READY_FOR_GENERATION">Üretime hazır</option>
+                <option value="GENERATING">Üretiliyor</option>
+                <option value="COMPLETED">Tamamlandı</option>
               </select>
             </label>
             <label>
-              <span>Output type</span>
+              <span>Çıktı türü</span>
               <select defaultValue="IMAGE_SET" name="outputType">
-                <option value="IMAGE_SET">IMAGE_SET</option>
-                <option value="REEL_STORYBOARD">REEL_STORYBOARD</option>
-                <option value="STORY_SERIES">STORY_SERIES</option>
+                <option value="IMAGE_SET">Görsel seti</option>
+                <option value="REEL_STORYBOARD">Reels storyboard</option>
+                <option value="STORY_SERIES">Story serisi</option>
               </select>
             </label>
             <label>
-              <span>Aspect ratio</span>
+              <span>Boyut oranı</span>
               <select defaultValue="4:5" name="aspectRatio">
                 <option value="4:5">4:5</option>
                 <option value="1:1">1:1</option>
@@ -244,23 +244,23 @@ export default async function GenerateStudioPage() {
               </select>
             </label>
             <label>
-              <span>Variation count</span>
+              <span>Varyasyon sayısı</span>
               <input defaultValue="4" min="1" max="12" name="variationCount" type="number" />
             </label>
             <label className="span-2">
-              <span>Prompt direction</span>
+              <span>Genel yönlendirme</span>
               <textarea name="promptDirection" rows={4} />
             </label>
             <label className="span-2">
-              <span>Subject direction</span>
+              <span>Konu yönlendirmesi</span>
               <textarea name="subjectDirection" rows={4} />
             </label>
             <label className="span-2">
-              <span>Remix instruction</span>
+              <span>Ek talimat</span>
               <textarea name="remixInstruction" rows={4} />
             </label>
             <label className="span-2">
-              <span>Keep elements JSON</span>
+              <span>Korunacak öğeler</span>
               <textarea
                 defaultValue={prettyJson(profile?.keepElementsJson)}
                 name="keepElementsJson"
@@ -268,21 +268,21 @@ export default async function GenerateStudioPage() {
               />
             </label>
             <label className="span-2">
-              <span>Reference assets</span>
+              <span>Referans görseller</span>
               <select multiple className="multi-select" name="selectedReferenceIds" size={Math.max(profile?.references.length || 2, 2)}>
                 {profile?.references.map((reference) => (
                   <option key={reference.id} value={reference.id}>
-                    {reference.asset.fileName} · {reference.role} {reference.isAnchor ? "· anchor" : ""}
+                    {reference.asset.fileName} · {reference.role} {reference.isAnchor ? "· ana referans" : ""}
                   </option>
                 ))}
               </select>
             </label>
             <label className="span-2">
-              <span>Content assets</span>
+              <span>Kullanılacak görseller</span>
               <select multiple className="multi-select" name="selectedAssetIds" size={Math.max(studio.assets.length, 3)}>
                 {studio.assets.map((asset) => (
                   <option key={asset.id} value={asset.id}>
-                    {asset.fileName} {asset.isFeatured ? "· featured" : ""}
+                    {asset.fileName} {asset.isFeatured ? "· öne çıkan" : ""}
                   </option>
                 ))}
               </select>
@@ -292,23 +292,23 @@ export default async function GenerateStudioPage() {
 
         <aside className="profile-sidebar">
           <section className="profile-card info-card">
-            <div className="eyebrow">How To Think</div>
-            <h2>Brief mantigi</h2>
+            <div className="eyebrow">Nasıl Düşünmeli?</div>
+            <h2>Talep mantığı</h2>
             <ul className="info-list">
-              <li>Recipe, scene turunu ve cekim mantigini verir.</li>
-              <li>Reference assets, mekani bozmayacak sabit dunyayi tanimlar.</li>
-              <li>Content assets, urun veya sahneye girecek aktif varliklari tasir.</li>
-              <li>Keep elements listesi modelin neyi bozamayacagini yazar.</li>
+              <li>Sahne reçetesi, üretimin hangi mantıkla yapılacağını belirler.</li>
+              <li>Referans görseller, mekanın korunması gereken tarafını tanımlar.</li>
+              <li>Kullanılacak görseller, ürünü veya sahneyi taşır.</li>
+              <li>Korunacak öğeler listesi modelin neyi bozmaması gerektiğini söyler.</li>
             </ul>
           </section>
 
           <section className="profile-card info-card">
-            <div className="eyebrow">Next Layer</div>
-            <h2>Buradan sonra ne baglanacak?</h2>
+            <div className="eyebrow">Sonraki Katman</div>
+            <h2>Buradan sonra ne olacak?</h2>
             <ul className="info-list">
-              <li>Image-to-image ve reference-guided generation cagrilari.</li>
-              <li>Brief bazli prompt orchestration.</li>
-              <li>Uretilen varyasyonlarin approval ve content calendar baglantisi.</li>
+              <li>Gerçek görsel üretim çağrıları burada devreye girer.</li>
+              <li>Talebe göre prompt ve referanslar birlikte kullanılır.</li>
+              <li>Üretilen varyasyonlar onay ve içerik takvimine bağlanır.</li>
             </ul>
           </section>
         </aside>

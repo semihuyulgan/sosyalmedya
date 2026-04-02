@@ -65,21 +65,21 @@ export default async function AssetLibraryPage() {
     <main className="profile-shell">
       <header className="profile-topbar">
         <div>
-          <div className="eyebrow">Media System</div>
-          <h1>Asset Library</h1>
+          <div className="eyebrow">Görsel Sistemi</div>
+          <h1>Görsel Kütüphanesi</h1>
           <p className="muted">
-            Bu modulde artik iki akış var: istersen dogrudan dosya yuklersin, istersen harici bir
-            medya URL / storage key girersin. Yuklenen dosyalar lokal gelistirme ortaminda
+            Bu modülde iki yol var: istersen doğrudan dosya yüklersin, istersen harici bir
+            medya bağlantısı girersin. Yüklenen dosyalar yerel geliştirme ortamında
             `public/uploads` altina kaydediliyor.
           </p>
         </div>
 
         <div className="topbar-actions">
           <Link className="link-chip" href="/">
-            Dashboard
+            Ana Sayfa
           </Link>
           <Link className="link-chip" href="/business-profile">
-            Business Profile
+            İşletme Kartı
           </Link>
         </div>
       </header>
@@ -88,8 +88,8 @@ export default async function AssetLibraryPage() {
         <section className="profile-card profile-form">
           <div className="card-head">
             <div>
-              <div className="eyebrow">Create Asset</div>
-              <h2>Yeni medya ekle</h2>
+              <div className="eyebrow">Yeni Kayıt</div>
+              <h2>Yeni görsel veya video ekle</h2>
             </div>
           </div>
 
@@ -97,43 +97,43 @@ export default async function AssetLibraryPage() {
             <input type="hidden" name="businessId" value={business.id} />
 
             <label>
-              <span>File name</span>
-              <input name="fileName" placeholder="signature-burger.jpg" required />
+              <span>Dosya adı</span>
+              <input name="fileName" placeholder="imza-burger.jpg" required />
             </label>
             <label>
-              <span>Upload file</span>
+              <span>Dosya yükle</span>
               <input accept="image/*,video/*" name="assetFile" type="file" />
             </label>
             <label>
-              <span>Media type</span>
+              <span>Medya türü</span>
               <select defaultValue="IMAGE" name="mediaType">
-                <option value="IMAGE">Image</option>
+                <option value="IMAGE">Görsel</option>
                 <option value="VIDEO">Video</option>
               </select>
             </label>
             <label className="span-2">
-              <span>Storage key / media URL</span>
+              <span>Medya bağlantısı</span>
               <input name="storageKey" placeholder="/uploads/... veya https://..." />
             </label>
             <label>
-              <span>MIME type</span>
+              <span>Dosya tipi</span>
               <input defaultValue="image/jpeg" name="mimeType" required />
             </label>
             <label>
-              <span>Source</span>
+              <span>Kaynak</span>
               <input defaultValue="operator_upload" name="source" />
             </label>
             <label>
-              <span>Quality score</span>
+              <span>Kalite puanı</span>
               <input defaultValue="80" name="qualityScore" type="number" min="0" max="100" />
             </label>
             <label className="span-2">
-              <span>Tags</span>
-              <input name="tags" placeholder="product, hero-shot, signature" />
+              <span>Etiketler</span>
+              <input name="tags" placeholder="urun, hero-shot, imza-urun" />
             </label>
             <div className="span-2">
               <button className="primary-submit" type="submit">
-                Add Asset
+                Kaydı Ekle
               </button>
             </div>
           </form>
@@ -141,22 +141,22 @@ export default async function AssetLibraryPage() {
 
         <aside className="profile-sidebar">
           <section className="profile-card info-card">
-            <div className="eyebrow">Library Snapshot</div>
-            <h2>{assetLibrary.assets.length} medya kaydi aktif</h2>
+            <div className="eyebrow">Kütüphane Özeti</div>
+            <h2>{assetLibrary.assets.length} medya kaydı aktif</h2>
             <ul className="info-list">
-              <li>Featured asset sayisi: {assetLibrary.assets.filter((asset) => asset.isFeatured).length}</li>
-              <li>Image adet: {assetLibrary.assets.filter((asset) => asset.mediaType === "IMAGE").length}</li>
-              <li>Video adet: {assetLibrary.assets.filter((asset) => asset.mediaType === "VIDEO").length}</li>
+              <li>Öne çıkan kayıt: {assetLibrary.assets.filter((asset) => asset.isFeatured).length}</li>
+              <li>Görsel sayısı: {assetLibrary.assets.filter((asset) => asset.mediaType === "IMAGE").length}</li>
+              <li>Video sayısı: {assetLibrary.assets.filter((asset) => asset.mediaType === "VIDEO").length}</li>
             </ul>
           </section>
 
           <section className="profile-card info-card">
-            <div className="eyebrow">Why This Matters</div>
-            <h2>Content engine icin temel</h2>
+            <div className="eyebrow">Neden Önemli?</div>
+            <h2>Üretim için temel alan</h2>
             <ul className="info-list">
-              <li>Tag yapisi sayesinde AI hangi gorselin hangi icerik tipine uygun oldugunu anlayacak.</li>
-              <li>Featured medya, marka icin one cikarilacak kahraman varliklari belirliyor.</li>
-              <li>Reel b-roll, hero shot ve atmosphere gibi etiketler sonraki modullerde kullanilacak.</li>
+              <li>Etiketler sayesinde yapay zeka hangi görselin hangi içerikte kullanılacağını anlar.</li>
+              <li>Öne çıkan kayıtlar markanın ana görsel hafızasını oluşturur.</li>
+              <li>Ürün, mekan, detay ve atmosfer gibi etiketler üretimde kullanılır.</li>
             </ul>
           </section>
         </aside>
@@ -181,10 +181,10 @@ export default async function AssetLibraryPage() {
                 <div>
                   <strong>{asset.fileName}</strong>
                   <p className="muted">
-                    {asset.mediaType} · {asset.source}
+                    {asset.mediaType === "IMAGE" ? "Görsel" : "Video"} · {asset.source}
                   </p>
                 </div>
-                {asset.isFeatured ? <span className="soft-pill">Featured</span> : null}
+                {asset.isFeatured ? <span className="soft-pill">Öne Çıkan</span> : null}
               </div>
 
               <div className="asset-tag-row">
@@ -198,34 +198,34 @@ export default async function AssetLibraryPage() {
               <form action={updateAsset} className="asset-form">
                 <input type="hidden" name="assetId" value={asset.id} />
                 <label>
-                  <span>File name</span>
+                  <span>Dosya adı</span>
                   <input defaultValue={asset.fileName} name="fileName" required />
                 </label>
                 <label>
-                  <span>Replace file</span>
+                  <span>Dosyayı değiştir</span>
                   <input accept="image/*,video/*" name="assetFile" type="file" />
                 </label>
                 <label>
-                  <span>Media type</span>
+                  <span>Medya türü</span>
                   <select defaultValue={asset.mediaType} name="mediaType">
-                    <option value="IMAGE">Image</option>
+                    <option value="IMAGE">Görsel</option>
                     <option value="VIDEO">Video</option>
                   </select>
                 </label>
                 <label className="span-2">
-                  <span>Storage key / media URL</span>
+                  <span>Medya bağlantısı</span>
                   <input defaultValue={asset.storageKey} name="storageKey" required />
                 </label>
                 <label>
-                  <span>MIME type</span>
+                  <span>Dosya tipi</span>
                   <input defaultValue={asset.mimeType} name="mimeType" required />
                 </label>
                 <label>
-                  <span>Source</span>
+                  <span>Kaynak</span>
                   <input defaultValue={asset.source} name="source" />
                 </label>
                 <label>
-                  <span>Quality score</span>
+                  <span>Kalite puanı</span>
                   <input
                     defaultValue={asset.qualityScore ?? 0}
                     name="qualityScore"
@@ -235,16 +235,16 @@ export default async function AssetLibraryPage() {
                   />
                 </label>
                 <label className="span-2">
-                  <span>Tags</span>
+                  <span>Etiketler</span>
                   <input defaultValue={tagText(asset.tags)} name="tags" />
                 </label>
                 <label className="asset-checkbox span-2">
                   <input defaultChecked={asset.isFeatured} name="isFeatured" type="checkbox" />
-                  <span>Set as featured asset</span>
+                  <span>Öne çıkan kayıt yap</span>
                 </label>
                 <div className="span-2">
                   <button className="ghost-action" type="submit">
-                    Update Asset
+                    Kaydı Güncelle
                   </button>
                 </div>
               </form>
