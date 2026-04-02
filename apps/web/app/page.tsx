@@ -1,324 +1,210 @@
 import Link from "next/link";
 
-const upcomingItems = [
+const paketler = [
   {
-    time: "Bugün · 18:30",
-    title: "Yeni tatli reels",
-    detail: "3 sahneli servis akisi ve aksama rezervasyon CTA",
-    status: "Onay bekliyor",
+    ad: "Baslangic",
+    fiyat: "7.900 TL",
+    detay: "Gunde 1 post ureten ve onay ile ilerleyen giris paketi.",
+    maddeler: [
+      "Gunluk 1 icerik",
+      "Telegram uzerinden onay",
+      "Temel gorsel uretimi",
+      "Aylik performans ozeti",
+    ],
   },
   {
-    time: "Yarin · 12:00",
-    title: "Oglen menusu carousel",
-    detail: "Hizli servis ve ofis kitlesine odakli 5 slide plan",
-    status: "Planlandi",
+    ad: "Buyume",
+    fiyat: "14.900 TL",
+    detay: "Gunde 2 post ve daha hizli operasyon isteyen isletmeler icin.",
+    maddeler: [
+      "Gunluk 2 icerik",
+      "Reels + post karmasi",
+      "Oncelikli gorsel uretimi",
+      "Telegram uzerinden hizli komutlar",
+    ],
   },
   {
-    time: "Cumartesi · 19:00",
-    title: "Aksam rezervasyon push",
-    detail: "Story + feed senkronlu kampanya duyurusu",
-    status: "Hazirlaniyor",
-  },
-];
-
-const approvals = [
-  {
-    title: "Izgara tabak tanitimi",
-    subtitle: "Telegram onayi bekliyor",
-    owner: "@luna_owner",
-    mode: "Manual",
-  },
-  {
-    title: "Mekan atmosferi story serisi",
-    subtitle: "Smart approval tetiklendi",
-    owner: "@luna_manager",
-    mode: "Smart",
-  },
-];
-
-const insights = [
-  {
-    label: "Reels moment",
-    body: "Aksam servisinden 35 dakika once yayinlanan reels icerikleri daha fazla profil ziyareti getiriyor.",
-  },
-  {
-    label: "Save magnet",
-    body: "Tatli ve brunch odakli carousel'ler kaydetme tarafinda ana yemek iceriklerini geciyor.",
-  },
-  {
-    label: "Approval rule",
-    body: "Fiyat veya kampanya mention olan iceriklerde smart approval yerine manual approval korunmali.",
+    ad: "Tam Otomasyon",
+    fiyat: "24.900 TL",
+    detay: "Yuksek tempo ve otomatik yayin akisi isteyen markalar icin.",
+    maddeler: [
+      "Gunluk 3+ icerik",
+      "Otomatik yayin secenegi",
+      "Kampanya ve yeni urun akisi",
+      "Kurulum ve operator destegi",
+    ],
   },
 ];
 
-const channels = [
-  { label: "Instagram", value: "Connected", tone: "good" },
-  { label: "Telegram", value: "Live approval", tone: "cool" },
-  { label: "Meta Publish", value: "Queue healthy", tone: "neutral" },
+const ozellikler = [
+  {
+    baslik: "Isletmeni taniyor",
+    aciklama:
+      "Mekanin tonu, urunlerin, hedef kitlen ve marka dili tek bir isletme kartinda toplanir.",
+  },
+  {
+    baslik: "Gorsel uretir",
+    aciklama:
+      "Ekledigin mekan ve urun gorsellerine gore sana o isletmeye uygun yeni gorseller uretir.",
+  },
+  {
+    baslik: "Telegram'dan yonetilir",
+    aciklama:
+      "Yeni urun ekleme, onay verme ve hizli yonlendirme gibi isleri panel acmadan halledebilirsin.",
+  },
+  {
+    baslik: "Onayli veya otomatik calisir",
+    aciklama:
+      "Istersen her paylasim once sana gelir, istersen otomatik yayin moduna gecersin.",
+  },
+];
+
+const adimlar = [
+  "Isletme kartini doldur.",
+  "Mekan ve urun gorsellerini ekle.",
+  "Yapay zekadan ilk gorselleri uretmesini iste.",
+  "Onay ver ya da Telegram'dan duzenle.",
 ];
 
 export default function HomePage() {
   return (
-    <main className="dashboard-shell">
-      <aside className="dashboard-sidebar">
-        <div className="sidebar-brand">
-          <div className="brand-mark">A</div>
+    <main className="marketing-shell">
+      <header className="marketing-topbar">
+        <Link className="marketing-brand" href="/">
+          <span className="marketing-mark">A</span>
           <div>
-            <strong>Autopilot Studio</strong>
-            <span>AI social commerce ops</span>
+            <strong>AI Social Autopilot</strong>
+            <span>Isletmeler icin sosyal medya otomasyonu</span>
+          </div>
+        </Link>
+
+        <nav className="marketing-nav">
+          <a href="#neler-yapar">Neler Yapar?</a>
+          <a href="#paketler">Paketler</a>
+          <a href="#nasil-calisir">Nasil Calisir?</a>
+          <Link className="ghost-action" href="/musteri-paneli">
+            Giris Yap
+          </Link>
+          <Link className="solid-action" href="/business-profile">
+            Kayit Ol
+          </Link>
+        </nav>
+      </header>
+
+      <section className="marketing-hero">
+        <div className="marketing-copy">
+          <div className="eyebrow">Sosyal medya artik daha kolay</div>
+          <h1>Isletmen icin icerik ureten, duzenleyen ve yoneten sade bir sistem.</h1>
+          <p>
+            Mekanini tanir, urunlerini ogrenir, sana uygun gorseller uretir. Istersen panelden,
+            istersen Telegram'dan yonetirsin.
+          </p>
+
+          <div className="marketing-actions">
+            <Link className="solid-action" href="/business-profile">
+              Isletme Kartini Olustur
+            </Link>
+            <Link className="ghost-action" href="/musteri-paneli">
+              Musteri Panelini Gor
+            </Link>
+          </div>
+
+          <div className="marketing-pills">
+            <span>Turkce arayuz</span>
+            <span>Telegram yonetimi</span>
+            <span>Gercek gorsel uretimi</span>
           </div>
         </div>
 
-        <nav className="sidebar-nav">
-          <a className="active" href="/">
-            Overview
-          </a>
-          <a href="/content-calendar">Calendar</a>
-          <a href="/">Content Ops</a>
-          <a href="/approval-center">Approvals</a>
-          <a href="/telegram-center">Telegram</a>
-          <a href="/autopilot-control">Autopilot</a>
-          <a href="/generation-pipeline">Pipeline</a>
-          <a href="/generate-studio">Generate Studio</a>
-          <a href="/">Campaigns</a>
-          <a href="/">Analytics</a>
-          <a href="/asset-library">Asset Library</a>
-          <a href="/visual-world">Visual World</a>
-          <a href="/business-profile">Business Profile</a>
-          <a href="/">Settings</a>
-        </nav>
-
-        <section className="sidebar-card">
-          <div className="eyebrow">Current Client</div>
-          <h3>Luna Bistro</h3>
-          <p>Besiktas aksami, premium ama ulasilabilir sehir restoranı.</p>
-          <div className="sidebar-pills">
-            <span>Smart publish</span>
-            <span>TR tone</span>
+        <aside className="marketing-highlight">
+          <div className="marketing-mini-card">
+            <span className="mini-label">Bugun</span>
+            <strong>1 yeni urun eklendi</strong>
+            <p>Yapay zeka yeni urun icin gorsel hazirliyor.</p>
           </div>
-        </section>
-      </aside>
-
-      <section className="dashboard-main">
-        <header className="dashboard-topbar">
-          <div>
-            <div className="eyebrow">Operations Cockpit</div>
-            <h1>Social media artik bir yayin paneli degil, gelir motoru gibi gorunmeli.</h1>
-            <p className="dashboard-intro">
-              Haftalik icerik ritmi, Telegram approval, marka hafizasi ve kampanya basincini tek
-              bakista yoneten daha premium bir operasyon katmani.
-            </p>
+          <div className="marketing-mini-card">
+            <span className="mini-label">Telegram</span>
+            <strong>Onay ve guncelleme tek sohbetten</strong>
+            <p>“Bu hafta tatliyi one cikar” gibi hizli komutlarla sistemi yonet.</p>
           </div>
+        </aside>
+      </section>
 
-          <div className="topbar-rail">
-            <div className="rail-card">
-              <span className="rail-label">Workspace</span>
-              <strong>Demo Studio</strong>
-            </div>
-            <div className="rail-card">
-              <span className="rail-label">Focus</span>
-              <strong>Dinner rush</strong>
-            </div>
-          </div>
-        </header>
+      <section className="marketing-section" id="neler-yapar">
+        <div className="section-heading">
+          <div className="eyebrow">Neler Yapar?</div>
+          <h2>Karmasik panel yerine net ve anlasilir bir deneyim.</h2>
+        </div>
 
-        <section className="hero-stage">
-          <article className="hero-primary card-sheen">
-            <div className="hero-badges">
-              <span>Instagram-first</span>
-              <span>Telegram loop</span>
-              <span>Smart approvals</span>
-            </div>
+        <div className="marketing-feature-grid">
+          {ozellikler.map((ozellik) => (
+            <article className="marketing-feature-card" key={ozellik.baslik}>
+              <h3>{ozellik.baslik}</h3>
+              <p>{ozellik.aciklama}</p>
+            </article>
+          ))}
+        </div>
+      </section>
 
-            <div className="hero-copy">
-              <div className="hero-label">This week</div>
-              <h2>9 icerik hazir, 2 tanesi onay kuyrugunda, kampanya akisi stabil.</h2>
-              <p>
-                Sistem mantigi artik daha net: operator icerigi set ediyor, isletme tek tikla onay
-                veriyor, yayinlama katmani planli sekilde ilerliyor.
-              </p>
-            </div>
+      <section className="marketing-section" id="paketler">
+        <div className="section-heading">
+          <div className="eyebrow">Paketler</div>
+          <h2>Isletmenin ihtiyacina gore basit paket secenekleri.</h2>
+        </div>
 
-            <div className="hero-actions">
-              <button className="solid-action">Yeni hafta icerigi uret</button>
-              <Link className="ghost-action" href="/content-calendar">
-                Content Calendar
-              </Link>
-              <Link className="ghost-action" href="/approval-center">
-                Approval Center
-              </Link>
-              <Link className="ghost-action" href="/telegram-center">
-                Telegram Center
-              </Link>
-              <Link className="ghost-action" href="/asset-library">
-                Asset Library
-              </Link>
-              <Link className="ghost-action" href="/autopilot-control">
-                Autopilot Control
-              </Link>
-              <Link className="ghost-action" href="/generation-pipeline">
-                Generation Pipeline
-              </Link>
-              <Link className="ghost-action" href="/generate-studio">
-                Generate Studio
-              </Link>
-              <Link className="ghost-action" href="/visual-world">
-                Visual World
-              </Link>
-              <Link className="ghost-action" href="/business-profile">
-                Marka profilini duzenle
-              </Link>
-            </div>
-          </article>
-
-          <article className="hero-side card-sheen">
-            <div className="panel-heading">
+        <div className="marketing-pricing-grid">
+          {paketler.map((paket) => (
+            <article className="marketing-price-card" key={paket.ad}>
               <div>
-                <div className="eyebrow">Live Status</div>
-                <h3>Channel health</h3>
+                <h3>{paket.ad}</h3>
+                <strong>{paket.fiyat}</strong>
+                <p>{paket.detay}</p>
               </div>
-            </div>
 
-            <div className="channel-stack">
-              {channels.map((channel) => (
-                <div className="channel-row" key={channel.label}>
-                  <div>
-                    <strong>{channel.label}</strong>
-                    <p>{channel.value}</p>
-                  </div>
-                  <span className={`signal ${channel.tone}`}></span>
-                </div>
-              ))}
-            </div>
+              <ul className="marketing-list">
+                {paket.maddeler.map((madde) => (
+                  <li key={madde}>{madde}</li>
+                ))}
+              </ul>
 
-            <div className="focus-box">
-              <span className="eyebrow">Next publish</span>
-              <strong>Bugün 18:30</strong>
-              <p>Yeni tatli reels, aksama rezervasyon trafiği icin son boost noktasi.</p>
-            </div>
-          </article>
-        </section>
-
-        <section className="stat-grid">
-          <article className="stat-card">
-            <span className="stat-label">Bu hafta planlanan</span>
-            <strong>9</strong>
-            <p>2 post, 4 carousel, 3 reels</p>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Approval queue</span>
-            <strong>2</strong>
-            <p>1 manual, 1 smart escalation</p>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Bu ay yayinlanan</span>
-            <strong>27</strong>
-            <p>Takvim disiplini korunuyor</p>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Estimated lift</span>
-            <strong>+18%</strong>
-            <p>Profil ziyareti trend tahmini</p>
-          </article>
-        </section>
-
-        <section className="dashboard-grid">
-          <article className="dashboard-card wide">
-            <div className="panel-heading">
-              <div>
-                <div className="eyebrow">Publishing Timeline</div>
-                <h3>Yaklasan icerik akisi</h3>
-              </div>
-              <span className="soft-pill">7-day view</span>
-            </div>
-
-            <div className="timeline-list">
-              {upcomingItems.map((item) => (
-                <div className="timeline-card" key={item.title}>
-                  <div className="timeline-time">{item.time}</div>
-                  <div className="timeline-body">
-                    <strong>{item.title}</strong>
-                    <p>{item.detail}</p>
-                  </div>
-                  <div className={`timeline-status ${item.status === "Onay bekliyor" ? "warn" : ""}`}>
-                    {item.status}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </article>
-
-          <article className="dashboard-card">
-            <div className="panel-heading">
-              <div>
-                <div className="eyebrow">Approval Layer</div>
-                <h3>Telegram queue</h3>
-              </div>
-            </div>
-
-            <div className="approval-list">
-              {approvals.map((item) => (
-                <div className="approval-card" key={item.title}>
-                  <div className="approval-meta">
-                    <strong>{item.title}</strong>
-                    <span>{item.subtitle}</span>
-                  </div>
-                  <div className="approval-foot">
-                    <span>{item.owner}</span>
-                    <span className="soft-pill">{item.mode}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </article>
-        </section>
-
-        <section className="dashboard-grid">
-          <article className="dashboard-card">
-            <div className="panel-heading">
-              <div>
-                <div className="eyebrow">Brand Memory</div>
-                <h3>Current strategic posture</h3>
-              </div>
-              <Link className="text-link" href="/business-profile">
-                Open profile
+              <Link className="solid-action" href="/business-profile">
+                Bu Paketle Basla
               </Link>
-            </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
-            <div className="memory-stack">
-              <div className="memory-row">
-                <span>Tonalite</span>
-                <strong>Samimi / sehirli / premium</strong>
-              </div>
-              <div className="memory-row">
-                <span>Pillar focus</span>
-                <strong>Signature plates, mood, reservation CTA</strong>
-              </div>
-              <div className="memory-row">
-                <span>Risk guardrail</span>
-                <strong>Asiri kampanya dili ve ucuz algisi yasak</strong>
-              </div>
-            </div>
-          </article>
+      <section className="marketing-section" id="nasil-calisir">
+        <div className="section-heading">
+          <div className="eyebrow">Nasil Calisir?</div>
+          <h2>Ilk kurulumdan ilk gorsel uretimine kadar 4 basit adim.</h2>
+        </div>
 
-          <article className="dashboard-card wide">
-            <div className="panel-heading">
-              <div>
-                <div className="eyebrow">AI Recommendations</div>
-                <h3>Next-week optimization signals</h3>
-              </div>
-            </div>
+        <div className="marketing-step-grid">
+          {adimlar.map((adim, index) => (
+            <article className="marketing-step-card" key={adim}>
+              <span>{index + 1}</span>
+              <p>{adim}</p>
+            </article>
+          ))}
+        </div>
+      </section>
 
-            <div className="insight-grid">
-              {insights.map((insight) => (
-                <div className="insight-card" key={insight.label}>
-                  <span>{insight.label}</span>
-                  <p>{insight.body}</p>
-                </div>
-              ))}
-            </div>
-          </article>
-        </section>
+      <section className="marketing-cta">
+        <div>
+          <div className="eyebrow">Hazirsan Baslayalim</div>
+          <h2>Once isletme kartini olustur, sonra ilk gorselleri birlikte uretelim.</h2>
+        </div>
+
+        <div className="marketing-actions">
+          <Link className="solid-action" href="/business-profile">
+            Hemen Basla
+          </Link>
+          <Link className="ghost-action" href="/musteri-paneli">
+            Paneli Ac
+          </Link>
+        </div>
       </section>
     </main>
   );

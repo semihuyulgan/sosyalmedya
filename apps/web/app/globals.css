@@ -608,6 +608,298 @@ textarea {
   color: var(--sky);
 }
 
+.marketing-shell,
+.customer-shell {
+  min-height: 100vh;
+  padding: 28px 28px 56px;
+}
+
+.marketing-topbar,
+.customer-topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.marketing-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.marketing-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: #03111b;
+  background: linear-gradient(135deg, var(--sky), var(--aqua));
+}
+
+.marketing-brand strong,
+.marketing-brand span {
+  display: block;
+}
+
+.marketing-brand span,
+.customer-topbar p,
+.marketing-copy p,
+.marketing-feature-card p,
+.marketing-price-card p,
+.marketing-step-card p,
+.marketing-mini-card p,
+.customer-card p,
+.customer-summary-card p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.marketing-nav,
+.marketing-actions,
+.customer-topbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.marketing-nav a:not(.ghost-action):not(.solid-action) {
+  color: var(--muted);
+}
+
+.marketing-hero,
+.marketing-cta {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 20px;
+  padding: 28px;
+  border-radius: 30px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(14, 24, 43, 0.9), rgba(8, 15, 29, 0.94));
+  box-shadow: var(--shadow);
+}
+
+.marketing-copy h1,
+.customer-topbar h1,
+.marketing-cta h2,
+.section-heading h2 {
+  margin: 10px 0 14px;
+  font-family: "Iowan Old Style", "Palatino Linotype", serif;
+  letter-spacing: -0.04em;
+}
+
+.marketing-copy h1 {
+  font-size: clamp(2.7rem, 5vw, 4.8rem);
+  line-height: 0.95;
+  max-width: 760px;
+}
+
+.marketing-copy p {
+  max-width: 680px;
+  font-size: 1.04rem;
+}
+
+.marketing-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.marketing-pills span,
+.mini-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(164, 190, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d6e5ff;
+  font-size: 0.84rem;
+}
+
+.marketing-highlight {
+  display: grid;
+  gap: 16px;
+}
+
+.marketing-mini-card,
+.marketing-feature-card,
+.marketing-price-card,
+.marketing-step-card,
+.customer-card,
+.customer-summary-card {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(14, 24, 43, 0.86), rgba(8, 15, 29, 0.92));
+  box-shadow: var(--shadow);
+}
+
+.marketing-mini-card,
+.marketing-feature-card,
+.marketing-step-card,
+.customer-card,
+.customer-summary-card {
+  padding: 22px;
+  border-radius: 24px;
+}
+
+.marketing-mini-card strong {
+  display: block;
+  margin: 12px 0 8px;
+  font-size: 1.2rem;
+}
+
+.marketing-section {
+  margin-top: 28px;
+}
+
+.section-heading {
+  margin-bottom: 18px;
+}
+
+.section-heading h2,
+.marketing-cta h2,
+.customer-topbar h1 {
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 1.02;
+}
+
+.marketing-feature-grid,
+.marketing-pricing-grid,
+.customer-card-grid,
+.customer-summary-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.marketing-feature-grid,
+.customer-summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.marketing-pricing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.marketing-feature-card h3,
+.marketing-price-card h3,
+.customer-card h2 {
+  margin: 0 0 10px;
+}
+
+.marketing-price-card {
+  padding: 24px;
+  border-radius: 28px;
+  display: grid;
+  gap: 18px;
+}
+
+.marketing-price-card strong {
+  display: block;
+  margin: 10px 0 10px;
+  font-size: 2rem;
+}
+
+.marketing-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.marketing-step-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.marketing-step-card span {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--sky), var(--aqua));
+  color: #03111b;
+}
+
+.marketing-cta {
+  align-items: center;
+}
+
+.customer-topbar {
+  margin-bottom: 24px;
+}
+
+.customer-summary-card span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.customer-summary-card strong {
+  display: block;
+  margin: 10px 0 8px;
+  font-size: 1.45rem;
+}
+
+.customer-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.customer-card {
+  display: grid;
+  gap: 14px;
+}
+
+@media (max-width: 1100px) {
+  .marketing-hero,
+  .marketing-cta,
+  .marketing-feature-grid,
+  .marketing-pricing-grid,
+  .marketing-step-grid,
+  .customer-summary-grid,
+  .customer-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .marketing-topbar,
+  .customer-topbar {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 720px) {
+  .marketing-shell,
+  .customer-shell,
+  .profile-shell,
+  .dashboard-main {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .marketing-hero,
+  .marketing-cta,
+  .marketing-mini-card,
+  .marketing-feature-card,
+  .marketing-price-card,
+  .marketing-step-card,
+  .customer-card,
+  .customer-summary-card {
+    border-radius: 22px;
+  }
+
+  .marketing-copy h1 {
+    font-size: 2.3rem;
+  }
+}
+
 .profile-shell {
   min-height: 100vh;
   padding: 42px 30px 56px;
