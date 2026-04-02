@@ -109,12 +109,12 @@ export default async function TelegramCenterPage() {
     workspace = await getWorkspace();
 
     if (!workspace.businesses.length) {
-      pageError = "Bu workspace icin henuz isletme bulunamadi.";
+      pageError = "Bu çalışma alanı için henüz işletme bulunamadı.";
     } else {
       telegram = await getTelegramStatus(workspace.businesses[0].id);
     }
   } catch (error) {
-    pageError = error instanceof Error ? error.message : "Telegram Center yuklenemedi.";
+    pageError = error instanceof Error ? error.message : "Telegram ekranı yüklenemedi.";
   }
 
   const business = workspace?.businesses[0];
@@ -124,19 +124,19 @@ export default async function TelegramCenterPage() {
       <main className="profile-shell">
         <header className="profile-topbar">
           <div>
-            <div className="eyebrow">Telegram Integration</div>
-            <h1>Telegram Center</h1>
+            <div className="eyebrow">Telegram Bağlantısı</div>
+            <h1>Telegram</h1>
             <p className="muted">
-              Bu ekran gecici olarak acilamadi. Asagidaki teknik durumu gorup tekrar deneyebiliriz.
+              Bu ekran şu an açılamadı. Aşağıdaki teknik bilgiyi görüp tekrar deneyebiliriz.
             </p>
           </div>
         </header>
 
         <section className="profile-card info-card">
-          <div className="eyebrow">Runtime Error</div>
-          <h2>Ekran verisi yuklenemedi</h2>
+          <div className="eyebrow">Teknik Durum</div>
+          <h2>Ekran verisi yüklenemedi</h2>
           <p className="muted">
-            {pageError || "Bilinmeyen bir hata olustu."}
+            {pageError || "Bilinmeyen bir hata oluştu."}
           </p>
           <p className="muted">
             API base URL:
@@ -174,24 +174,23 @@ export default async function TelegramCenterPage() {
     <main className="profile-shell">
       <header className="profile-topbar">
         <div>
-          <div className="eyebrow">Telegram Integration</div>
-          <h1>Telegram Center</h1>
+          <div className="eyebrow">Telegram Bağlantısı</div>
+          <h1>Telegram</h1>
           <p className="muted">
-            Bu ekran bot hazirligini, bagli chat bilgisini ve onaya giden mesaj formatini
-            gosteriyor. Gercek bot token eklendiginde ayni approval motoru Telegram callback ile
-            calisacak.
+            Bu ekranda Telegram bağlantını kurar, son mesajları görür ve sistemin Telegram
+            üzerinden nasıl çalıştığını takip edersin.
           </p>
         </div>
 
         <div className="topbar-actions">
           <Link className="link-chip" href="/">
-            Dashboard
+            Ana Sayfa
           </Link>
           <Link className="link-chip" href="/approval-center">
-            Approval Center
+            Onay Merkezi
           </Link>
           <Link className="link-chip" href="/content-calendar">
-            Content Calendar
+            İçerik Takvimi
           </Link>
         </div>
       </header>
@@ -200,20 +199,20 @@ export default async function TelegramCenterPage() {
         <section className="profile-card profile-form">
           <div className="card-head">
             <div>
-              <div className="eyebrow">Quick Connect</div>
-              <h2>Telegram hesabini bagla</h2>
+              <div className="eyebrow">Hızlı Bağlantı</div>
+              <h2>Telegram hesabını bağla</h2>
             </div>
           </div>
 
           <p className="muted">
-            Müşteriden chat id istemiyoruz. Bu işletmeye özel bağlantı linkiyle bota gidip
-            <code> /start</code> demesi yeterli; sistem özel sohbeti otomatik bağlar.
+            Müşteriden chat kimliği istemiyoruz. Bu işletmeye özel bağlantı linkine tıklayıp
+            <code> /start</code> yazması yeterli; özel sohbet otomatik bağlanır.
           </p>
 
           {bot.connectUrl ? (
             <div className="span-2">
               <a className="primary-submit" href={bot.connectUrl} rel="noreferrer" target="_blank">
-                Telegram&apos;da baglanti baslat
+                Telegram&apos;da bağlantıyı başlat
               </a>
             </div>
           ) : (
@@ -224,23 +223,23 @@ export default async function TelegramCenterPage() {
 
           <div className="history-list">
             <div className="history-item">
-              <strong>1. Adim</strong>
+              <strong>1. Adım</strong>
               <span>Bağlantı linkine tıkla ve bot sohbetini aç.</span>
             </div>
             <div className="history-item">
-              <strong>2. Adim</strong>
+              <strong>2. Adım</strong>
               <span>Botta <code>/start</code> mesajını gönder.</span>
             </div>
             <div className="history-item">
-              <strong>3. Adim</strong>
+              <strong>3. Adım</strong>
               <span>Sayfayı yenile; linked chat alanı otomatik dolacak.</span>
             </div>
           </div>
 
           <div className="card-head">
             <div>
-              <div className="eyebrow">Advanced Fallback</div>
-              <h2>Manuel baglanti</h2>
+              <div className="eyebrow">Elle Bağlama</div>
+              <h2>Manuel bağlantı</h2>
             </div>
           </div>
 
@@ -254,52 +253,52 @@ export default async function TelegramCenterPage() {
 
         <aside className="profile-sidebar">
           <section className="profile-card info-card">
-            <div className="eyebrow">Integration State</div>
-            <h2>{telegram.botConfigured ? "Bot token hazir" : "Bot token eksik"}</h2>
+            <div className="eyebrow">Bağlantı Durumu</div>
+            <h2>{telegram.botConfigured ? "Bot hazır" : "Bot bağlantısı eksik"}</h2>
             <ul className="info-list">
-              <li>Bot username: {bot.username ? `@${bot.username}` : "Henuz okunamadi"}</li>
-              <li>Linked chat: {telegram.link?.chatTitle || telegram.link?.chatId || "Bagli degil"}</li>
-              <li>Pending approvals: {telegram.pendingApprovalCount}</li>
-              <li>Status: {telegram.link?.status || "NOT_LINKED"}</li>
-              <li>Webhook: {webhook.configured ? "bagli" : "bagli degil"}</li>
+              <li>Bot kullanıcı adı: {bot.username ? `@${bot.username}` : "Henüz okunamadı"}</li>
+              <li>Bağlı sohbet: {telegram.link?.chatTitle || telegram.link?.chatId || "Bağlı değil"}</li>
+              <li>Bekleyen onay: {telegram.pendingApprovalCount}</li>
+              <li>Durum: {telegram.link?.status || "NOT_LINKED"}</li>
+              <li>Webhook: {webhook.configured ? "bağlı" : "bağlı değil"}</li>
               <li>
-                Last auto replan:{" "}
+                Son otomatik planlama:{" "}
                 {telegram.autopilotLastPlannedAt
                   ? new Date(telegram.autopilotLastPlannedAt).toLocaleString("tr-TR")
-                  : "Henuz yok"}
+                  : "Henüz yok"}
               </li>
             </ul>
           </section>
 
           <section className="profile-card info-card">
-            <div className="eyebrow">Webhook Route</div>
-            <h2>Hazir endpoint</h2>
+            <div className="eyebrow">Webhook Bilgisi</div>
+            <h2>Hazır bağlantı noktası</h2>
             <p className="muted">
-              Telegram callback'leri icin backend endpoint'i hazir:
+              Telegram mesajlarının sisteme düşeceği adres hazır:
               <br />
               <code>/api/telegram/webhook</code>
             </p>
             <p className="muted">
-              Target webhook URL:
+              Hedef webhook URL:
               <br />
-              <code>{webhook.targetUrl || "once Railway public API URL girilmeli"}</code>
+              <code>{webhook.targetUrl || "Önce Railway public API URL girilmeli"}</code>
             </p>
             <p className="muted">
-              Connect URL:
+              Bağlantı linki:
               <br />
-              <code>{bot.connectUrl || "bot username hazir oldugunda olusacak"}</code>
+              <code>{bot.connectUrl || "Bot kullanıcı adı hazır olduğunda oluşacak"}</code>
             </p>
             <p className="muted">
-              Webhook state: {webhook.message}
+              Webhook durumu: {webhook.message}
               {webhook.currentUrl ? (
                 <>
                   <br />
-                  Current: <code>{webhook.currentUrl}</code>
+                  Şu anki adres: <code>{webhook.currentUrl}</code>
                 </>
               ) : null}
             </p>
             <p className="muted">
-              Ornek medya captionlari:
+              Örnek mesajlar:
               <br />
               <code>yeni urun ekle San Sebastian cheesecake 220 TL</code>
               <br />
@@ -313,8 +312,8 @@ export default async function TelegramCenterPage() {
         <article className="profile-card approval-center-card">
           <div className="card-head">
             <div>
-              <div className="eyebrow">Bot Responses</div>
-              <h2>Telegram'a donulecek son cevaplar</h2>
+              <div className="eyebrow">Bot Yanıtları</div>
+              <h2>Telegram&apos;a gönderilen son cevaplar</h2>
             </div>
           </div>
 
@@ -331,15 +330,15 @@ export default async function TelegramCenterPage() {
               ))}
             </div>
           ) : (
-            <p className="muted">Komut veya medya geldikce sistemin cevap ozetleri burada gorunecek.</p>
+            <p className="muted">Komut veya görsel geldikçe sistemin verdiği cevaplar burada görünür.</p>
           )}
         </article>
 
         <article className="profile-card approval-center-card">
           <div className="card-head">
             <div>
-              <div className="eyebrow">Outgoing Message</div>
-              <h2>Telegram preview</h2>
+              <div className="eyebrow">Onay Mesajı</div>
+              <h2>Telegram önizlemesi</h2>
             </div>
           </div>
 
@@ -355,15 +354,15 @@ export default async function TelegramCenterPage() {
               </div>
             </div>
           ) : (
-            <p className="muted">Bekleyen approval olmadiginda Telegram preview burada gorunecek.</p>
+            <p className="muted">Bekleyen onay olduğunda Telegram önizlemesi burada görünür.</p>
           )}
         </article>
 
         <article className="profile-card approval-center-card">
           <div className="card-head">
             <div>
-              <div className="eyebrow">Media Intake</div>
-              <h2>Telegram ile gelen son gorseller</h2>
+              <div className="eyebrow">Gelen Görseller</div>
+              <h2>Telegram ile gelen son görseller</h2>
             </div>
           </div>
 
@@ -386,7 +385,7 @@ export default async function TelegramCenterPage() {
             </div>
           ) : (
             <p className="muted">
-              Telegram uzerinden gorsel gelince burada yeni urun veya mekan guncellemesi olarak listelenecek.
+              Telegram üzerinden gelen görseller burada yeni ürün ya da mekân güncellemesi olarak listelenir.
             </p>
           )}
         </article>
@@ -394,8 +393,8 @@ export default async function TelegramCenterPage() {
         <article className="profile-card approval-center-card">
           <div className="card-head">
             <div>
-              <div className="eyebrow">Auto Effects</div>
-              <h2>Son olusan intake briefleri</h2>
+              <div className="eyebrow">Otomatik Üretim Etkisi</div>
+              <h2>Son oluşan üretim istekleri</h2>
             </div>
           </div>
 
@@ -406,7 +405,7 @@ export default async function TelegramCenterPage() {
                   <strong>{brief.title}</strong>
                   <span>{brief.generationMode}</span>
                   <p className="muted">
-                    {brief.sceneRecipe?.title || "Scene recipe yok"} ·{" "}
+                    {brief.sceneRecipe?.title || "Sahne kurgusu yok"} ·{" "}
                     {new Date(brief.createdAt).toLocaleString("tr-TR")}
                   </p>
                 </div>
@@ -414,7 +413,7 @@ export default async function TelegramCenterPage() {
             </div>
           ) : (
             <p className="muted">
-              Telegram ile gelen urun veya mekan guncellemesi sonrasinda otomatik olusan briefler burada gorunecek.
+              Telegram ile gelen ürün veya mekân güncellemesi sonrasında oluşan üretim istekleri burada görünür.
             </p>
           )}
         </article>

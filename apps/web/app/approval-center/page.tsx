@@ -75,8 +75,59 @@ const getApprovalQueue = async (businessId: string) => {
 };
 
 const formatDate = (value: string | null) => {
-  if (!value) return "No date";
+  if (!value) return "Tarih yok";
   return new Date(value).toLocaleString("tr-TR");
+};
+
+const contentTypeLabel = (value: string) => {
+  switch (value) {
+    case "POST":
+      return "Post";
+    case "REEL":
+      return "Reel";
+    case "STORY":
+      return "Story";
+    default:
+      return value;
+  }
+};
+
+const statusLabel = (value: string) => {
+  switch (value) {
+    case "WAITING_APPROVAL":
+      return "Onay bekliyor";
+    case "DRAFT":
+      return "Taslak";
+    case "GENERATED":
+      return "Üretildi";
+    case "NEEDS_REVIEW":
+      return "Kontrol bekliyor";
+    case "APPROVED":
+      return "Onaylandı";
+    case "SCHEDULED":
+      return "Planlandı";
+    case "PUBLISHED":
+      return "Yayınlandı";
+    case "FAILED":
+      return "Başarısız";
+    case "REJECTED":
+      return "Reddedildi";
+    default:
+      return value;
+  }
+};
+
+const approvalActionLabel = (value: string) => {
+  switch (value) {
+    case "APPROVE":
+      return "Onayla";
+    case "REVISE":
+      return "Revize iste";
+    case "REJECT":
+      return "Reddet";
+    default:
+      return value;
+  }
 };
 
 const getPreviewAsset = (
@@ -104,23 +155,23 @@ export default async function ApprovalCenterPage() {
     <main className="profile-shell">
       <header className="profile-topbar">
         <div>
-          <div className="eyebrow">Approval Layer</div>
-          <h1>Approval Center</h1>
+          <div className="eyebrow">Onay Akışı</div>
+          <h1>Onay Merkezi</h1>
           <p className="muted">
-            Bu sayfa Telegram akisini simule ediyor. Buradaki aksiyonlar approval request ve content
-            item durumlarini gercek veritabaninda guncelliyor.
+            Burada yayına çıkmadan önce son kontrolü yaparsın. Beğendiğin içeriği onaylar,
+            gerekirse düzenleme notu bırakırsın.
           </p>
         </div>
 
         <div className="topbar-actions">
           <Link className="link-chip" href="/">
-            Dashboard
+            Ana Sayfa
           </Link>
           <Link className="link-chip" href="/telegram-center">
-            Telegram Center
+            Telegram
           </Link>
           <Link className="link-chip" href="/content-calendar">
-            Content Calendar
+            İçerik Takvimi
           </Link>
         </div>
       </header>
@@ -137,34 +188,35 @@ export default async function ApprovalCenterPage() {
                 <div>
                   <strong>{item.title}</strong>
                   <p className="muted">
-                    {item.type} · {item.pillarName || "No pillar"} · {item.targetAction || "No target action"}
+                    {contentTypeLabel(item.type)} · {item.pillarName || "Kategori yok"} ·{" "}
+                    {item.targetAction || "Hedef yok"}
                   </p>
                 </div>
                 <div className="approval-status-stack">
                   <span className={`soft-pill ${item.status === "WAITING_APPROVAL" ? "calendar-warn" : ""}`}>
-                    {item.status}
+                    {statusLabel(item.status)}
                   </span>
-                  <span className="soft-pill">{latestApproval?.status || "NO_REQUEST"}</span>
+                  <span className="soft-pill">{statusLabel(latestApproval?.status || "NO_REQUEST")}</span>
                 </div>
               </div>
 
               <div className="readiness-row">
                 <span className={`soft-pill ${isPublishReady ? "readiness-good" : "readiness-bad"}`}>
-                  {isPublishReady ? "Publish ready" : "Final output missing"}
+                  {isPublishReady ? "Yayına hazır" : "Seçili final görsel yok"}
                 </span>
               </div>
 
               <div className="approval-metadata">
                 <div>
-                  <span className="meta-label">Requested</span>
+                  <span className="meta-label">İstek zamanı</span>
                   <strong>{formatDate(latestApproval?.requestedAt || null)}</strong>
                 </div>
                 <div>
-                  <span className="meta-label">Channel</span>
+                  <span className="meta-label">Kanal</span>
                   <strong>{latestApproval?.channel || "web"}</strong>
                 </div>
                 <div>
-                  <span className="meta-label">Planned publish</span>
+                  <span className="meta-label">Planlanan yayın</span>
                   <strong>{formatDate(item.plannedFor)}</strong>
                 </div>
               </div>
@@ -173,8 +225,8 @@ export default async function ApprovalCenterPage() {
                 <div className="content-preview-shell compact">
                   <img alt={item.title} className="content-preview-image" src={previewAsset.storageKey} />
                   <div className="content-preview-meta">
-                    <span className="asset-tag">{previewAsset.source || "asset"}</span>
-                    <span className="asset-tag">{item.assets.length} output</span>
+                    <span className="asset-tag">{previewAsset.source || "görsel"}</span>
+                    <span className="asset-tag">{item.assets.length} varyasyon</span>
                   </div>
                 </div>
               ) : null}
@@ -184,54 +236,54 @@ export default async function ApprovalCenterPage() {
                   {item.assets.map((link) => (
                     <div className={`output-card ${link.isSelected ? "selected" : ""}`} key={link.id}>
                       <img alt={link.asset.fileName} className="output-thumb" src={link.asset.storageKey} />
-                      <div className="output-card-meta">
-                        <span className="asset-tag">{link.asset.source || "asset"}</span>
-                        {link.isSelected ? <span className="asset-tag">final</span> : null}
-                      </div>
-                      {!link.isSelected ? (
-                        <form action={selectFinalOutput}>
-                          <input name="contentItemId" type="hidden" value={item.id} />
-                          <input name="contentItemAssetId" type="hidden" value={link.id} />
-                          <button className="ghost-action output-select-button" type="submit">
-                            Use As Final
-                          </button>
-                        </form>
-                      ) : (
-                        <div className="output-selected-label">Final output</div>
-                      )}
+                    <div className="output-card-meta">
+                      <span className="asset-tag">{link.asset.source || "görsel"}</span>
+                      {link.isSelected ? <span className="asset-tag">seçili</span> : null}
                     </div>
-                  ))}
+                    {!link.isSelected ? (
+                      <form action={selectFinalOutput}>
+                          <input name="contentItemId" type="hidden" value={item.id} />
+                        <input name="contentItemAssetId" type="hidden" value={link.id} />
+                        <button className="ghost-action output-select-button" type="submit">
+                          Final olarak seç
+                        </button>
+                      </form>
+                    ) : (
+                      <div className="output-selected-label">Final görsel</div>
+                    )}
+                  </div>
+                ))}
                 </div>
               ) : null}
 
               <form action={takeApprovalAction} className="approval-action-form">
                 <input name="approvalRequestId" type="hidden" value={latestApproval?.id || ""} />
                 <label className="span-2">
-                  <span>Review note</span>
+                  <span>Not</span>
                   <textarea name="note" placeholder="Revizyon notu ya da onay notu..." rows={3} />
                 </label>
                 <div className="approval-button-row span-2">
                   <button className="solid-action" name="action" type="submit" value="APPROVE">
-                    Approve
+                    Onayla
                   </button>
                   <button className="ghost-action" name="action" type="submit" value="REVISE">
-                    Request Revision
+                    Düzeltme iste
                   </button>
                   <button className="ghost-action" name="action" type="submit" value="REJECT">
-                    Reject
+                    Reddet
                   </button>
                 </div>
               </form>
 
               {latestApproval?.actions.length ? (
                 <div className="approval-history">
-                  <div className="eyebrow">Action History</div>
+                  <div className="eyebrow">Geçmiş</div>
                   <div className="history-list">
                     {latestApproval.actions.map((action) => (
                       <div className="history-item" key={action.id}>
-                        <strong>{action.action}</strong>
+                        <strong>{approvalActionLabel(action.action)}</strong>
                         <span>{formatDate(action.createdAt)}</span>
-                        <p className="muted">{action.note || "No note"}</p>
+                        <p className="muted">{action.note || "Not bırakılmadı"}</p>
                       </div>
                     ))}
                   </div>

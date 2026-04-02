@@ -72,6 +72,44 @@ const toDateValue = (value: string | null) => {
   return new Date(value).toISOString().slice(0, 16);
 };
 
+const contentTypeLabel = (value: string) => {
+  switch (value) {
+    case "POST":
+      return "Post";
+    case "REEL":
+      return "Reel";
+    case "STORY":
+      return "Story";
+    default:
+      return value;
+  }
+};
+
+const contentStatusLabel = (value: string) => {
+  switch (value) {
+    case "DRAFT":
+      return "Taslak";
+    case "GENERATED":
+      return "Üretildi";
+    case "NEEDS_REVIEW":
+      return "Kontrol bekliyor";
+    case "WAITING_APPROVAL":
+      return "Onay bekliyor";
+    case "APPROVED":
+      return "Onaylandı";
+    case "SCHEDULED":
+      return "Planlandı";
+    case "PUBLISHED":
+      return "Yayınlandı";
+    case "FAILED":
+      return "Başarısız";
+    case "ARCHIVED":
+      return "Arşivlendi";
+    default:
+      return value;
+  }
+};
+
 const getPreviewAsset = (
   assets: Array<{
     id: string;
@@ -97,29 +135,29 @@ export default async function ContentCalendarPage() {
     <main className="profile-shell">
       <header className="profile-topbar">
         <div>
-          <div className="eyebrow">Publishing System</div>
-          <h1>Content Calendar</h1>
+          <div className="eyebrow">İçerik Planı</div>
+          <h1>İçerik Takvimi</h1>
           <p className="muted">
-            Bu ekran gercek content item kayitlariyla calisiyor. Burada uretilen veya planlanan
-            icerikler daha sonra approval ve publishing katmanina baglanacak.
+            Burada hangi içeriğin ne zaman çıkacağını görürsün. Üretilen içerikler, onay süreci ve
+            yayın planı bu akışta birleşir.
           </p>
         </div>
 
         <div className="topbar-actions">
           <Link className="link-chip" href="/">
-            Dashboard
+            Ana Sayfa
           </Link>
           <Link className="link-chip" href="/telegram-center">
-            Telegram Center
+            Telegram
           </Link>
           <Link className="link-chip" href="/approval-center">
-            Approval Center
+            Onay Merkezi
           </Link>
           <Link className="link-chip" href="/asset-library">
-            Asset Library
+            Görsel Kütüphanesi
           </Link>
           <Link className="link-chip" href="/business-profile">
-            Business Profile
+            İşletme Kartı
           </Link>
         </div>
       </header>
@@ -128,8 +166,8 @@ export default async function ContentCalendarPage() {
         <section className="profile-card profile-form">
           <div className="card-head">
             <div>
-              <div className="eyebrow">Plan New Item</div>
-              <h2>Takvime yeni icerik ekle</h2>
+              <div className="eyebrow">Yeni İçerik</div>
+              <h2>Takvime yeni içerik ekle</h2>
             </div>
           </div>
 
@@ -137,11 +175,11 @@ export default async function ContentCalendarPage() {
             <input name="businessId" type="hidden" value={business.id} />
 
             <label className="span-2">
-              <span>Title</span>
-              <input name="title" placeholder="Hafta sonu brunch carousel" required />
+              <span>Başlık</span>
+              <input name="title" placeholder="Hafta sonu brunch paylaşımı" required />
             </label>
             <label>
-              <span>Type</span>
+              <span>İçerik türü</span>
               <select defaultValue="POST" name="type">
                 <option value="POST">Post</option>
                 <option value="REEL">Reel</option>
@@ -149,23 +187,23 @@ export default async function ContentCalendarPage() {
               </select>
             </label>
             <label>
-              <span>Status</span>
+              <span>Durum</span>
               <select defaultValue="DRAFT" name="status">
-                <option value="DRAFT">Draft</option>
-                <option value="GENERATED">Generated</option>
-                <option value="NEEDS_REVIEW">Needs review</option>
-                <option value="WAITING_APPROVAL">Waiting approval</option>
-                <option value="APPROVED">Approved</option>
-                <option value="SCHEDULED">Scheduled</option>
-                <option value="PUBLISHED">Published</option>
-                <option value="FAILED">Failed</option>
-                <option value="ARCHIVED">Archived</option>
+                <option value="DRAFT">Taslak</option>
+                <option value="GENERATED">Üretildi</option>
+                <option value="NEEDS_REVIEW">Kontrol bekliyor</option>
+                <option value="WAITING_APPROVAL">Onay bekliyor</option>
+                <option value="APPROVED">Onaylandı</option>
+                <option value="SCHEDULED">Planlandı</option>
+                <option value="PUBLISHED">Yayınlandı</option>
+                <option value="FAILED">Başarısız</option>
+                <option value="ARCHIVED">Arşivlendi</option>
               </select>
             </label>
             <label>
-              <span>Content pillar</span>
+              <span>İçerik başlığı</span>
               <select defaultValue="" name="pillarName">
-                <option value="">No pillar</option>
+                <option value="">Seçilmedi</option>
                 {contentData.contentPillars.map((pillar) => (
                   <option key={pillar.id} value={pillar.name}>
                     {pillar.name}
@@ -174,24 +212,24 @@ export default async function ContentCalendarPage() {
               </select>
             </label>
             <label>
-              <span>Target action</span>
+              <span>Hedef</span>
               <input name="targetAction" placeholder="RESERVATION" />
             </label>
             <label>
-              <span>Planned for</span>
+              <span>Yayın zamanı</span>
               <input name="plannedFor" type="datetime-local" />
             </label>
             <label className="asset-checkbox">
               <input defaultChecked name="approvalRequired" type="checkbox" />
-              <span>Approval required</span>
+              <span>Önce onaya gitsin</span>
             </label>
             <label className="asset-checkbox">
               <input defaultChecked name="needsClientApproval" type="checkbox" />
-              <span>Needs client approval</span>
+              <span>Müşteri onayı istensin</span>
             </label>
             <div className="span-2">
               <button className="primary-submit" type="submit">
-                Create Content Item
+                İçeriği Oluştur
               </button>
             </div>
           </form>
@@ -199,22 +237,22 @@ export default async function ContentCalendarPage() {
 
         <aside className="profile-sidebar">
           <section className="profile-card info-card">
-            <div className="eyebrow">Calendar Snapshot</div>
-            <h2>{contentData.contentItems.length} aktif icerik kaydi</h2>
+            <div className="eyebrow">Takvim Özeti</div>
+            <h2>{contentData.contentItems.length} aktif içerik kaydı</h2>
             <ul className="info-list">
-              <li>Approval bekleyen: {contentData.contentItems.filter((item) => item.status === "WAITING_APPROVAL").length}</li>
-              <li>Scheduled: {contentData.contentItems.filter((item) => item.status === "SCHEDULED").length}</li>
-              <li>Draft/Generated: {contentData.contentItems.filter((item) => ["DRAFT", "GENERATED", "NEEDS_REVIEW"].includes(item.status)).length}</li>
+              <li>Onay bekleyen: {contentData.contentItems.filter((item) => item.status === "WAITING_APPROVAL").length}</li>
+              <li>Planlanan: {contentData.contentItems.filter((item) => item.status === "SCHEDULED").length}</li>
+              <li>Taslak ve üretim aşaması: {contentData.contentItems.filter((item) => ["DRAFT", "GENERATED", "NEEDS_REVIEW"].includes(item.status)).length}</li>
             </ul>
           </section>
 
           <section className="profile-card info-card">
-            <div className="eyebrow">System Role</div>
-            <h2>Takvim neden cekirdek modul?</h2>
+            <div className="eyebrow">Bu Ekran Ne İşe Yarar?</div>
+            <h2>Takvim neden önemli?</h2>
             <ul className="info-list">
-              <li>Asset Library ve Business Profile verileri burada yayina donusur.</li>
-              <li>Telegram approval katmani bu kayitlar uzerinden calisacak.</li>
-              <li>Publishing ve analytics baglantisi icin tek kaynak bu takvim olacak.</li>
+              <li>İşletme bilgileri ve görseller burada içeriğe dönüşür.</li>
+              <li>Telegram onay akışı bu kayıtlar üzerinden çalışır.</li>
+              <li>Yayın planı için merkez ekran burasıdır.</li>
             </ul>
           </section>
         </aside>
@@ -231,17 +269,18 @@ export default async function ContentCalendarPage() {
               <div>
                 <strong>{item.title}</strong>
                 <p className="muted">
-                  {item.type} · {item.pillarName || "No pillar"} · {item.targetAction || "No target action"}
+                  {contentTypeLabel(item.type)} · {item.pillarName || "Kategori yok"} ·{" "}
+                  {item.targetAction || "Hedef yok"}
                 </p>
               </div>
               <span className={`soft-pill ${item.status === "WAITING_APPROVAL" ? "calendar-warn" : ""}`}>
-                {item.status}
+                {contentStatusLabel(item.status)}
               </span>
             </div>
 
             <div className="readiness-row">
               <span className={`soft-pill ${isPublishReady ? "readiness-good" : "readiness-bad"}`}>
-                {isPublishReady ? "Publish ready" : "Final output missing"}
+                {isPublishReady ? "Yayına hazır" : "Seçili final görsel yok"}
               </span>
             </div>
 
@@ -249,8 +288,8 @@ export default async function ContentCalendarPage() {
               <div className="content-preview-shell">
                 <img alt={item.title} className="content-preview-image" src={previewAsset.storageKey} />
                 <div className="content-preview-meta">
-                  <span className="asset-tag">{previewAsset.source || "asset"}</span>
-                  <span className="asset-tag">{item.assets.length} output</span>
+                  <span className="asset-tag">{previewAsset.source || "görsel"}</span>
+                  <span className="asset-tag">{item.assets.length} varyasyon</span>
                 </div>
               </div>
             ) : null}
@@ -261,19 +300,19 @@ export default async function ContentCalendarPage() {
                   <div className={`output-card ${link.isSelected ? "selected" : ""}`} key={link.id}>
                     <img alt={link.asset.fileName} className="output-thumb" src={link.asset.storageKey} />
                     <div className="output-card-meta">
-                      <span className="asset-tag">{link.asset.source || "asset"}</span>
-                      {link.isSelected ? <span className="asset-tag">final</span> : null}
+                      <span className="asset-tag">{link.asset.source || "görsel"}</span>
+                      {link.isSelected ? <span className="asset-tag">seçili</span> : null}
                     </div>
                     {!link.isSelected ? (
                       <form action={selectFinalOutput}>
                         <input name="contentItemId" type="hidden" value={item.id} />
                         <input name="contentItemAssetId" type="hidden" value={link.id} />
                         <button className="ghost-action output-select-button" type="submit">
-                          Use As Final
+                          Final olarak seç
                         </button>
                       </form>
                     ) : (
-                      <div className="output-selected-label">Final output</div>
+                      <div className="output-selected-label">Final görsel</div>
                     )}
                   </div>
                 ))}
@@ -284,11 +323,11 @@ export default async function ContentCalendarPage() {
               <input name="contentItemId" type="hidden" value={item.id} />
 
               <label className="span-2">
-                <span>Title</span>
+                <span>Başlık</span>
                 <input defaultValue={item.title} name="title" required />
               </label>
               <label>
-                <span>Type</span>
+                <span>İçerik türü</span>
                 <select defaultValue={item.type} name="type">
                   <option value="POST">Post</option>
                   <option value="REEL">Reel</option>
@@ -296,23 +335,23 @@ export default async function ContentCalendarPage() {
                 </select>
               </label>
               <label>
-                <span>Status</span>
+                <span>Durum</span>
                 <select defaultValue={item.status} name="status">
-                  <option value="DRAFT">Draft</option>
-                  <option value="GENERATED">Generated</option>
-                  <option value="NEEDS_REVIEW">Needs review</option>
-                  <option value="WAITING_APPROVAL">Waiting approval</option>
-                  <option value="APPROVED">Approved</option>
-                  <option value="SCHEDULED">Scheduled</option>
-                  <option value="PUBLISHED">Published</option>
-                  <option value="FAILED">Failed</option>
-                  <option value="ARCHIVED">Archived</option>
+                  <option value="DRAFT">Taslak</option>
+                  <option value="GENERATED">Üretildi</option>
+                  <option value="NEEDS_REVIEW">Kontrol bekliyor</option>
+                  <option value="WAITING_APPROVAL">Onay bekliyor</option>
+                  <option value="APPROVED">Onaylandı</option>
+                  <option value="SCHEDULED">Planlandı</option>
+                  <option value="PUBLISHED">Yayınlandı</option>
+                  <option value="FAILED">Başarısız</option>
+                  <option value="ARCHIVED">Arşivlendi</option>
                 </select>
               </label>
               <label>
-                <span>Content pillar</span>
+                <span>İçerik başlığı</span>
                 <select defaultValue={item.pillarName || ""} name="pillarName">
-                  <option value="">No pillar</option>
+                  <option value="">Seçilmedi</option>
                   {contentData.contentPillars.map((pillar) => (
                     <option key={pillar.id} value={pillar.name}>
                       {pillar.name}
@@ -321,16 +360,16 @@ export default async function ContentCalendarPage() {
                 </select>
               </label>
               <label>
-                <span>Target action</span>
+                <span>Hedef</span>
                 <input defaultValue={item.targetAction || ""} name="targetAction" />
               </label>
               <label>
-                <span>Planned for</span>
+                <span>Yayın zamanı</span>
                 <input defaultValue={toDateValue(item.plannedFor)} name="plannedFor" type="datetime-local" />
               </label>
               <label className="asset-checkbox">
                 <input defaultChecked={item.approvalRequired} name="approvalRequired" type="checkbox" />
-                <span>Approval required</span>
+                <span>Önce onaya gitsin</span>
               </label>
               <label className="asset-checkbox">
                 <input
@@ -338,15 +377,15 @@ export default async function ContentCalendarPage() {
                   name="needsClientApproval"
                   type="checkbox"
                 />
-                <span>Needs client approval</span>
+                <span>Müşteri onayı istensin</span>
               </label>
               <div className="span-2">
                 <div className="calendar-actions">
                   <button className="ghost-action" type="submit">
-                    Update Content Item
+                    İçeriği Güncelle
                   </button>
                   <button className="ghost-action" formAction={sendToApproval} name="contentItemId" type="submit" value={item.id}>
-                    Send To Approval
+                    Onaya Gönder
                   </button>
                 </div>
               </div>
