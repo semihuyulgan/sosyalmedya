@@ -114,6 +114,49 @@ const prettyJson = (value: string | null | undefined) => {
   }
 };
 
+const generationModeLabel = (value: string) => {
+  switch (value) {
+    case "REMIX":
+      return "Mevcut görseli geliştir";
+    case "SCENE_EXPANSION":
+      return "Sahneyi genişlet";
+    case "PRODUCT_IN_CONTEXT":
+      return "Ürünü mekân içinde göster";
+    case "NARRATIVE_LIFESTYLE":
+      return "Yaşam tarzı sahnesi üret";
+    default:
+      return value;
+  }
+};
+
+const outputTypeLabel = (value: string) => {
+  switch (value) {
+    case "IMAGE_SET":
+      return "Görsel seti";
+    case "REEL_STORYBOARD":
+      return "Reels taslağı";
+    case "STORY_SERIES":
+      return "Story serisi";
+    default:
+      return value;
+  }
+};
+
+const statusLabel = (value: string) => {
+  switch (value) {
+    case "DRAFT":
+      return "Taslak";
+    case "READY_FOR_GENERATION":
+      return "Üretime hazır";
+    case "GENERATING":
+      return "Üretiliyor";
+    case "COMPLETED":
+      return "Tamamlandı";
+    default:
+      return value;
+  }
+};
+
 export default async function GenerateStudioPage() {
   const workspace = await getWorkspace();
   const business = workspace.businesses[0];
@@ -127,8 +170,8 @@ export default async function GenerateStudioPage() {
           <div className="eyebrow">Yapay Zeka Üretimi</div>
           <h1>Üretim Stüdyosu</h1>
           <p className="muted">
-            Burası prompt yazma alanı değil; mekan hafızası, referans görseller ve sahne reçeteleri
-            ile kontrollü üretim talepleri oluşturduğun yer.
+            Burada yapay zekâya ne üretmesini istediğini sade bir şekilde anlatırsın. Mekân
+            hafızası, referans görseller ve sahne kurgusu birlikte kullanılır.
           </p>
         </div>
 
@@ -150,8 +193,8 @@ export default async function GenerateStudioPage() {
           <div className="eyebrow">Üretim Özeti</div>
           <h2>{studio.name}</h2>
           <p className="muted">
-            Bir üretim talebi; sahne reçetesi, referans seçimi, görsel seçimi ve korunacak
-            öğeleri aynı yerde birleştirir.
+            Her üretim isteği; seçilen görselleri, sahne yönünü ve korunacak detayları tek yerde
+            toplar. Böylece daha tutarlı sonuçlar alınır.
           </p>
           <div className="visual-stat-row">
             <div className="visual-stat">
@@ -168,7 +211,7 @@ export default async function GenerateStudioPage() {
             </div>
             <div className="visual-stat">
               <strong>{profile?.sceneRecipes.length || 0}</strong>
-              <span>Sahne reçetesi</span>
+              <span>Sahne kurgusu</span>
             </div>
           </div>
         </div>
@@ -181,7 +224,7 @@ export default async function GenerateStudioPage() {
           <div className="card-head">
             <div>
               <div className="eyebrow">Yeni Talep</div>
-              <h2>Yeni üretim isteği oluştur</h2>
+              <h2>Yeni görsel üretim isteği oluştur</h2>
             </div>
             <button className="primary-submit" type="submit">
               Talep Oluştur
@@ -203,9 +246,9 @@ export default async function GenerateStudioPage() {
               </select>
             </label>
             <label>
-              <span>Sahne reçetesi</span>
+              <span>Sahne kurgusu</span>
               <select defaultValue="" name="sceneRecipeId">
-                <option value="">Reçete seçilmedi</option>
+                <option value="">Sahne kurgusu seçilmedi</option>
                 {profile?.sceneRecipes.map((recipe) => (
                   <option key={recipe.id} value={recipe.id}>
                     {recipe.title}
@@ -214,7 +257,7 @@ export default async function GenerateStudioPage() {
               </select>
             </label>
             <label>
-              <span>Hedef</span>
+              <span>Amaç</span>
               <input defaultValue="PROFILE_TRAFFIC" name="objective" />
             </label>
             <label>
@@ -248,15 +291,15 @@ export default async function GenerateStudioPage() {
               <input defaultValue="4" min="1" max="12" name="variationCount" type="number" />
             </label>
             <label className="span-2">
-              <span>Genel yönlendirme</span>
+              <span>Genel anlatım yönü</span>
               <textarea name="promptDirection" rows={4} />
             </label>
             <label className="span-2">
-              <span>Konu yönlendirmesi</span>
+              <span>Konu ve odak</span>
               <textarea name="subjectDirection" rows={4} />
             </label>
             <label className="span-2">
-              <span>Ek talimat</span>
+              <span>Ek not</span>
               <textarea name="remixInstruction" rows={4} />
             </label>
             <label className="span-2">
@@ -292,10 +335,10 @@ export default async function GenerateStudioPage() {
 
         <aside className="profile-sidebar">
           <section className="profile-card info-card">
-            <div className="eyebrow">Nasıl Düşünmeli?</div>
-            <h2>Talep mantığı</h2>
+              <div className="eyebrow">Nasıl Düşünmeli?</div>
+            <h2>Nasıl kullanılır?</h2>
             <ul className="info-list">
-              <li>Sahne reçetesi, üretimin hangi mantıkla yapılacağını belirler.</li>
+              <li>Sahne kurgusu, üretimin hangi tarzda ilerleyeceğini belirler.</li>
               <li>Referans görseller, mekanın korunması gereken tarafını tanımlar.</li>
               <li>Kullanılacak görseller, ürünü veya sahneyi taşır.</li>
               <li>Korunacak öğeler listesi modelin neyi bozmaması gerektiğini söyler.</li>
@@ -304,11 +347,11 @@ export default async function GenerateStudioPage() {
 
           <section className="profile-card info-card">
             <div className="eyebrow">Sonraki Katman</div>
-            <h2>Buradan sonra ne olacak?</h2>
+            <h2>Sonra ne olur?</h2>
             <ul className="info-list">
-              <li>Gerçek görsel üretim çağrıları burada devreye girer.</li>
-              <li>Talebe göre prompt ve referanslar birlikte kullanılır.</li>
-              <li>Üretilen varyasyonlar onay ve içerik takvimine bağlanır.</li>
+              <li>Yapay zekâ seçtiğin görselleri ve notları birlikte yorumlar.</li>
+              <li>Üretim tamamlanınca farklı varyasyonlar oluşur.</li>
+              <li>Beğendiğin sonuçlar onay ve içerik takvimine aktarılır.</li>
             </ul>
           </section>
         </aside>
@@ -325,31 +368,33 @@ export default async function GenerateStudioPage() {
                 <div>
                   <strong>{brief.title}</strong>
                   <p className="muted">
-                    {brief.generationMode} · {brief.sceneRecipe?.title || "No recipe"} · {brief.outputType}
+                    {generationModeLabel(brief.generationMode)} ·{" "}
+                    {brief.sceneRecipe?.title || "Sahne kurgusu yok"} ·{" "}
+                    {outputTypeLabel(brief.outputType)}
                   </p>
                 </div>
-                <span className="soft-pill">{brief.status}</span>
+                <span className="soft-pill">{statusLabel(brief.status)}</span>
               </div>
 
               <form action={updateGenerationBrief} className="asset-form">
                 <input type="hidden" name="briefId" value={brief.id} />
                 <label className="span-2">
-                  <span>Title</span>
+                  <span>Başlık</span>
                   <input defaultValue={brief.title} name="title" required />
                 </label>
                 <label>
-                  <span>Generation mode</span>
+                  <span>Üretim türü</span>
                   <select defaultValue={brief.generationMode} name="generationMode">
-                    <option value="REMIX">REMIX</option>
-                    <option value="SCENE_EXPANSION">SCENE_EXPANSION</option>
-                    <option value="PRODUCT_IN_CONTEXT">PRODUCT_IN_CONTEXT</option>
-                    <option value="NARRATIVE_LIFESTYLE">NARRATIVE_LIFESTYLE</option>
+                    <option value="REMIX">Mevcut görseli geliştir</option>
+                    <option value="SCENE_EXPANSION">Sahneyi genişlet</option>
+                    <option value="PRODUCT_IN_CONTEXT">Ürünü mekân içinde göster</option>
+                    <option value="NARRATIVE_LIFESTYLE">Yaşam tarzı sahnesi üret</option>
                   </select>
                 </label>
                 <label>
-                  <span>Scene recipe</span>
+                  <span>Sahne kurgusu</span>
                   <select defaultValue={brief.sceneRecipe?.id || ""} name="sceneRecipeId">
-                    <option value="">No recipe</option>
+                    <option value="">Sahne kurgusu yok</option>
                     {profile?.sceneRecipes.map((recipe) => (
                       <option key={recipe.id} value={recipe.id}>
                         {recipe.title}
@@ -358,28 +403,28 @@ export default async function GenerateStudioPage() {
                   </select>
                 </label>
                 <label>
-                  <span>Objective</span>
+                  <span>Amaç</span>
                   <input defaultValue={brief.objective || ""} name="objective" />
                 </label>
                 <label>
-                  <span>Status</span>
+                  <span>Durum</span>
                   <select defaultValue={brief.status} name="status">
-                    <option value="DRAFT">DRAFT</option>
-                    <option value="READY_FOR_GENERATION">READY_FOR_GENERATION</option>
-                    <option value="GENERATING">GENERATING</option>
-                    <option value="COMPLETED">COMPLETED</option>
+                    <option value="DRAFT">Taslak</option>
+                    <option value="READY_FOR_GENERATION">Üretime hazır</option>
+                    <option value="GENERATING">Üretiliyor</option>
+                    <option value="COMPLETED">Tamamlandı</option>
                   </select>
                 </label>
                 <label>
-                  <span>Output type</span>
+                  <span>Çıktı türü</span>
                   <select defaultValue={brief.outputType} name="outputType">
-                    <option value="IMAGE_SET">IMAGE_SET</option>
-                    <option value="REEL_STORYBOARD">REEL_STORYBOARD</option>
-                    <option value="STORY_SERIES">STORY_SERIES</option>
+                    <option value="IMAGE_SET">Görsel seti</option>
+                    <option value="REEL_STORYBOARD">Reels taslağı</option>
+                    <option value="STORY_SERIES">Story serisi</option>
                   </select>
                 </label>
                 <label>
-                  <span>Aspect ratio</span>
+                  <span>Boyut oranı</span>
                   <select defaultValue={brief.aspectRatio} name="aspectRatio">
                     <option value="4:5">4:5</option>
                     <option value="1:1">1:1</option>
@@ -388,27 +433,27 @@ export default async function GenerateStudioPage() {
                   </select>
                 </label>
                 <label>
-                  <span>Variation count</span>
+                  <span>Varyasyon sayısı</span>
                   <input defaultValue={brief.variationCount} min="1" max="12" name="variationCount" type="number" />
                 </label>
                 <label className="span-2">
-                  <span>Prompt direction</span>
+                  <span>Genel anlatım yönü</span>
                   <textarea defaultValue={brief.promptDirection || ""} name="promptDirection" rows={4} />
                 </label>
                 <label className="span-2">
-                  <span>Subject direction</span>
+                  <span>Konu ve odak</span>
                   <textarea defaultValue={brief.subjectDirection || ""} name="subjectDirection" rows={4} />
                 </label>
                 <label className="span-2">
-                  <span>Remix instruction</span>
+                  <span>Ek not</span>
                   <textarea defaultValue={brief.remixInstruction || ""} name="remixInstruction" rows={4} />
                 </label>
                 <label className="span-2">
-                  <span>Keep elements JSON</span>
+                  <span>Korunacak öğeler</span>
                   <textarea defaultValue={prettyJson(brief.keepElementsJson)} name="keepElementsJson" rows={6} />
                 </label>
                 <label className="span-2">
-                  <span>Reference assets</span>
+                  <span>Referans görseller</span>
                   <select
                     multiple
                     className="multi-select"
@@ -424,7 +469,7 @@ export default async function GenerateStudioPage() {
                   </select>
                 </label>
                 <label className="span-2">
-                  <span>Content assets</span>
+                  <span>Kullanılacak görseller</span>
                   <select
                     multiple
                     className="multi-select"
@@ -441,7 +486,7 @@ export default async function GenerateStudioPage() {
                 </label>
                 <div className="span-2">
                   <button className="ghost-action" type="submit">
-                    Update Brief
+                    Talebi Güncelle
                   </button>
                 </div>
               </form>

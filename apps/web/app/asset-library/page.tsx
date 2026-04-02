@@ -68,9 +68,8 @@ export default async function AssetLibraryPage() {
           <div className="eyebrow">Görsel Sistemi</div>
           <h1>Görsel Kütüphanesi</h1>
           <p className="muted">
-            Bu modülde iki yol var: istersen doğrudan dosya yüklersin, istersen harici bir
-            medya bağlantısı girersin. Yüklenen dosyalar yerel geliştirme ortamında
-            `public/uploads` altina kaydediliyor.
+            Buraya işletmeni anlatan görselleri ekliyorsun. Mekân, ürün, detay ve atmosfer
+            fotoğrafları ne kadar iyi olursa yapay zekâ da o kadar iyi üretim yapar.
           </p>
         </div>
 
@@ -129,7 +128,7 @@ export default async function AssetLibraryPage() {
             </label>
             <label className="span-2">
               <span>Etiketler</span>
-              <input name="tags" placeholder="urun, hero-shot, imza-urun" />
+              <input name="tags" placeholder="ürün, menü, mekân, detay, atmosfer" />
             </label>
             <div className="span-2">
               <button className="primary-submit" type="submit">
@@ -154,9 +153,9 @@ export default async function AssetLibraryPage() {
             <div className="eyebrow">Neden Önemli?</div>
             <h2>Üretim için temel alan</h2>
             <ul className="info-list">
-              <li>Etiketler sayesinde yapay zeka hangi görselin hangi içerikte kullanılacağını anlar.</li>
+              <li>Etiketler sayesinde yapay zekâ hangi görselin hangi içerikte kullanılacağını anlar.</li>
               <li>Öne çıkan kayıtlar markanın ana görsel hafızasını oluşturur.</li>
-              <li>Ürün, mekan, detay ve atmosfer gibi etiketler üretimde kullanılır.</li>
+              <li>Ürün, mekân, detay ve atmosfer gibi etiketler üretimde kullanılır.</li>
             </ul>
           </section>
         </aside>
@@ -240,7 +239,7 @@ export default async function AssetLibraryPage() {
                 </label>
                 <label className="asset-checkbox span-2">
                   <input defaultChecked={asset.isFeatured} name="isFeatured" type="checkbox" />
-                  <span>Öne çıkan kayıt yap</span>
+                  <span>Öne çıkan görsel yap</span>
                 </label>
                 <div className="span-2">
                   <button className="ghost-action" type="submit">
