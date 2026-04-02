@@ -611,7 +611,12 @@ textarea {
 .marketing-shell,
 .customer-shell {
   min-height: 100vh;
-  padding: 28px 28px 56px;
+  padding: 28px 28px 64px;
+  background:
+    radial-gradient(circle at top left, rgba(125, 211, 252, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(94, 234, 212, 0.14), transparent 22%),
+    linear-gradient(180deg, #f5f8ff 0%, #eef4ff 100%);
+  color: #132238;
 }
 
 .marketing-topbar,
@@ -653,7 +658,7 @@ textarea {
 .marketing-mini-card p,
 .customer-card p,
 .customer-summary-card p {
-  color: var(--muted);
+  color: #5d6d89;
   line-height: 1.65;
 }
 
@@ -667,7 +672,8 @@ textarea {
 }
 
 .marketing-nav a:not(.ghost-action):not(.solid-action) {
-  color: var(--muted);
+  color: #4f6080;
+  font-weight: 600;
 }
 
 .marketing-hero,
@@ -676,11 +682,11 @@ textarea {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
   gap: 20px;
-  padding: 28px;
-  border-radius: 30px;
-  border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(14, 24, 43, 0.9), rgba(8, 15, 29, 0.94));
-  box-shadow: var(--shadow);
+  padding: 36px;
+  border-radius: 32px;
+  border: 1px solid rgba(19, 34, 56, 0.08);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 24px 70px rgba(18, 34, 59, 0.08);
 }
 
 .marketing-copy h1,
@@ -703,6 +709,18 @@ textarea {
   font-size: 1.04rem;
 }
 
+.marketing-copy .eyebrow,
+.section-heading .eyebrow,
+.customer-topbar .eyebrow {
+  color: #3867ff;
+}
+
+.marketing-copy .eyebrow::before,
+.section-heading .eyebrow::before,
+.customer-topbar .eyebrow::before {
+  background: linear-gradient(90deg, rgba(56, 103, 255, 0.2), rgba(56, 103, 255, 0.8));
+}
+
 .marketing-pills {
   display: flex;
   flex-wrap: wrap;
@@ -716,10 +734,22 @@ textarea {
   align-items: center;
   padding: 8px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(164, 190, 255, 0.16);
-  background: rgba(255, 255, 255, 0.04);
-  color: #d6e5ff;
+  border: 1px solid rgba(56, 103, 255, 0.12);
+  background: rgba(56, 103, 255, 0.06);
+  color: #3152ba;
   font-size: 0.84rem;
+}
+
+.marketing-trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.marketing-trust-row span {
+  color: #50617f;
+  font-size: 0.92rem;
 }
 
 .marketing-highlight {
@@ -733,9 +763,9 @@ textarea {
 .marketing-step-card,
 .customer-card,
 .customer-summary-card {
-  border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(14, 24, 43, 0.86), rgba(8, 15, 29, 0.92));
-  box-shadow: var(--shadow);
+  border: 1px solid rgba(19, 34, 56, 0.08);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 40px rgba(18, 34, 59, 0.06);
 }
 
 .marketing-mini-card,
@@ -751,6 +781,7 @@ textarea {
   display: block;
   margin: 12px 0 8px;
   font-size: 1.2rem;
+  color: #132238;
 }
 
 .marketing-section {
@@ -802,6 +833,7 @@ textarea {
   display: block;
   margin: 10px 0 10px;
   font-size: 2rem;
+  color: #132238;
 }
 
 .marketing-list {
@@ -809,7 +841,7 @@ textarea {
   padding-left: 18px;
   display: grid;
   gap: 10px;
-  color: var(--muted);
+  color: #5d6d89;
 }
 
 .marketing-step-grid {
@@ -826,8 +858,8 @@ textarea {
   border-radius: 999px;
   margin-bottom: 12px;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--sky), var(--aqua));
-  color: #03111b;
+  background: linear-gradient(135deg, #3867ff, #62c4ff);
+  color: #ffffff;
 }
 
 .marketing-cta {
@@ -839,7 +871,7 @@ textarea {
 }
 
 .customer-summary-card span {
-  color: var(--muted);
+  color: #667791;
   font-size: 0.88rem;
 }
 
@@ -847,6 +879,7 @@ textarea {
   display: block;
   margin: 10px 0 8px;
   font-size: 1.45rem;
+  color: #132238;
 }
 
 .customer-card-grid {
@@ -856,6 +889,27 @@ textarea {
 .customer-card {
   display: grid;
   gap: 14px;
+}
+
+.marketing-shell .solid-action,
+.customer-shell .solid-action {
+  background: #3867ff;
+  color: #ffffff;
+  box-shadow: 0 14px 30px rgba(56, 103, 255, 0.22);
+}
+
+.marketing-shell .ghost-action,
+.customer-shell .ghost-action {
+  background: #ffffff;
+  color: #20304c;
+  border: 1px solid rgba(19, 34, 56, 0.12);
+}
+
+.marketing-shell .ghost-action:hover,
+.customer-shell .ghost-action:hover,
+.marketing-shell .solid-action:hover,
+.customer-shell .solid-action:hover {
+  transform: translateY(-1px);
 }
 
 @media (max-width: 1100px) {

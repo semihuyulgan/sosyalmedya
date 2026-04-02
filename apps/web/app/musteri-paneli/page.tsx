@@ -45,10 +45,10 @@ export default function MusteriPaneliPage() {
       <header className="customer-topbar">
         <div>
           <div className="eyebrow">Musteri Paneli</div>
-          <h1>Hos geldin. Burada sadece ihtiyac duyacagin seyler var.</h1>
+          <h1>Hos geldin. Isletmeni yonetmek icin gereken ana alanlar burada.</h1>
           <p>
-            Teknik detaylari arkada tuttuk. Isletmeni yonetmek icin bu alandaki temel adimlar
-            yeterli.
+            Teknik detaylari arkada tuttuk. Buradan isletme kartini duzenleyebilir, gorsellerini
+            ekleyebilir ve yeni icerik uretimini baslatabilirsin.
           </p>
         </div>
 
@@ -66,7 +66,7 @@ export default function MusteriPaneliPage() {
         <article className="customer-summary-card">
           <span>Durum</span>
           <strong>Kurulum hazir</strong>
-          <p>Temel alanlar doldurulduktan sonra ilk uretime gecilebilir.</p>
+          <p>Temel alanlar tamamlaninca ilk gorsel uretimine hemen gecilir.</p>
         </article>
         <article className="customer-summary-card">
           <span>Yonetim</span>
@@ -76,7 +76,7 @@ export default function MusteriPaneliPage() {
         <article className="customer-summary-card">
           <span>Sonraki adim</span>
           <strong>Gorsel ekle</strong>
-          <p>Mekan ve urun fotograflarini ekleyip ilk gorseli uret.</p>
+          <p>Mekan ve urun fotograflarini ekle, sonra yapay zekaya ilk uretimi yaptir.</p>
         </article>
       </section>
 

@@ -66,6 +66,12 @@ const adimlar = [
   "Onay ver ya da Telegram'dan duzenle.",
 ];
 
+const guvenBasliklari = [
+  "Restoranlar ve kafeler icin tasarlandi",
+  "Turkce panel ve Telegram deneyimi",
+  "Kurulumdan sonra hizli kullanim",
+];
+
 export default function HomePage() {
   return (
     <main className="marketing-shell">
@@ -94,18 +100,18 @@ export default function HomePage() {
       <section className="marketing-hero">
         <div className="marketing-copy">
           <div className="eyebrow">Sosyal medya artik daha kolay</div>
-          <h1>Isletmen icin icerik ureten, duzenleyen ve yoneten sade bir sistem.</h1>
+          <h1>Isletmen icin gorsel ureten ve paylasim surecini yoneten sade bir panel.</h1>
           <p>
-            Mekanini tanir, urunlerini ogrenir, sana uygun gorseller uretir. Istersen panelden,
-            istersen Telegram'dan yonetirsin.
+            Mekanini tanir, urunlerini ogrenir ve sana uygun icerikler hazirlar. Istersen panelden,
+            istersen Telegram uzerinden yonetirsin.
           </p>
 
           <div className="marketing-actions">
             <Link className="solid-action" href="/business-profile">
-              Isletme Kartini Olustur
+              Ucretsiz Basla
             </Link>
             <Link className="ghost-action" href="/musteri-paneli">
-              Musteri Panelini Gor
+              Nasil Gorundugunu Gor
             </Link>
           </div>
 
@@ -113,6 +119,12 @@ export default function HomePage() {
             <span>Turkce arayuz</span>
             <span>Telegram yonetimi</span>
             <span>Gercek gorsel uretimi</span>
+          </div>
+
+          <div className="marketing-trust-row">
+            {guvenBasliklari.map((madde) => (
+              <span key={madde}>{madde}</span>
+            ))}
           </div>
         </div>
 
@@ -126,6 +138,11 @@ export default function HomePage() {
             <span className="mini-label">Telegram</span>
             <strong>Onay ve guncelleme tek sohbetten</strong>
             <p>“Bu hafta tatliyi one cikar” gibi hizli komutlarla sistemi yonet.</p>
+          </div>
+          <div className="marketing-mini-card marketing-note-card">
+            <span className="mini-label">Baslangic</span>
+            <strong>Ilk hedef: isletme karti ve gorsel kutuphanesi</strong>
+            <p>Kurulum bittikten sonra ilk uretim testine dakikalar icinde gecilir.</p>
           </div>
         </aside>
       </section>
