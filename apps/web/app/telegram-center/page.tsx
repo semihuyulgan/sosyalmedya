@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { saveTelegramLink, syncTelegramWebhook } from "./actions";
+import { TelegramControls } from "./telegram-controls";
 
 const apiBaseUrl = process.env.API_BASE_URL || "http://127.0.0.1:4000";
 
@@ -244,31 +244,12 @@ export default async function TelegramCenterPage() {
             </div>
           </div>
 
-          <form action={saveTelegramLink} className="form-grid">
-            <input name="businessId" type="hidden" value={business.id} />
-
-            <label>
-              <span>Chat ID</span>
-              <input defaultValue={telegram.link?.chatId || ""} name="chatId" placeholder="-100..." required />
-            </label>
-            <label>
-              <span>Chat title</span>
-              <input defaultValue={telegram.link?.chatTitle || ""} name="chatTitle" placeholder="Luna Bistro Owners" />
-            </label>
-            <div className="span-2">
-              <button className="primary-submit" type="submit">
-                Save Telegram Link
-              </button>
-            </div>
-          </form>
-
-          <div className="span-2">
-            <form action={syncTelegramWebhook}>
-              <button className="primary-submit" type="submit">
-                Sync Telegram Webhook
-              </button>
-            </form>
-          </div>
+          <TelegramControls
+            apiBaseUrl={apiBaseUrl}
+            businessId={business.id}
+            defaultChatId={telegram.link?.chatId || ""}
+            defaultChatTitle={telegram.link?.chatTitle || ""}
+          />
         </section>
 
         <aside className="profile-sidebar">
