@@ -1128,6 +1128,8 @@ textarea {
 
 .landing-pricing-card.recommended {
   border-color: rgba(152, 196, 79, 0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 24px 54px rgba(168, 216, 92, 0.18);
 }
 
 .landing-price-row {
@@ -1146,12 +1148,21 @@ textarea {
   color: #61716a;
 }
 
+.landing-pricing-card p {
+  color: #596963;
+  line-height: 1.72;
+}
+
 .landing-check-list {
   margin: 0 0 20px;
   padding-left: 18px;
   display: grid;
   gap: 10px;
   color: #5d6d89;
+}
+
+.landing-pricing-card .landing-primary-button {
+  width: 100%;
 }
 
 .landing-band {
@@ -1722,6 +1733,88 @@ textarea {
   margin-bottom: 24px;
 }
 
+.customer-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.customer-hero-card,
+.customer-progress-card {
+  padding: 28px;
+  border-radius: 30px;
+  border: 1px solid rgba(32, 51, 48, 0.08);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 40px rgba(18, 34, 59, 0.06);
+}
+
+.customer-hero-kicker,
+.customer-progress-title,
+.customer-card-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(199, 240, 141, 0.3);
+  color: #5b7b2a;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.customer-hero-card h2 {
+  margin: 16px 0 14px;
+  color: #223530;
+  font-size: clamp(2rem, 3vw, 3.2rem);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.customer-hero-card p {
+  max-width: 680px;
+  color: #56665f;
+  line-height: 1.75;
+  letter-spacing: -0.01em;
+}
+
+.customer-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.customer-progress-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.customer-progress-item {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.customer-progress-item span {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #243631;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.customer-progress-item p {
+  margin: 0;
+  color: #56665f;
+  line-height: 1.65;
+}
+
 .customer-summary-card span {
   color: #667791;
   font-size: 0.88rem;
@@ -1741,6 +1834,16 @@ textarea {
 .customer-card {
   display: grid;
   gap: 14px;
+}
+
+.customer-card h2 {
+  color: #223530;
+  letter-spacing: -0.02em;
+}
+
+.customer-card p {
+  color: #5d6d89;
+  line-height: 1.72;
 }
 
 .marketing-shell .solid-action,
@@ -1855,7 +1958,8 @@ textarea {
   .landing-faq-shell,
   .landing-feature-grid,
   .landing-gallery-grid,
-  .landing-pricing-grid {
+  .landing-pricing-grid,
+  .customer-hero-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1869,6 +1973,10 @@ textarea {
 
   .landing-faq-shell {
     display: grid;
+  }
+
+  .landing-pricing-card.recommended {
+    transform: none;
   }
 }
 

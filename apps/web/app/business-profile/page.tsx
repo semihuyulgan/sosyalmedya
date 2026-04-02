@@ -98,10 +98,10 @@ export default async function BusinessProfilePage() {
       <header className="profile-topbar">
         <div>
           <div className="eyebrow">İşletme Kartı</div>
-          <h1>Isletme kartini olustur</h1>
+          <h1>İşletme kartını oluştur</h1>
           <p className="muted">
-            Burasi artik ayar sayfasi degil. Once isletmeyi net tarif ediyoruz, sonra gorselleri ve
-            urunleri ekleyip gercek uretim testlerine geciyoruz.
+            Burası artık teknik bir ayar sayfası değil. Önce işletmeni net tarif ediyoruz, sonra
+            görselleri ve ürünleri ekleyip gerçek üretim testlerine geçiyoruz.
           </p>
         </div>
 
@@ -123,8 +123,8 @@ export default async function BusinessProfilePage() {
           <div className="eyebrow">Kurulum Durumu</div>
           <h2>{business.name}</h2>
           <p className="muted">
-            Ilk hedefimiz bu isletmenin kim oldugunu, kime hitap ettigini ve nasil gorunmesi
-            gerektigini netlestirmek. Ondan sonra gorsel yukleyip AI uretime gececegiz.
+            İlk hedefimiz bu işletmenin kim olduğunu, kime hitap ettiğini ve nasıl görünmesi
+            gerektiğini netleştirmek. Ondan sonra görsel yükleyip yapay zekâ üretimine geçeceğiz.
           </p>
           <div className="visual-stat-row">
             <div className="visual-stat">
@@ -153,7 +153,7 @@ export default async function BusinessProfilePage() {
 
           <div className="card-head">
             <div>
-              <div className="eyebrow">1. Kim Bu Isletme?</div>
+              <div className="eyebrow">1. Kim Bu İşletme?</div>
               <h2>Temel işletme bilgileri</h2>
             </div>
             <button className="primary-submit" type="submit">
@@ -163,11 +163,11 @@ export default async function BusinessProfilePage() {
 
           <div className="form-grid">
             <label>
-              <span>Isletme adi</span>
+              <span>İşletme adı</span>
               <input defaultValue={business.name} name="name" required />
             </label>
             <label>
-              <span>Sektor</span>
+              <span>Sektör</span>
               <input defaultValue={business.category} name="category" required />
             </label>
             <label>
@@ -178,13 +178,13 @@ export default async function BusinessProfilePage() {
               <span>Ana hedef</span>
               <select defaultValue={business.primaryGoal} name="primaryGoal">
                 <option value="RESERVATION">Rezervasyon</option>
-                <option value="ORDER">Siparis</option>
-                <option value="PROFILE_TRAFFIC">Profile trafik</option>
+                <option value="ORDER">Sipariş</option>
+                <option value="PROFILE_TRAFFIC">Profil trafiği</option>
                 <option value="AWARENESS">Bilinirlik</option>
               </select>
             </label>
             <label className="span-2">
-              <span>Isletmeyi kisaca anlat</span>
+              <span>İşletmeyi kısaca anlat</span>
               <textarea
                 defaultValue={business.description || ""}
                 name="description"
@@ -197,25 +197,25 @@ export default async function BusinessProfilePage() {
               <input defaultValue={business.address || ""} name="address" />
             </label>
             <label>
-              <span>Sehir</span>
+              <span>Şehir</span>
               <input defaultValue={business.city} name="city" required />
             </label>
             <label>
-              <span>Ulke</span>
+              <span>Ülke</span>
               <input defaultValue={business.country} name="country" required />
             </label>
           </div>
 
           <div className="card-head compact">
             <div>
-              <div className="eyebrow">2. Musteri Ve Ton</div>
-              <h2>Kime konusuyoruz?</h2>
+              <div className="eyebrow">2. Müşteri ve Ton</div>
+              <h2>Kime konuşuyoruz?</h2>
             </div>
           </div>
 
           <div className="form-grid">
             <label className="span-2">
-              <span>Ton ozeti</span>
+              <span>Ton özeti</span>
               <textarea
                 defaultValue={settings?.toneSummary || ""}
                 name="toneSummary"
@@ -254,14 +254,14 @@ export default async function BusinessProfilePage() {
 
           <div className="card-head compact">
             <div>
-              <div className="eyebrow">3. Marka Hafizasi</div>
-              <h2>AI bu markayi nasil hatirlasin?</h2>
+              <div className="eyebrow">3. Marka Hafızası</div>
+              <h2>Yapay zekâ bu markayı nasıl hatırlasın?</h2>
             </div>
           </div>
 
           <div className="form-grid">
             <label className="span-2">
-              <span>Marka ozeti</span>
+              <span>Marka özeti</span>
               <textarea
                 defaultValue={brandProfile?.summary || ""}
                 name="brandSummary"
@@ -292,7 +292,7 @@ export default async function BusinessProfilePage() {
           <div className="card-head compact">
             <div>
               <div className="eyebrow">4. Operasyon Bilgisi</div>
-              <h2>Ne zaman ve nasil yayin yapilsin?</h2>
+              <h2>Ne zaman ve nasıl yayın yapılsın?</h2>
             </div>
           </div>
 
@@ -312,9 +312,9 @@ export default async function BusinessProfilePage() {
             <label>
               <span>Çalışma modu</span>
               <select defaultValue={business.operatingMode} name="operatingMode">
-                <option value="SELF_SERVE">Self-Serve</option>
-                <option value="MANAGED">Managed</option>
-                <option value="HYBRID">Hybrid</option>
+                <option value="SELF_SERVE">Kendi kullanan işletme</option>
+                <option value="MANAGED">Bizim yönettiğimiz işletme</option>
+                <option value="HYBRID">Hibrit kullanım</option>
               </select>
             </label>
             <label>
@@ -348,7 +348,7 @@ export default async function BusinessProfilePage() {
                 defaultValue={prettyJson(settings?.seasonalNotesJson)}
                 name="seasonalNotesJson"
                 rows={5}
-                placeholder='["yazın teras one ciksin", "hafta sonu brunch vurgusu"]'
+                placeholder='["yazın teras öne çıksın", "hafta sonu brunch vurgusu"]'
               />
             </label>
             <label className="asset-checkbox">
@@ -374,7 +374,7 @@ export default async function BusinessProfilePage() {
           <section className="profile-card info-card">
             <div className="eyebrow">İşletme Özeti</div>
             <h2>{business.name}</h2>
-            <p>{business.description || "Isletme aciklamasi henuz girilmedi."}</p>
+            <p>{business.description || "İşletme açıklaması henüz girilmedi."}</p>
             <div className="detail-stack">
               <div>
                 <strong>Sektör</strong>
@@ -386,7 +386,7 @@ export default async function BusinessProfilePage() {
               </div>
               <div>
                 <strong>Ton</strong>
-                <p className="muted">{settings?.toneSummary || "Ton ozeti henuz yok."}</p>
+                <p className="muted">{settings?.toneSummary || "Ton özeti henüz yok."}</p>
               </div>
             </div>
           </section>
@@ -400,7 +400,7 @@ export default async function BusinessProfilePage() {
                   <span className="pillar-order">0{pillar.priority}</span>
                   <div>
                     <strong>{pillar.name}</strong>
-                    <p className="muted">{pillar.description || "Aciklama yok."}</p>
+                    <p className="muted">{pillar.description || "Açıklama yok."}</p>
                   </div>
                 </div>
               ))}
@@ -411,10 +411,10 @@ export default async function BusinessProfilePage() {
             <div className="eyebrow">Sonraki Adım</div>
             <h2>Şimdi ne yapacağız?</h2>
             <ul className="info-list">
-              <li>1. Bu karti doldur ve kaydet.</li>
+              <li>1. Bu kartı doldur ve kaydet.</li>
               <li>2. [Görsel Kütüphanesi](/Users/semihmacbook/Documents/New%20project/apps/web/app/asset-library/page.tsx) ekranından mekan ve ürün görsellerini ekle.</li>
               <li>3. [Üretim Stüdyosu](/Users/semihmacbook/Documents/New%20project/apps/web/app/generate-studio/page.tsx) ekranından ilk gerçek üretimi başlat.</li>
-              <li>4. Sonra gerekirse Telegram ile yeni urun ve mekan guncellemesi yap.</li>
+              <li>4. Sonra gerekirse Telegram ile yeni ürün ve mekân güncellemesi yap.</li>
             </ul>
             <div className="topbar-actions" style={{ marginTop: 16 }}>
               <Link className="ghost-action" href="/asset-library">
