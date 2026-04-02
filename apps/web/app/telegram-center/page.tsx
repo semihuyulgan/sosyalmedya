@@ -14,14 +14,14 @@ type TelegramStatusResponse = {
   businessId: string;
   businessName: string;
   botConfigured: boolean;
-  bot: {
+  bot?: {
     username: string;
     displayName: string;
     connectUrl: string;
     ready: boolean;
     message: string;
   };
-  webhook: {
+  webhook?: {
     envReady: boolean;
     configured: boolean;
     targetUrl: string;
@@ -148,6 +148,28 @@ export default async function TelegramCenterPage() {
     );
   }
 
+  const bot = telegram.bot || {
+    username: "",
+    displayName: "",
+    connectUrl: "",
+    ready: false,
+    message: "Bot bilgisi henuz API tarafindan donmedi.",
+  };
+
+  const webhook = telegram.webhook || {
+    envReady: false,
+    configured: false,
+    targetUrl: "",
+    currentUrl: "",
+    pendingUpdateCount: 0,
+    lastErrorMessage: "",
+    message: "Webhook bilgisi henuz API tarafindan donmedi.",
+  };
+
+  const recentTelegramResponses = telegram.recentTelegramResponses || [];
+  const recentMediaUpdates = telegram.recentMediaUpdates || [];
+  const recentGenerationBriefs = telegram.recentGenerationBriefs || [];
+
   return (
     <main className="profile-shell">
       <header className="profile-topbar">
@@ -188,9 +210,9 @@ export default async function TelegramCenterPage() {
             <code> /start</code> demesi yeterli; sistem özel sohbeti otomatik bağlar.
           </p>
 
-          {telegram.bot.connectUrl ? (
+          {bot.connectUrl ? (
             <div className="span-2">
-              <a className="primary-submit" href={telegram.bot.connectUrl} rel="noreferrer" target="_blank">
+              <a className="primary-submit" href={bot.connectUrl} rel="noreferrer" target="_blank">
                 Telegram&apos;da baglanti baslat
               </a>
             </div>
@@ -254,11 +276,11 @@ export default async function TelegramCenterPage() {
             <div className="eyebrow">Integration State</div>
             <h2>{telegram.botConfigured ? "Bot token hazir" : "Bot token eksik"}</h2>
             <ul className="info-list">
-              <li>Bot username: {telegram.bot.username ? `@${telegram.bot.username}` : "Henuz okunamadi"}</li>
+              <li>Bot username: {bot.username ? `@${bot.username}` : "Henuz okunamadi"}</li>
               <li>Linked chat: {telegram.link?.chatTitle || telegram.link?.chatId || "Bagli degil"}</li>
               <li>Pending approvals: {telegram.pendingApprovalCount}</li>
               <li>Status: {telegram.link?.status || "NOT_LINKED"}</li>
-              <li>Webhook: {telegram.webhook.configured ? "bagli" : "bagli degil"}</li>
+              <li>Webhook: {webhook.configured ? "bagli" : "bagli degil"}</li>
               <li>
                 Last auto replan:{" "}
                 {telegram.autopilotLastPlannedAt
@@ -279,19 +301,19 @@ export default async function TelegramCenterPage() {
             <p className="muted">
               Target webhook URL:
               <br />
-              <code>{telegram.webhook.targetUrl || "once Railway public API URL girilmeli"}</code>
+              <code>{webhook.targetUrl || "once Railway public API URL girilmeli"}</code>
             </p>
             <p className="muted">
               Connect URL:
               <br />
-              <code>{telegram.bot.connectUrl || "bot username hazir oldugunda olusacak"}</code>
+              <code>{bot.connectUrl || "bot username hazir oldugunda olusacak"}</code>
             </p>
             <p className="muted">
-              Webhook state: {telegram.webhook.message}
-              {telegram.webhook.currentUrl ? (
+              Webhook state: {webhook.message}
+              {webhook.currentUrl ? (
                 <>
                   <br />
-                  Current: <code>{telegram.webhook.currentUrl}</code>
+                  Current: <code>{webhook.currentUrl}</code>
                 </>
               ) : null}
             </p>
@@ -315,9 +337,9 @@ export default async function TelegramCenterPage() {
             </div>
           </div>
 
-          {telegram.recentTelegramResponses.length ? (
+          {recentTelegramResponses.length ? (
             <div className="history-list">
-              {telegram.recentTelegramResponses.map((item) => (
+              {recentTelegramResponses.map((item) => (
                 <div className="history-item" key={item.id}>
                   <strong>{item.commandText}</strong>
                   <span>
@@ -364,9 +386,9 @@ export default async function TelegramCenterPage() {
             </div>
           </div>
 
-          {telegram.recentMediaUpdates.length ? (
+          {recentMediaUpdates.length ? (
             <div className="history-list">
-              {telegram.recentMediaUpdates.map((asset) => (
+              {recentMediaUpdates.map((asset) => (
                 <div className="history-item" key={asset.id}>
                   <strong>{asset.fileName}</strong>
                   <span>{new Date(asset.createdAt).toLocaleString("tr-TR")}</span>
@@ -396,9 +418,9 @@ export default async function TelegramCenterPage() {
             </div>
           </div>
 
-          {telegram.recentGenerationBriefs.length ? (
+          {recentGenerationBriefs.length ? (
             <div className="history-list">
-              {telegram.recentGenerationBriefs.map((brief) => (
+              {recentGenerationBriefs.map((brief) => (
                 <div className="history-item" key={brief.id}>
                   <strong>{brief.title}</strong>
                   <span>{brief.generationMode}</span>
