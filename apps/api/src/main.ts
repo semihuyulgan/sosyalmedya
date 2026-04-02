@@ -1160,6 +1160,10 @@ const getTelegramApiUrl = (token: string, method: string) => {
   return `https://api.telegram.org/bot${token}/${method}`;
 };
 
+const getTelegramFileBaseUrl = (token: string) => {
+  return `https://api.telegram.org/file/bot${token}`;
+};
+
 const TELEGRAM_COMMANDS = [
   { command: "yardim", description: "Hazir komutlari goster" },
   { command: "durum", description: "Yayin ve onay durumunu ozetle" },
@@ -1194,6 +1198,75 @@ const sendTelegramText = async (chatId: string, text: string) => {
   } catch {
     return { ok: false };
   }
+};
+
+const inferExtensionFromMimeType = (mimeType: string, fallback = "jpg") => {
+  const normalized = mimeType.toLowerCase();
+
+  if (normalized.includes("png")) {
+    return "png";
+  }
+
+  if (normalized.includes("webp")) {
+    return "webp";
+  }
+
+  if (normalized.includes("gif")) {
+    return "gif";
+  }
+
+  return fallback;
+};
+
+const downloadTelegramFile = async (fileId: string) => {
+  const config = getTelegramConfig();
+
+  if (!config.token) {
+    throw new Error("TELEGRAM_BOT_TOKEN is required.");
+  }
+
+  const fileInfoResponse = await fetch(getTelegramApiUrl(config.token, "getFile"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      file_id: fileId,
+    }),
+    signal: AbortSignal.timeout(30_000),
+  });
+
+  if (!fileInfoResponse.ok) {
+    throw new Error(`Telegram getFile failed: ${fileInfoResponse.status}`);
+  }
+
+  const fileInfoPayload = (await fileInfoResponse.json()) as {
+    ok?: boolean;
+    result?: {
+      file_path?: string;
+    };
+  };
+
+  const filePath = fileInfoPayload.result?.file_path;
+
+  if (!fileInfoPayload.ok || !filePath) {
+    throw new Error("Telegram file path could not be resolved.");
+  }
+
+  const fileResponse = await fetch(`${getTelegramFileBaseUrl(config.token)}/${filePath}`, {
+    signal: AbortSignal.timeout(60_000),
+  });
+
+  if (!fileResponse.ok) {
+    throw new Error(`Telegram file download failed: ${fileResponse.status}`);
+  }
+
+  const arrayBuffer = await fileResponse.arrayBuffer();
+
+  return {
+    buffer: Buffer.from(arrayBuffer),
+    filePath,
+  };
 };
 
 const answerTelegramCallback = async (callbackQueryId: string, text?: string) => {
@@ -2281,6 +2354,17 @@ const loadAssetAsFile = async (asset: {
   mimeType: string;
   storageKey: string;
 }) => {
+  if (asset.storageKey.startsWith("telegram://")) {
+    const fileId = asset.storageKey.replace("telegram://", "").trim();
+
+    if (!fileId) {
+      throw new Error("Telegram asset file id is missing.");
+    }
+
+    const downloaded = await downloadTelegramFile(fileId);
+    return new File([downloaded.buffer], asset.fileName, { type: asset.mimeType || "image/jpeg" });
+  }
+
   if (asset.storageKey.startsWith("http://") || asset.storageKey.startsWith("https://")) {
     const response = await fetch(asset.storageKey, {
       signal: AbortSignal.timeout(30_000),
@@ -2313,6 +2397,25 @@ const saveGeneratedImage = async (buffer: Buffer, extension = "png") => {
   return {
     storageKey: publicApiBaseUrl ? `${publicApiBaseUrl}/generated/${fileName}` : `/generated/${fileName}`,
     fileName,
+  };
+};
+
+const saveTelegramInboundAsset = async (input: {
+  buffer: Buffer;
+  fileName: string;
+  mimeType: string;
+  fallbackExtension?: string;
+}) => {
+  const extension =
+    path.extname(input.fileName).replace(/^\./, "") ||
+    inferExtensionFromMimeType(input.mimeType, input.fallbackExtension || "jpg");
+  const normalizedBaseName = path.basename(input.fileName, path.extname(input.fileName)) || `telegram-${Date.now()}`;
+  const safeBaseName = slugify(normalizedBaseName) || `telegram-${Date.now()}`;
+  const saved = await saveGeneratedImage(input.buffer, extension);
+
+  return {
+    storageKey: saved.storageKey,
+    fileName: `${safeBaseName}.${extension}`,
   };
 };
 
@@ -2964,6 +3067,13 @@ const createTelegramMediaIntake = async (input: {
   fileName: string;
 }) => {
   const classified = classifyTelegramMediaCaption(input.caption);
+  const downloadedTelegramAsset = await downloadTelegramFile(input.fileId);
+  const storedTelegramAsset = await saveTelegramInboundAsset({
+    buffer: downloadedTelegramAsset.buffer,
+    fileName: input.fileName,
+    mimeType: input.mimeType,
+    fallbackExtension: inferExtensionFromMimeType(input.mimeType),
+  });
   const business = await prisma.business.findUnique({
     where: { id: input.businessId },
     include: {
@@ -2979,8 +3089,8 @@ const createTelegramMediaIntake = async (input: {
     const asset = await tx.asset.create({
       data: {
         businessId: input.businessId,
-        fileName: input.fileName,
-        storageKey: `telegram://${input.fileId}`,
+        fileName: storedTelegramAsset.fileName,
+        storageKey: storedTelegramAsset.storageKey,
         mimeType: input.mimeType,
         mediaType: input.mediaType,
         source: "telegram_upload",

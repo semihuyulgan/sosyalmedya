@@ -35,6 +35,7 @@ type PipelineResponse = {
     jobType: string;
     status: string;
     provider: string;
+    errorMessage: string | null;
     queuedFor: string | null;
     createdAt: string;
     autopilotPlan: null | {
@@ -126,10 +127,26 @@ const getPreviewAsset = (
     | undefined,
 ) => assets?.find((item) => item.isSelected)?.asset || assets?.find((item) => item.asset.mediaType === "IMAGE")?.asset || null;
 
+const sortJobsForDisplay = (jobs: PipelineResponse["generationJobs"]) =>
+  [...jobs].sort((left, right) => {
+    const leftTelegram = left.title.toLowerCase().includes("telegram") || left.provider === "telegram_intake";
+    const rightTelegram = right.title.toLowerCase().includes("telegram") || right.provider === "telegram_intake";
+
+    if (leftTelegram !== rightTelegram) {
+      return leftTelegram ? -1 : 1;
+    }
+
+    return new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime();
+  });
+
 export default async function GenerationPipelinePage() {
   const workspace = await getWorkspace();
   const business = workspace.businesses[0];
   const pipeline = await getPipeline(business.id);
+  const sortedJobs = sortJobsForDisplay(pipeline.generationJobs);
+  const latestTelegramJob = sortedJobs.find(
+    (job) => job.title.toLowerCase().includes("telegram") || job.provider === "telegram_intake",
+  );
 
   return (
     <main className="profile-shell">
@@ -234,6 +251,30 @@ export default async function GenerationPipelinePage() {
         </section>
 
         <aside className="profile-sidebar">
+          {latestTelegramJob ? (
+            <section className="profile-card info-card">
+              <div className="eyebrow">Latest Telegram Run</div>
+              <h2>{latestTelegramJob.title}</h2>
+              <ul className="info-list">
+                <li>Durum: {latestTelegramJob.status}</li>
+                <li>Saglayici: {latestTelegramJob.provider}</li>
+                <li>Zaman: {formatDate(latestTelegramJob.queuedFor || latestTelegramJob.createdAt)}</li>
+                <li>
+                  Cikti:
+                  {" "}
+                  {latestTelegramJob.contentItem?.assets.length
+                    ? `${latestTelegramJob.contentItem.assets.length} asset`
+                    : "Henuz olusmadi"}
+                </li>
+              </ul>
+              {latestTelegramJob.errorMessage ? (
+                <p className="muted" style={{ color: "#ffb4b4" }}>
+                  Hata: {latestTelegramJob.errorMessage}
+                </p>
+              ) : null}
+            </section>
+          ) : null}
+
           <section className="profile-card info-card">
             <div className="eyebrow">System Decision</div>
             <h2>Pipeline neyi otomatik yapiyor?</h2>
@@ -264,7 +305,7 @@ export default async function GenerationPipelinePage() {
       </section>
 
       <section className="autopilot-plan-grid">
-        {pipeline.generationJobs.map((job) => {
+        {sortedJobs.map((job) => {
           const previewAsset = getPreviewAsset(job.contentItem?.assets);
           const isPublishReady = Boolean(job.contentItem?.assets.some((link) => link.isSelected));
 
@@ -285,6 +326,12 @@ export default async function GenerationPipelinePage() {
                 {isPublishReady ? "Publish ready" : "Final output missing"}
               </span>
             </div>
+
+            {job.errorMessage ? (
+              <div className="readiness-row">
+                <span className="soft-pill readiness-bad">{job.errorMessage}</span>
+              </div>
+            ) : null}
 
             {previewAsset ? (
               <div className="content-preview-shell">
