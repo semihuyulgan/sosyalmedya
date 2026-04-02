@@ -4861,6 +4861,33 @@ app.post("/api/telegram/webhook/sync", async (_request, reply) => {
   }
 });
 
+app.post("/api/telegram/commands/sync", async (_request, reply) => {
+  try {
+    const result = await syncTelegramCommands();
+
+    if (!result.ok) {
+      reply.code(400);
+      return {
+        ok: false,
+        message: "Telegram commands could not be synced.",
+      };
+    }
+
+    reply.code(201);
+    return {
+      ok: true,
+      description: "Telegram komutlari senkronize edildi.",
+      commands: TELEGRAM_COMMANDS,
+    };
+  } catch (error) {
+    reply.code(400);
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Telegram commands could not be synced.",
+    };
+  }
+});
+
 app.get("/api/businesses/:businessId/telegram-command-center", async (request, reply) => {
   const paramsSchema = z.object({
     businessId: z.string().uuid(),

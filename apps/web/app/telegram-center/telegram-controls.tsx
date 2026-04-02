@@ -24,8 +24,10 @@ export function TelegramControls({ apiBaseUrl, businessId, defaultChatId, defaul
   const [chatTitle, setChatTitle] = useState(defaultChatTitle);
   const [saveState, setSaveState] = useState<ActionState>(initialState);
   const [syncState, setSyncState] = useState<ActionState>(initialState);
+  const [commandState, setCommandState] = useState<ActionState>(initialState);
   const [isSaving, setIsSaving] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isSyncingCommands, setIsSyncingCommands] = useState(false);
 
   const isSaveDisabled = useMemo(() => isSaving || !chatId.trim(), [chatId, isSaving]);
 
@@ -94,6 +96,35 @@ export function TelegramControls({ apiBaseUrl, businessId, defaultChatId, defaul
     }
   };
 
+  const handleSyncCommands = async () => {
+    setIsSyncingCommands(true);
+    setCommandState(initialState);
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/telegram/commands/sync`, {
+        method: "POST",
+      });
+
+      const payload = (await response.json().catch(() => null)) as { message?: string; description?: string } | null;
+
+      if (!response.ok) {
+        throw new Error(payload?.message || "Telegram commands could not be synced.");
+      }
+
+      setCommandState({
+        kind: "success",
+        message: payload?.description || "Telegram komutlari senkronize edildi.",
+      });
+    } catch (error) {
+      setCommandState({
+        kind: "error",
+        message: error instanceof Error ? error.message : "Telegram commands could not be synced.",
+      });
+    } finally {
+      setIsSyncingCommands(false);
+    }
+  };
+
   return (
     <>
       <div className="form-grid">
@@ -129,6 +160,17 @@ export function TelegramControls({ apiBaseUrl, businessId, defaultChatId, defaul
         {syncState.message ? (
           <p className="muted" style={{ color: syncState.kind === "error" ? "#ffb86b" : undefined }}>
             {syncState.message}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="span-2" style={{ display: "grid", gap: 12 }}>
+        <button className="primary-submit" disabled={isSyncingCommands} onClick={handleSyncCommands} type="button">
+          {isSyncingCommands ? "Komutlar senkronize ediliyor..." : "Sync Telegram Commands"}
+        </button>
+        {commandState.message ? (
+          <p className="muted" style={{ color: commandState.kind === "error" ? "#ffb86b" : undefined }}>
+            {commandState.message}
           </p>
         ) : null}
       </div>
