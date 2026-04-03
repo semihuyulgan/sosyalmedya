@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createAsset } from "./actions";
+import { UploadPanel } from "./upload-panel";
 
 const apiBaseUrl = process.env.API_BASE_URL || "http://127.0.0.1:4000";
 
@@ -89,49 +89,7 @@ export default async function AssetLibraryPage() {
             </div>
           </div>
 
-          <form action={createAsset} className="form-grid">
-            <input type="hidden" name="businessId" value={business.id} />
-            <input type="hidden" name="mimeType" value="image/jpeg" />
-            <input type="hidden" name="source" value="panel_upload" />
-            <input type="hidden" name="qualityScore" value="80" />
-            <label>
-              <span>Dosya yükle</span>
-              <input accept="image/*,video/*" multiple name="assetFile" type="file" />
-            </label>
-            <label>
-              <span>Medya türü</span>
-              <select defaultValue="IMAGE" name="mediaType">
-                <option value="IMAGE">Görsel</option>
-                <option value="VIDEO">Video</option>
-              </select>
-            </label>
-            <label>
-              <span>Kısa ad</span>
-              <input name="fileName" placeholder="örn. imza kahve, salon, vitrin" />
-            </label>
-            <label className="span-2">
-              <span>Etiketler</span>
-              <input name="tags" placeholder="ürün, menü, mekân, detay, atmosfer" />
-            </label>
-            <div className="span-2">
-              <p className="muted" style={{ margin: 0 }}>
-                Aynı anda birden fazla görsel seçebilirsin. Hepsi tek seferde yüklenecek.
-              </p>
-            </div>
-            <div className="span-2">
-              <div className="flow-actions">
-                <Link className="ghost-action" href="/business-profile">
-                  Önceki adım: İşletme Kartı
-                </Link>
-                <button className="solid-action" type="submit">
-                  Görseli Yükle
-                </button>
-                <Link className="ghost-action" href="/telegram-center">
-                  Görselleri yükledim, Telegram’a geç
-                </Link>
-              </div>
-            </div>
-          </form>
+          <UploadPanel businessId={business.id} />
         </section>
       </section>
 
