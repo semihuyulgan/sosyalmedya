@@ -125,8 +125,8 @@ export default async function AssetLibraryPage() {
         </div>
       </section>
 
-      <section className="simple-library-layout">
-        <section className="customer-card simple-upload-card">
+      <section className="single-flow-shell">
+        <section className="customer-card simple-upload-card single-flow-card">
           <div className="section-heading compact-heading">
             <div>
               <div className="eyebrow">Yeni Yükleme</div>
@@ -159,32 +159,17 @@ export default async function AssetLibraryPage() {
               <input name="tags" placeholder="ürün, menü, mekân, detay, atmosfer" />
             </label>
             <div className="span-2">
-              <button className="solid-action" type="submit">
-                Görseli Yükle
-              </button>
+              <div className="flow-actions">
+                <button className="solid-action" type="submit">
+                  Görseli Yükle
+                </button>
+                <Link className="ghost-action" href="/generate-studio">
+                  Görselleri yükledim, üretime geç
+                </Link>
+              </div>
             </div>
           </form>
         </section>
-
-        <aside className="customer-card simple-help-card">
-          <span className="customer-card-tag">Nasıl seçmeliyim?</span>
-          <h2>En iyi sonuç için bunları yükle</h2>
-          <p>Mekânın genel görünümü, ürün yakın planları, masa düzeni ve atmosfer fotoğrafları en çok işimize yarar.</p>
-          <ul className="simple-help-list">
-            <li>İşletmenin dışı veya giriş alanı</li>
-            <li>En çok satan ürünlerin net fotoğrafları</li>
-            <li>Mekân içinden birkaç farklı açı</li>
-            <li>Işık ve ambiyansı gösteren kareler</li>
-          </ul>
-          <div className="customer-hero-actions">
-            <Link className="ghost-action" href="/business-profile">
-              İşletme Kartını Aç
-            </Link>
-            <Link className="solid-action" href="/generate-studio">
-              Üretime Geç
-            </Link>
-          </div>
-        </aside>
       </section>
 
       <section className="section-heading simple-gallery-heading">

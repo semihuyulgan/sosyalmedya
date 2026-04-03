@@ -249,10 +249,9 @@ textarea {
 .dashboard-topbar h1 {
   margin: 10px 0 14px;
   max-width: 880px;
-  font-family: "Iowan Old Style", "Palatino Linotype", serif;
-  font-weight: 700;
+  font-weight: 800;
   font-size: clamp(2.5rem, 4.4vw, 4.4rem);
-  letter-spacing: -0.05em;
+  letter-spacing: -0.03em;
   line-height: 0.96;
 }
 
@@ -1406,8 +1405,15 @@ textarea {
 .marketing-cta h2,
 .section-heading h2 {
   margin: 10px 0 14px;
-  font-family: "Iowan Old Style", "Palatino Linotype", serif;
-  letter-spacing: -0.04em;
+  font-family:
+    "Aptos",
+    "Inter",
+    "SF Pro Display",
+    "Segoe UI",
+    "Helvetica Neue",
+    sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .marketing-copy h1 {
@@ -1913,6 +1919,26 @@ textarea {
   margin-bottom: 24px;
 }
 
+.single-flow-shell {
+  display: block;
+  margin-bottom: 24px;
+}
+
+.single-flow-card {
+  width: 100%;
+}
+
+.flow-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.single-column-list {
+  grid-template-columns: 1fr;
+}
+
 .simple-upload-card,
 .simple-help-card {
   padding: 26px;
@@ -2107,6 +2133,11 @@ textarea {
     flex-direction: column;
   }
 
+  .flow-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .marketing-showcase {
     justify-content: flex-start;
   }
@@ -2261,9 +2292,16 @@ textarea {
 }
 
 .profile-topbar h1 {
-  font-family: "Iowan Old Style", "Palatino Linotype", serif;
+  font-family:
+    "Aptos",
+    "Inter",
+    "SF Pro Display",
+    "Segoe UI",
+    "Helvetica Neue",
+    sans-serif;
   font-size: clamp(2.2rem, 4vw, 3.8rem);
-  letter-spacing: -0.05em;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .topbar-actions {

@@ -7,6 +7,7 @@ type WorkspaceResponse = {
   businesses: Array<{
     id: string;
     name: string;
+    primaryGoal: string;
   }>;
 };
 
@@ -164,77 +165,84 @@ export default async function GenerateStudioPage() {
   const profile = studio.visualWorldProfile;
 
   return (
-    <main className="profile-shell">
-      <header className="profile-topbar">
+    <main className="customer-shell">
+      <header className="customer-topbar">
         <div>
           <div className="eyebrow">Yapay Zeka Üretimi</div>
           <h1>Üretim Stüdyosu</h1>
-          <p className="muted">
-            Burada yapay zekâya ne üretmesini istediğini sade bir şekilde anlatırsın. Mekân
-            hafızası, referans görseller ve sahne kurgusu birlikte kullanılır.
+          <p>
+            Burada yapay zekâya ne üretmesini istediğini seçersin. Formu doldur, kaydet ve üretim
+            isteğini oluştur.
           </p>
         </div>
 
-        <div className="topbar-actions">
-          <Link className="link-chip" href="/">
+        <div className="customer-topbar-actions">
+          <Link className="ghost-action" href="/musteri-paneli">
+            Müşteri Paneli
+          </Link>
+          <Link className="ghost-action" href="/">
             Ana Sayfa
           </Link>
-          <Link className="link-chip" href="/visual-world">
-            Görsel Dünya
-          </Link>
-          <Link className="link-chip" href="/asset-library">
-            Görsel Kütüphanesi
+          <Link className="solid-action" href="/content-calendar">
+            Sonraki Adım: Takvime Geç
           </Link>
         </div>
       </header>
 
-      <section className="visual-hero">
-        <div className="profile-card visual-hero-card">
-          <div className="eyebrow">Üretim Özeti</div>
-          <h2>{studio.name}</h2>
-          <p className="muted">
-            Her üretim isteği; seçilen görselleri, sahne yönünü ve korunacak detayları tek yerde
-            toplar. Böylece daha tutarlı sonuçlar alınır.
-          </p>
-          <div className="visual-stat-row">
-            <div className="visual-stat">
-              <strong>{studio.generationBriefs.length}</strong>
-              <span>Toplam üretim talebi</span>
-            </div>
-            <div className="visual-stat">
-              <strong>{studio.generationBriefs.filter((item) => item.status === "READY_FOR_GENERATION").length}</strong>
-              <span>Üretime hazır</span>
-            </div>
-            <div className="visual-stat">
-              <strong>{profile?.references.filter((item) => item.isAnchor).length || 0}</strong>
-              <span>Ana referans</span>
-            </div>
-            <div className="visual-stat">
-              <strong>{profile?.sceneRecipes.length || 0}</strong>
-              <span>Sahne kurgusu</span>
-            </div>
-          </div>
+      <section className="customer-summary-grid simple-summary-grid">
+        <article className="customer-summary-card">
+          <span>Toplam istek</span>
+          <strong>{studio.generationBriefs.length}</strong>
+          <p>Şimdiye kadar oluşturduğun üretim istekleri.</p>
+        </article>
+        <article className="customer-summary-card">
+          <span>Üretime hazır</span>
+          <strong>{studio.generationBriefs.filter((item) => item.status === "READY_FOR_GENERATION").length}</strong>
+          <p>Tek tıkla üretime gönderilebilecek istekler.</p>
+        </article>
+        <article className="customer-summary-card">
+          <span>Referans</span>
+          <strong>{profile?.references.filter((item) => item.isAnchor).length || 0}</strong>
+          <p>Sistemin öncelikli gördüğü ana görseller.</p>
+        </article>
+        <article className="customer-summary-card">
+          <span>Sahne kurgusu</span>
+          <strong>{profile?.sceneRecipes.length || 0}</strong>
+          <p>Hazır üretim şablonları.</p>
+        </article>
+      </section>
+
+      <section className="workflow-strip">
+        <div className="workflow-step">
+          <strong>1. İşletme kartını doldur</strong>
+          <p>İşletmenin kim olduğunu sistem anlasın.</p>
+        </div>
+        <div className="workflow-step">
+          <strong>2. Görsellerini yükle</strong>
+          <p>Mekân ve ürün fotoğraflarını ekle.</p>
+        </div>
+        <div className="workflow-step current">
+          <strong>3. İlk üretimi başlat</strong>
+          <p>Şimdi yeni görsel isteğini oluştur.</p>
         </div>
       </section>
 
-      <section className="visual-grid">
-        <form action={createGenerationBrief} className="profile-card profile-form">
+      <section className="single-flow-shell">
+        <form action={createGenerationBrief} className="customer-card simple-upload-card single-flow-card">
           <input type="hidden" name="businessId" value={business.id} />
 
-          <div className="card-head">
+          <div className="section-heading compact-heading">
             <div>
               <div className="eyebrow">Yeni Talep</div>
               <h2>Yeni görsel üretim isteği oluştur</h2>
+              <p>İstediğin görsel türünü seç, notlarını ekle ve talebi kaydet.</p>
             </div>
-            <button className="primary-submit" type="submit">
-              Talep Oluştur
-            </button>
           </div>
 
           <div className="form-grid">
             <label className="span-2">
               <span>Başlık</span>
-              <input defaultValue="Mekan içinde premium ürün hikayesi" name="title" required />
+              <input defaultValue="Mekân içinde premium ürün hikâyesi" name="title" required />
             </label>
             <label>
               <span>Üretim türü</span>
@@ -258,15 +266,18 @@ export default async function GenerateStudioPage() {
             </label>
             <label>
               <span>Amaç</span>
-              <input defaultValue="PROFILE_TRAFFIC" name="objective" />
+              <select defaultValue={business.primaryGoal} name="objective">
+                <option value="RESERVATION">Rezervasyon</option>
+                <option value="ORDER">Sipariş</option>
+                <option value="PROFILE_TRAFFIC">Profil ziyareti</option>
+                <option value="AWARENESS">Bilinirlik</option>
+              </select>
             </label>
             <label>
               <span>Durum</span>
-              <select defaultValue="DRAFT" name="status">
-                <option value="DRAFT">Taslak</option>
+              <select defaultValue="READY_FOR_GENERATION" name="status">
                 <option value="READY_FOR_GENERATION">Üretime hazır</option>
-                <option value="GENERATING">Üretiliyor</option>
-                <option value="COMPLETED">Tamamlandı</option>
+                <option value="DRAFT">Taslak olarak kalsın</option>
               </select>
             </label>
             <label>
@@ -292,15 +303,27 @@ export default async function GenerateStudioPage() {
             </label>
             <label className="span-2">
               <span>Genel anlatım yönü</span>
-              <textarea name="promptDirection" rows={4} />
+              <textarea
+                name="promptDirection"
+                rows={4}
+                placeholder="Örnek: Daha premium, temiz ve iştah açıcı bir görünüm istiyorum."
+              />
             </label>
             <label className="span-2">
               <span>Konu ve odak</span>
-              <textarea name="subjectDirection" rows={4} />
+              <textarea
+                name="subjectDirection"
+                rows={4}
+                placeholder="Örnek: Ürün net görünsün, arka planda mekân hissi kalsın."
+              />
             </label>
             <label className="span-2">
               <span>Ek not</span>
-              <textarea name="remixInstruction" rows={4} />
+              <textarea
+                name="remixInstruction"
+                rows={4}
+                placeholder="Örnek: Sıcak ışık kullan, doğal tonları koru."
+              />
             </label>
             <label className="span-2">
               <span>Korunacak öğeler</span>
@@ -330,40 +353,35 @@ export default async function GenerateStudioPage() {
                 ))}
               </select>
             </label>
+            <div className="span-2">
+              <div className="flow-actions">
+                <button className="solid-action" type="submit">
+                  Kaydet ve üretim isteğini oluştur
+                </button>
+                <Link className="ghost-action" href="/content-calendar">
+                  Kaydettim, takvime geç
+                </Link>
+              </div>
+            </div>
           </div>
         </form>
-
-        <aside className="profile-sidebar">
-          <section className="profile-card info-card">
-              <div className="eyebrow">Nasıl Düşünmeli?</div>
-            <h2>Nasıl kullanılır?</h2>
-            <ul className="info-list">
-              <li>Sahne kurgusu, üretimin hangi tarzda ilerleyeceğini belirler.</li>
-              <li>Referans görseller, mekanın korunması gereken tarafını tanımlar.</li>
-              <li>Kullanılacak görseller, ürünü veya sahneyi taşır.</li>
-              <li>Korunacak öğeler listesi modelin neyi bozmaması gerektiğini söyler.</li>
-            </ul>
-          </section>
-
-          <section className="profile-card info-card">
-            <div className="eyebrow">Sonraki Katman</div>
-            <h2>Sonra ne olur?</h2>
-            <ul className="info-list">
-              <li>Yapay zekâ seçtiğin görselleri ve notları birlikte yorumlar.</li>
-              <li>Üretim tamamlanınca farklı varyasyonlar oluşur.</li>
-              <li>Beğendiğin sonuçlar onay ve içerik takvimine aktarılır.</li>
-            </ul>
-          </section>
-        </aside>
       </section>
 
-      <section className="recipe-list">
+      <section className="section-heading simple-gallery-heading">
+        <div>
+          <div className="eyebrow">Son İstekler</div>
+          <h2>Oluşturduğun üretim istekleri</h2>
+          <p>İstersen aşağıdan mevcut isteklerini güncelleyebilirsin.</p>
+        </div>
+      </section>
+
+      <section className="recipe-list single-column-list">
         {studio.generationBriefs.map((brief) => {
           const selectedReferenceIds = parseJsonArray(brief.selectedReferenceIdsJson);
           const selectedAssetIds = parseJsonArray(brief.selectedAssetIdsJson);
 
           return (
-            <article className="profile-card recipe-card" key={brief.id}>
+            <article className="customer-card recipe-card simple-flow-card" key={brief.id}>
               <div className="calendar-card-head">
                 <div>
                   <strong>{brief.title}</strong>

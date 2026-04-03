@@ -195,8 +195,8 @@ export default async function BusinessProfilePage() {
         </div>
       </section>
 
-      <section className="simple-library-layout">
-        <form action={updateBusinessProfile} className="customer-card simple-upload-card">
+      <section className="single-flow-shell">
+        <form action={updateBusinessProfile} className="customer-card simple-upload-card single-flow-card">
           <input name="businessId" type="hidden" value={business.id} />
           <input name="seasonalNotesJson" type="hidden" value="" />
 
@@ -463,40 +463,16 @@ export default async function BusinessProfilePage() {
           </div>
 
           <div className="business-form-footer">
-            <button className="solid-action" type="submit">
-              Kaydet ve devam et
-            </button>
-          </div>
-        </form>
-
-        <aside className="customer-card simple-help-card">
-          <span className="customer-card-tag">Bu bilgiler ne işe yarar?</span>
-          <h2>Sistem bu karttan ne öğrenir?</h2>
-          <p>Bu kart sayesinde yapay zekâ işletmenin tarzını, hedefini ve müşterisini tanır.</p>
-          <ul className="simple-help-list">
-            <li>Hangi sektörde olduğunu anlar</li>
-            <li>Nasıl bir dil kullanması gerektiğini öğrenir</li>
-            <li>Hangi hedefe odaklanacağını bilir</li>
-            <li>Yayınlarda hangi iletişim bilgisini kullanacağını görür</li>
-          </ul>
-
-          <div className="section-heading compact-heading business-side-note">
-            <div>
-              <div className="eyebrow">Sonraki Adım</div>
-              <h2>Buradan sonra ne yapacaksın?</h2>
-              <p>Bu kartı kaydettikten sonra önce görsellerini yükle, sonra ilk üretimi başlat.</p>
+            <div className="flow-actions">
+              <button className="solid-action" type="submit">
+                Kaydet
+              </button>
+              <Link className="ghost-action" href="/asset-library">
+                Kaydet ve görselleri yüklemeye geç
+              </Link>
             </div>
           </div>
-
-          <div className="customer-hero-actions">
-            <Link className="ghost-action" href="/asset-library">
-              Görselleri Yükle
-            </Link>
-            <Link className="solid-action" href="/generate-studio">
-              Üretime Geç
-            </Link>
-          </div>
-        </aside>
+        </form>
       </section>
     </main>
   );
