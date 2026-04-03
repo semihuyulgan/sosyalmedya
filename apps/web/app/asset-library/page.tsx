@@ -62,10 +62,29 @@ const resolveAssetSrc = (storageKey: string) => {
   return null;
 };
 
+const getAssetCategory = (asset: AssetResponse["assets"][number]) => {
+  const tags = asset.tags.map((tag) => tag.tag.toLocaleLowerCase("tr-TR"));
+  if (tags.includes("urun")) return "urun";
+  if (tags.includes("mekan")) return "mekan";
+  return "diger";
+};
+
 export default async function AssetLibraryPage() {
   const workspace = await getWorkspace();
   const business = workspace.businesses[0];
   const assetLibrary = await getAssets(business.id);
+  const mekanAssets = assetLibrary.assets.filter((asset) => getAssetCategory(asset) === "mekan");
+  const urunAssets = assetLibrary.assets.filter((asset) => getAssetCategory(asset) === "urun");
+  const otherGroups = assetLibrary.assets
+    .filter((asset) => getAssetCategory(asset) === "diger")
+    .reduce<Record<string, typeof assetLibrary.assets>>((groups, asset) => {
+      const customTag =
+        asset.tags
+          .map((tag) => tag.tag)
+          .find((tag) => !["mekan", "urun"].includes(tag.toLocaleLowerCase("tr-TR"))) || "diger";
+      groups[customTag] = [...(groups[customTag] || []), asset];
+      return groups;
+    }, {});
 
   return (
     <main className="customer-shell">
@@ -97,54 +116,69 @@ export default async function AssetLibraryPage() {
         <div>
           <div className="eyebrow">Son Yüklenenler</div>
           <h2>Kütüphanendeki görseller</h2>
-          <p>Yüklediklerin burada görünür. Beğenmediklerini sonra birlikte düzenleyebiliriz.</p>
+          <p>Yüklediklerin kategori kategori görünür. Böylece neyin mekânı neyin ürünü anlattığı net olur.</p>
         </div>
       </section>
 
-      <section className="simple-gallery-grid">
-        {assetLibrary.assets.map((asset) => {
-          const previewSrc = resolveAssetSrc(asset.storageKey);
+      <section className="single-flow-shell narrow-flow-shell grouped-library-shell">
+        <div className="grouped-library-section">
+          <div className="section-heading compact-heading">
+            <div>
+              <div className="eyebrow">Mekân</div>
+              <h2>Mekân görselleri</h2>
+            </div>
+          </div>
+          <div className="mini-thumb-grid">
+            {mekanAssets.map((asset) => {
+              const previewSrc = resolveAssetSrc(asset.storageKey);
+              return (
+                <article className="mini-thumb-card" key={asset.id}>
+                  {previewSrc ? <img alt={asset.fileName} className="mini-thumb-image" src={previewSrc} /> : null}
+                </article>
+              );
+            })}
+          </div>
+        </div>
 
-          return (
-            <article className="customer-card simple-asset-card" key={asset.id}>
-              <div className="simple-asset-visual">
-                {asset.mediaType === "IMAGE" && previewSrc ? (
-                  <img alt={asset.fileName} className="asset-preview" src={previewSrc} />
-                ) : (
-                  <div className="asset-video-placeholder">
-                    <span>{asset.mediaType === "IMAGE" ? "GÖRSEL" : "VIDEO"}</span>
-                    <strong>{asset.fileName}</strong>
-                  </div>
-                )}
-              </div>
+        <div className="grouped-library-section">
+          <div className="section-heading compact-heading">
+            <div>
+              <div className="eyebrow">Ürün</div>
+              <h2>Ürün görselleri</h2>
+            </div>
+          </div>
+          <div className="mini-thumb-grid">
+            {urunAssets.map((asset) => {
+              const previewSrc = resolveAssetSrc(asset.storageKey);
+              return (
+                <article className="mini-thumb-card" key={asset.id}>
+                  {previewSrc ? <img alt={asset.fileName} className="mini-thumb-image" src={previewSrc} /> : null}
+                </article>
+              );
+            })}
+          </div>
+        </div>
 
-              <div className="simple-asset-body">
-                <div className="simple-asset-head">
-                  <strong>{asset.fileName}</strong>
-                  {asset.isFeatured ? <span className="customer-card-tag">Öne çıkan</span> : null}
-                </div>
-                <p className="muted">
-                  {asset.mediaType === "IMAGE" ? "Görsel" : "Video"} ·{" "}
-                  {asset.source === "telegram_upload"
-                    ? "Telegram'dan geldi"
-                    : asset.source === "openai_generated"
-                      ? "Yapay zekâ tarafından üretildi"
-                      : "Panelden yüklendi"}
-                </p>
-                <div className="asset-tag-row">
-                  {asset.tags.map((tag) => (
-                    <span className="asset-tag" key={tag.id}>
-                      {tag.tag}
-                    </span>
-                  ))}
-                </div>
-                <span className="simple-asset-date">
-                  {new Date(asset.createdAt).toLocaleDateString("tr-TR")}
-                </span>
+        {Object.entries(otherGroups).map(([groupName, assets]) => (
+          <div className="grouped-library-section" key={groupName}>
+            <div className="section-heading compact-heading">
+              <div>
+                <div className="eyebrow">Ek kategori</div>
+                <h2>{groupName}</h2>
               </div>
-            </article>
-          );
-        })}
+            </div>
+            <div className="mini-thumb-grid">
+              {assets.map((asset) => {
+                const previewSrc = resolveAssetSrc(asset.storageKey);
+                return (
+                  <article className="mini-thumb-card" key={asset.id}>
+                    {previewSrc ? <img alt={asset.fileName} className="mini-thumb-image" src={previewSrc} /> : null}
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </section>
     </main>
   );

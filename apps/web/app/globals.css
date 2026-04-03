@@ -2061,6 +2061,85 @@ textarea {
   display: block;
 }
 
+.upload-flow-shell {
+  display: grid;
+  gap: 18px;
+}
+
+.upload-section-card,
+.grouped-library-section {
+  padding: 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(19, 34, 56, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.upload-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.upload-section-head.compact {
+  margin-bottom: 12px;
+}
+
+.upload-section-head h3 {
+  margin: 6px 0 8px;
+  color: #203330;
+  font-size: 1.6rem;
+}
+
+.upload-section-head p {
+  margin: 0;
+  color: #64766f;
+}
+
+.upload-thumb-grid,
+.mini-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.upload-thumb-card,
+.mini-thumb-card {
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(19, 34, 56, 0.08);
+  background: #f7f5ef;
+  aspect-ratio: 1 / 1;
+}
+
+.upload-thumb-image,
+.mini-thumb-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.custom-category-list {
+  display: grid;
+  gap: 16px;
+}
+
+.custom-category-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(19, 34, 56, 0.08);
+  background: rgba(247, 248, 252, 0.8);
+}
+
+.grouped-library-shell {
+  display: grid;
+  gap: 18px;
+}
+
 .schedule-card {
   display: grid;
   grid-template-columns: 140px minmax(0, 1fr);
@@ -2231,6 +2310,11 @@ textarea {
 
   .upload-preview-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .upload-thumb-grid,
+  .mini-thumb-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .marketing-topbar,

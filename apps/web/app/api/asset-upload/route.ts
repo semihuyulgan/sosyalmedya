@@ -64,10 +64,19 @@ const normalizeCategoryTag = (value: string) => {
       return "atmosfer";
     case "EKIP":
       return "ekip";
+    case "CUSTOM":
+      return "";
     default:
       return "";
   }
 };
+
+const normalizeCustomCategoryTag = (value: string) =>
+  value
+    .toLocaleLowerCase("tr-TR")
+    .replace(/[^a-z0-9ğüşöçıİ\s-]/gi, "")
+    .trim()
+    .replace(/\s+/g, "-");
 
 export async function POST(request: Request) {
   try {
@@ -77,8 +86,12 @@ export async function POST(request: Request) {
     const mediaType = String(formData.get("mediaType") || "IMAGE").trim();
     const fileName = String(formData.get("fileName") || "").trim();
     const category = String(formData.get("category") || "MEKAN").trim();
+    const customCategoryName = String(formData.get("customCategoryName") || "").trim();
     const categoryTag = normalizeCategoryTag(category);
-    const tags = Array.from(new Set([categoryTag, ...parseTags(String(formData.get("tags") || ""))].filter(Boolean)));
+    const customCategoryTag = category === "CUSTOM" ? normalizeCustomCategoryTag(customCategoryName) : "";
+    const tags = Array.from(
+      new Set([categoryTag, customCategoryTag, ...parseTags(String(formData.get("tags") || ""))].filter(Boolean)),
+    );
     const qualityScore = Number(String(formData.get("qualityScore") || "80")) || 80;
     const files = formData
       .getAll("assetFile")
