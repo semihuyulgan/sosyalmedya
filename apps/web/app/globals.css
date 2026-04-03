@@ -1939,6 +1939,10 @@ textarea {
   margin: 0 auto 24px;
 }
 
+.narrow-flow-shell {
+  max-width: 760px;
+}
+
 .single-flow-card {
   width: 100%;
   padding: 32px;
@@ -1995,9 +1999,26 @@ textarea {
   margin: 0 auto;
 }
 
+.single-column-schedule {
+  display: grid;
+  gap: 16px;
+}
+
 .simple-asset-card {
   padding: 14px;
   gap: 14px;
+}
+
+.schedule-card {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.schedule-card .simple-asset-visual {
+  min-height: 120px;
 }
 
 .simple-asset-visual {
@@ -2149,6 +2170,10 @@ textarea {
   .simple-gallery-grid,
   .setup-card-grid,
   .support-links-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-card {
     grid-template-columns: 1fr;
   }
 

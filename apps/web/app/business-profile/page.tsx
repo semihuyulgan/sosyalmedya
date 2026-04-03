@@ -143,7 +143,7 @@ export default async function BusinessProfilePage() {
         </div>
       </header>
 
-      <section className="single-flow-shell">
+      <section className="single-flow-shell narrow-flow-shell">
         <form action={updateBusinessProfile} className="customer-card simple-upload-card single-flow-card">
           <input name="businessId" type="hidden" value={business.id} />
           <input name="seasonalNotesJson" type="hidden" value="" />

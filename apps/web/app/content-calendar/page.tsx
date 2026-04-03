@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createContentItem, sendToApproval, selectFinalOutput, updateContentItem } from "./actions";
+import { savePublishingPreferences } from "./actions";
 
 const apiBaseUrl = process.env.API_BASE_URL || "http://127.0.0.1:4000";
 
@@ -7,37 +7,30 @@ type WorkspaceResponse = {
   businesses: Array<{
     id: string;
     name: string;
+    publishMode: string;
+    settings: {
+      peakHoursJson: string | null;
+    } | null;
   }>;
 };
 
 type ContentResponse = {
   id: string;
   name: string;
-  contentPillars: Array<{
-    id: string;
-    name: string;
-  }>;
   contentItems: Array<{
     id: string;
     title: string;
     type: string;
     status: string;
-    pillarName: string | null;
-    targetAction: string | null;
     plannedFor: string | null;
-    approvalRequired: boolean;
-    needsClientApproval: boolean;
     assets: Array<{
       id: string;
-      role: string;
       isSelected: boolean;
       asset: {
         id: string;
         storageKey: string;
         fileName: string;
-        mimeType: string;
         mediaType: string;
-        source: string | null;
       };
     }>;
   }>;
@@ -67,32 +60,19 @@ const getContentItems = async (businessId: string) => {
   return (await response.json()) as ContentResponse;
 };
 
-const toDateValue = (value: string | null) => {
-  if (!value) return "";
-  return new Date(value).toISOString().slice(0, 16);
-};
+const parsePeakHour = (value: string | null | undefined) => {
+  if (!value) return "18:00";
 
-const contentTypeLabel = (value: string) => {
-  switch (value) {
-    case "POST":
-      return "Post";
-    case "REEL":
-      return "Reel";
-    case "STORY":
-      return "Story";
-    default:
-      return value;
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) && parsed.length ? String(parsed[0]) : "18:00";
+  } catch {
+    return "18:00";
   }
 };
 
 const contentStatusLabel = (value: string) => {
   switch (value) {
-    case "DRAFT":
-      return "Taslak";
-    case "GENERATED":
-      return "Üretildi";
-    case "NEEDS_REVIEW":
-      return "Kontrol bekliyor";
     case "WAITING_APPROVAL":
       return "Onay bekliyor";
     case "APPROVED":
@@ -101,300 +81,159 @@ const contentStatusLabel = (value: string) => {
       return "Planlandı";
     case "PUBLISHED":
       return "Yayınlandı";
-    case "FAILED":
-      return "Başarısız";
-    case "ARCHIVED":
-      return "Arşivlendi";
     default:
-      return value;
+      return "Hazırlanıyor";
   }
 };
 
 const getPreviewAsset = (
   assets: Array<{
     id: string;
-    role: string;
     isSelected: boolean;
     asset: {
       id: string;
       storageKey: string;
       fileName: string;
-      mimeType: string;
       mediaType: string;
-      source: string | null;
     };
   }>,
 ) => assets.find((item) => item.isSelected)?.asset || assets.find((item) => item.asset.mediaType === "IMAGE")?.asset || null;
+
+const saatler = Array.from({ length: 48 }, (_, index) => {
+  const hour = Math.floor(index / 2)
+    .toString()
+    .padStart(2, "0");
+  const minute = index % 2 === 0 ? "00" : "30";
+  return `${hour}:${minute}`;
+});
 
 export default async function ContentCalendarPage() {
   const workspace = await getWorkspace();
   const business = workspace.businesses[0];
   const contentData = await getContentItems(business.id);
+  const selectedHour = parsePeakHour(business.settings?.peakHoursJson);
+  const approvalPreference = business.publishMode === "AUTO" ? "AUTO" : "MANUAL";
 
   return (
-    <main className="profile-shell">
-      <header className="profile-topbar">
+    <main className="customer-shell">
+      <header className="customer-topbar">
         <div>
-          <div className="eyebrow">İçerik Planı</div>
-          <h1>İçerik Takvimi</h1>
-          <p className="muted">
-            Burada hangi içeriğin hangi gün ve saatte paylaşılacağını görürsün. Onay verdiğin
-            içerikler takvimde yerine oturur.
+          <div className="eyebrow">Adım 4 / 4</div>
+          <h1>Yayın saatini seç.</h1>
+          <p>
+            Sen sadece saati ve onay şeklini seç. Hangi gün paylaşım yapılacağını sistem, en uygun
+            zamanlara göre otomatik planlasın.
           </p>
-        </div>
-
-        <div className="topbar-actions">
-          <Link className="link-chip" href="/">
-            Ana Sayfa
-          </Link>
-          <Link className="link-chip" href="/telegram-center">
-            Telegram
-          </Link>
-          <Link className="link-chip" href="/approval-center">
-            Onay Merkezi
-          </Link>
-          <Link className="link-chip" href="/asset-library">
-            Görsel Kütüphanesi
-          </Link>
-          <Link className="link-chip" href="/business-profile">
-            İşletme Kartı
-          </Link>
-          <Link className="link-chip" href="/musteri-paneli">
-            Müşteri Paneli
-          </Link>
         </div>
       </header>
 
-      <section className="asset-layout">
-        <section className="profile-card profile-form">
-          <div className="card-head">
+      <section className="single-flow-shell narrow-flow-shell">
+        <article className="customer-card simple-upload-card single-flow-card">
+          <div className="section-heading compact-heading">
             <div>
-              <div className="eyebrow">Yeni İçerik</div>
-              <h2>Takvime yeni içerik ekle</h2>
+              <div className="eyebrow">Yayın Tercihi</div>
+              <h2>Paylaşımlar saat kaçta yayınlansın?</h2>
+              <p>Günleri sistem seçer. Sen sadece yayın saatini ve onay isteyip istemediğini belirle.</p>
             </div>
           </div>
 
-          <form action={createContentItem} className="form-grid">
+          <form action={savePublishingPreferences} className="form-grid">
             <input name="businessId" type="hidden" value={business.id} />
 
-            <label className="span-2">
-              <span>Başlık</span>
-              <input name="title" placeholder="Hafta sonu brunch paylaşımı" required />
-            </label>
             <label>
-              <span>İçerik türü</span>
-              <select defaultValue="POST" name="type">
-                <option value="POST">Post</option>
-                <option value="REEL">Reel</option>
-                <option value="STORY">Story</option>
-              </select>
-            </label>
-            <label>
-              <span>Durum</span>
-              <select defaultValue="DRAFT" name="status">
-                <option value="DRAFT">Taslak</option>
-                <option value="GENERATED">Üretildi</option>
-                <option value="NEEDS_REVIEW">Kontrol bekliyor</option>
-                <option value="WAITING_APPROVAL">Onay bekliyor</option>
-                <option value="APPROVED">Onaylandı</option>
-                <option value="SCHEDULED">Planlandı</option>
-                <option value="PUBLISHED">Yayınlandı</option>
-                <option value="FAILED">Başarısız</option>
-                <option value="ARCHIVED">Arşivlendi</option>
-              </select>
-            </label>
-            <label>
-              <span>İçerik başlığı</span>
-              <select defaultValue="" name="pillarName">
-                <option value="">Seçilmedi</option>
-                {contentData.contentPillars.map((pillar) => (
-                  <option key={pillar.id} value={pillar.name}>
-                    {pillar.name}
+              <span>Yayın saati</span>
+              <select defaultValue={selectedHour} name="peakHoursJson">
+                {saatler.map((saat) => (
+                  <option key={saat} value={saat}>
+                    {saat}
                   </option>
                 ))}
               </select>
             </label>
+
             <label>
-              <span>Hedef</span>
-              <input name="targetAction" placeholder="RESERVATION" />
+              <span>Onay tercihi</span>
+              <select defaultValue={approvalPreference} name="approvalPreference">
+                <option value="MANUAL">Her paylaşımda benden onay iste</option>
+                <option value="AUTO">Onay almadan otomatik devam et</option>
+              </select>
             </label>
-            <label>
-              <span>Yayın zamanı</span>
-              <input name="plannedFor" type="datetime-local" />
-            </label>
-            <label className="asset-checkbox">
-              <input defaultChecked name="approvalRequired" type="checkbox" />
-              <span>Önce onaya gitsin</span>
-            </label>
-            <label className="asset-checkbox">
-              <input defaultChecked name="needsClientApproval" type="checkbox" />
-              <span>Müşteri onayı istensin</span>
-            </label>
+
             <div className="span-2">
-              <button className="primary-submit" type="submit">
-                İçeriği Oluştur
-              </button>
+              <div className="flow-actions">
+                <Link className="ghost-action" href="/telegram-center">
+                  Önceki adım: Telegram bağlantısı
+                </Link>
+                <button className="solid-action" type="submit">
+                  Kaydet ve takvimi göster
+                </button>
+              </div>
             </div>
           </form>
-        </section>
 
-        <aside className="profile-sidebar">
-          <section className="profile-card info-card">
-            <div className="eyebrow">Takvim Özeti</div>
-            <h2>{contentData.contentItems.length} aktif içerik kaydı</h2>
-            <ul className="info-list">
-              <li>Onay bekleyen: {contentData.contentItems.filter((item) => item.status === "WAITING_APPROVAL").length}</li>
-              <li>Planlanan: {contentData.contentItems.filter((item) => item.status === "SCHEDULED").length}</li>
-              <li>Taslak ve üretim aşaması: {contentData.contentItems.filter((item) => ["DRAFT", "GENERATED", "NEEDS_REVIEW"].includes(item.status)).length}</li>
-            </ul>
-          </section>
-
-          <section className="profile-card info-card">
-            <div className="eyebrow">Bu Ekran Ne İşe Yarar?</div>
-            <h2>Takvim neden önemli?</h2>
-            <ul className="info-list">
-              <li>İşletme bilgileri ve görseller burada içeriğe dönüşür.</li>
-              <li>Telegram onay akışı bu kayıtlar üzerinden çalışır.</li>
-              <li>Yayın planı için merkez ekran burasıdır.</li>
-            </ul>
-          </section>
-        </aside>
+          <p className="muted" style={{ marginTop: 18 }}>
+            Bu adımdan sonra paneli kullanmana gerek yoktur. Tüm onayları ve güncellemeleri Telegram üzerinden yönetebilirsin.
+          </p>
+        </article>
       </section>
 
-      <section className="calendar-list">
-        {contentData.contentItems.map((item) => {
-          const previewAsset = getPreviewAsset(item.assets);
-          const isPublishReady = item.assets.some((link) => link.isSelected);
-
-          return (
-          <article className="profile-card calendar-card" key={item.id}>
-            <div className="calendar-card-head">
-              <div>
-                <strong>{item.title}</strong>
-                <p className="muted">
-                  {contentTypeLabel(item.type)} · {item.pillarName || "Kategori yok"} ·{" "}
-                  {item.targetAction || "Hedef yok"}
-                </p>
-              </div>
-              <span className={`soft-pill ${item.status === "WAITING_APPROVAL" ? "calendar-warn" : ""}`}>
-                {contentStatusLabel(item.status)}
-              </span>
+      <section className="single-flow-shell narrow-flow-shell">
+        <article className="customer-card simple-upload-card single-flow-card">
+          <div className="section-heading compact-heading">
+            <div>
+              <div className="eyebrow">Takvim</div>
+              <h2>Önümüzdeki paylaşımlar</h2>
+              <p>Hazırlanan içerikler burada görünür. Günleri sistem belirler, seçtiğin saat esas alınır.</p>
             </div>
+          </div>
 
-            <div className="readiness-row">
-              <span className={`soft-pill ${isPublishReady ? "readiness-good" : "readiness-bad"}`}>
-                {isPublishReady ? "Yayına hazır" : "Seçili final görsel yok"}
-              </span>
-            </div>
+          {contentData.contentItems.length ? (
+            <div className="single-column-schedule">
+              {contentData.contentItems.slice(0, 6).map((item) => {
+                const previewAsset = getPreviewAsset(item.assets);
 
-            {previewAsset ? (
-              <div className="content-preview-shell">
-                <img alt={item.title} className="content-preview-image" src={previewAsset.storageKey} />
-                <div className="content-preview-meta">
-                  <span className="asset-tag">{previewAsset.source || "görsel"}</span>
-                  <span className="asset-tag">{item.assets.length} varyasyon</span>
-                </div>
-              </div>
-            ) : null}
+                return (
+                  <article className="customer-card simple-asset-card schedule-card" key={item.id}>
+                    {previewAsset ? (
+                      <div className="simple-asset-visual">
+                        <img alt={item.title} className="asset-preview" src={previewAsset.storageKey} />
+                      </div>
+                    ) : null}
 
-            {item.assets.length ? (
-              <div className="output-gallery">
-                {item.assets.map((link) => (
-                  <div className={`output-card ${link.isSelected ? "selected" : ""}`} key={link.id}>
-                    <img alt={link.asset.fileName} className="output-thumb" src={link.asset.storageKey} />
-                    <div className="output-card-meta">
-                      <span className="asset-tag">{link.asset.source || "görsel"}</span>
-                      {link.isSelected ? <span className="asset-tag">seçili</span> : null}
+                    <div className="simple-asset-body">
+                      <div className="simple-asset-head">
+                        <strong>{item.title}</strong>
+                        <span className="customer-card-tag">{contentStatusLabel(item.status)}</span>
+                      </div>
+                      <p className="muted">
+                        {item.plannedFor
+                          ? new Date(item.plannedFor).toLocaleString("tr-TR")
+                          : "Günü sistem planlıyor"}
+                      </p>
                     </div>
-                    {!link.isSelected ? (
-                      <form action={selectFinalOutput}>
-                        <input name="contentItemId" type="hidden" value={item.id} />
-                        <input name="contentItemAssetId" type="hidden" value={link.id} />
-                        <button className="ghost-action output-select-button" type="submit">
-                          Final olarak seç
-                        </button>
-                      </form>
-                    ) : (
-                      <div className="output-selected-label">Final görsel</div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : null}
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="customer-card simple-upload-card">
+              <p className="muted">
+                İlk plan birkaç dakika içinde burada görünür. Sistem, işletme bilgilerini ve yüklediğin
+                görselleri kullanarak paylaşım günlerini otomatik oluşturur.
+              </p>
+            </div>
+          )}
 
-            <form action={updateContentItem} className="asset-form">
-              <input name="contentItemId" type="hidden" value={item.id} />
+          <div className="flow-actions" style={{ marginTop: 24 }}>
+            <Link className="solid-action" href="/musteri-paneli">
+              Tamam
+            </Link>
+          </div>
 
-              <label className="span-2">
-                <span>Başlık</span>
-                <input defaultValue={item.title} name="title" required />
-              </label>
-              <label>
-                <span>İçerik türü</span>
-                <select defaultValue={item.type} name="type">
-                  <option value="POST">Post</option>
-                  <option value="REEL">Reel</option>
-                  <option value="STORY">Story</option>
-                </select>
-              </label>
-              <label>
-                <span>Durum</span>
-                <select defaultValue={item.status} name="status">
-                  <option value="DRAFT">Taslak</option>
-                  <option value="GENERATED">Üretildi</option>
-                  <option value="NEEDS_REVIEW">Kontrol bekliyor</option>
-                  <option value="WAITING_APPROVAL">Onay bekliyor</option>
-                  <option value="APPROVED">Onaylandı</option>
-                  <option value="SCHEDULED">Planlandı</option>
-                  <option value="PUBLISHED">Yayınlandı</option>
-                  <option value="FAILED">Başarısız</option>
-                  <option value="ARCHIVED">Arşivlendi</option>
-                </select>
-              </label>
-              <label>
-                <span>İçerik başlığı</span>
-                <select defaultValue={item.pillarName || ""} name="pillarName">
-                  <option value="">Seçilmedi</option>
-                  {contentData.contentPillars.map((pillar) => (
-                    <option key={pillar.id} value={pillar.name}>
-                      {pillar.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <span>Hedef</span>
-                <input defaultValue={item.targetAction || ""} name="targetAction" />
-              </label>
-              <label>
-                <span>Yayın zamanı</span>
-                <input defaultValue={toDateValue(item.plannedFor)} name="plannedFor" type="datetime-local" />
-              </label>
-              <label className="asset-checkbox">
-                <input defaultChecked={item.approvalRequired} name="approvalRequired" type="checkbox" />
-                <span>Önce onaya gitsin</span>
-              </label>
-              <label className="asset-checkbox">
-                <input
-                  defaultChecked={item.needsClientApproval}
-                  name="needsClientApproval"
-                  type="checkbox"
-                />
-                <span>Müşteri onayı istensin</span>
-              </label>
-              <div className="span-2">
-                <div className="calendar-actions">
-                  <button className="ghost-action" type="submit">
-                    İçeriği Güncelle
-                  </button>
-                  <button className="ghost-action" formAction={sendToApproval} name="contentItemId" type="submit" value={item.id}>
-                    Onaya Gönder
-                  </button>
-                </div>
-              </div>
-            </form>
-          </article>
-        )})}
+          <p className="muted" style={{ marginTop: 18 }}>
+            Buradan sonra paneli düzenli kullanmana gerek yok. Yeni onaylar, eklemeler ve yönlendirmeler için Telegram yeterli olacaktır.
+          </p>
+        </article>
       </section>
     </main>
   );

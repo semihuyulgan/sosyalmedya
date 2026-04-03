@@ -9,6 +9,38 @@ const getValue = (formData: FormData, key: string) => {
   return typeof value === "string" ? value.trim() : "";
 };
 
+export const savePublishingPreferences = async (formData: FormData) => {
+  const businessId = getValue(formData, "businessId");
+
+  if (!businessId) {
+    throw new Error("Business id is required.");
+  }
+
+  const approvalPreference = getValue(formData, "approvalPreference");
+  const publishMode = approvalPreference === "AUTO" ? "AUTO" : "MANUAL";
+  const selectedHour = getValue(formData, "peakHoursJson");
+
+  const response = await fetch(`${apiBaseUrl}/api/businesses/${businessId}/publishing-preferences`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      publishMode,
+      peakHoursJson: selectedHour ? JSON.stringify([selectedHour]) : undefined,
+    }),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Publishing preferences could not be updated.");
+  }
+
+  revalidatePath("/content-calendar");
+  revalidatePath("/approval-center");
+  revalidatePath("/telegram-center");
+};
+
 export const createContentItem = async (formData: FormData) => {
   const payload = {
     businessId: getValue(formData, "businessId"),

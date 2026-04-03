@@ -98,6 +98,11 @@ const updateBusinessSchema = z.object({
   seasonalNotesJson: z.string().optional(),
 });
 
+const updatePublishingPreferencesSchema = z.object({
+  publishMode: z.enum(["MANUAL", "AUTO"]),
+  peakHoursJson: z.string().optional(),
+});
+
 const telegramCommandSchema = z.object({
   command: z.string().min(2),
 });
@@ -4007,6 +4012,49 @@ app.patch("/api/businesses/:businessId", async (request, reply) => {
           summary: body.brandSummary || body.description || "",
           voiceGuidelines: body.voiceGuidelines || null,
           visualGuidelines: body.visualGuidelines || null,
+        },
+      },
+    },
+    include: includeBusinessProfile,
+  });
+
+  reply.code(200);
+  return business;
+});
+
+app.patch("/api/businesses/:businessId/publishing-preferences", async (request, reply) => {
+  const paramsSchema = z.object({
+    businessId: z.string().uuid(),
+  });
+
+  const { businessId } = paramsSchema.parse(request.params);
+  const body = updatePublishingPreferencesSchema.parse(request.body);
+
+  const business = await prisma.business.update({
+    where: { id: businessId },
+    data: {
+      publishMode: body.publishMode,
+      settings: {
+        upsert: {
+          create: {
+            preferredLanguage: "tr",
+            peakHoursJson: body.peakHoursJson || null,
+          },
+          update: {
+            peakHoursJson: body.peakHoursJson || null,
+          },
+        },
+      },
+      autopilotPolicy: {
+        upsert: {
+          create: {
+            approvalMode: body.publishMode === "AUTO" ? "AUTO" : "MANUAL",
+            allowAutoPublishing: body.publishMode === "AUTO",
+          },
+          update: {
+            approvalMode: body.publishMode === "AUTO" ? "AUTO" : "MANUAL",
+            allowAutoPublishing: body.publishMode === "AUTO",
+          },
         },
       },
     },

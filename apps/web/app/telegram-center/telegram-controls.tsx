@@ -1,12 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useState } from "react";
 
 type Props = {
   apiBaseUrl: string;
-  businessId: string;
-  defaultChatId: string;
-  defaultChatTitle: string;
 };
 
 type ActionState = {
@@ -19,161 +17,72 @@ const initialState: ActionState = {
   message: "",
 };
 
-export function TelegramControls({ apiBaseUrl, businessId, defaultChatId, defaultChatTitle }: Props) {
-  const [chatId, setChatId] = useState(defaultChatId);
-  const [chatTitle, setChatTitle] = useState(defaultChatTitle);
-  const [saveState, setSaveState] = useState<ActionState>(initialState);
-  const [syncState, setSyncState] = useState<ActionState>(initialState);
-  const [commandState, setCommandState] = useState<ActionState>(initialState);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [isSyncingCommands, setIsSyncingCommands] = useState(false);
+export function TelegramControls({ apiBaseUrl }: Props) {
+  const [state, setState] = useState<ActionState>(initialState);
+  const [isPreparing, setIsPreparing] = useState(false);
 
-  const isSaveDisabled = useMemo(() => isSaving || !chatId.trim(), [chatId, isSaving]);
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    setSaveState(initialState);
+  const handlePrepare = async () => {
+    setIsPreparing(true);
+    setState(initialState);
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/businesses/${businessId}/telegram-link`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          chatId: chatId.trim(),
-          chatTitle: chatTitle.trim() || undefined,
-        }),
-      });
-
-      const payload = (await response.json().catch(() => null)) as { message?: string } | null;
-
-      if (!response.ok) {
-        throw new Error(payload?.message || "Telegram link could not be saved.");
-      }
-
-      setSaveState({
-        kind: "success",
-        message: "Telegram baglantisi kaydedildi. Sayfayi yenileyince guncel durum gorunur.",
-      });
-    } catch (error) {
-      setSaveState({
-        kind: "error",
-        message: error instanceof Error ? error.message : "Telegram link could not be saved.",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleSync = async () => {
-    setIsSyncing(true);
-    setSyncState(initialState);
-
-    try {
-      const response = await fetch(`${apiBaseUrl}/api/telegram/webhook/sync`, {
+      const webhookResponse = await fetch(`${apiBaseUrl}/api/telegram/webhook/sync`, {
         method: "POST",
       });
 
-      const payload = (await response.json().catch(() => null)) as { message?: string; description?: string } | null;
+      const webhookPayload = (await webhookResponse.json().catch(() => null)) as
+        | { message?: string; description?: string }
+        | null;
 
-      if (!response.ok) {
-        throw new Error(payload?.message || "Telegram webhook could not be synced.");
+      if (!webhookResponse.ok) {
+        throw new Error(webhookPayload?.message || "Telegram bağlantısı hazırlanamadı.");
       }
 
-      setSyncState({
-        kind: "success",
-        message: payload?.description || "Telegram webhook senkronize edildi.",
-      });
-    } catch (error) {
-      setSyncState({
-        kind: "error",
-        message: error instanceof Error ? error.message : "Telegram webhook could not be synced.",
-      });
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
-  const handleSyncCommands = async () => {
-    setIsSyncingCommands(true);
-    setCommandState(initialState);
-
-    try {
-      const response = await fetch(`${apiBaseUrl}/api/telegram/commands/sync`, {
+      const commandsResponse = await fetch(`${apiBaseUrl}/api/telegram/commands/sync`, {
         method: "POST",
       });
 
-      const payload = (await response.json().catch(() => null)) as { message?: string; description?: string } | null;
+      const commandsPayload = (await commandsResponse.json().catch(() => null)) as
+        | { message?: string; description?: string }
+        | null;
 
-      if (!response.ok) {
-        throw new Error(payload?.message || "Telegram commands could not be synced.");
+      if (!commandsResponse.ok) {
+        throw new Error(commandsPayload?.message || "Telegram komutları hazırlanamadı.");
       }
 
-      setCommandState({
+      setState({
         kind: "success",
-        message: payload?.description || "Telegram komutlari senkronize edildi.",
+        message: "Telegram bağlantısı hazır. Şimdi Telegram’da bağlantıyı başlatıp /start yazabilirsin.",
       });
     } catch (error) {
-      setCommandState({
+      setState({
         kind: "error",
-        message: error instanceof Error ? error.message : "Telegram commands could not be synced.",
+        message: error instanceof Error ? error.message : "Telegram bağlantısı hazırlanamadı.",
       });
     } finally {
-      setIsSyncingCommands(false);
+      setIsPreparing(false);
     }
   };
 
   return (
-    <>
-      <div className="form-grid">
-        <label>
-          <span>Chat ID</span>
-          <input onChange={(event) => setChatId(event.target.value)} placeholder="-100..." value={chatId} />
-        </label>
-        <label>
-          <span>Chat title</span>
-          <input
-            onChange={(event) => setChatTitle(event.target.value)}
-            placeholder="Luna Bistro Owners"
-            value={chatTitle}
-          />
-        </label>
-      </div>
-
-      <div className="span-2" style={{ display: "grid", gap: 12 }}>
-        <button className="primary-submit" disabled={isSaveDisabled} onClick={handleSave} type="button">
-          {isSaving ? "Kaydediliyor..." : "Save Telegram Link"}
-        </button>
-        {saveState.message ? (
-          <p className="muted" style={{ color: saveState.kind === "error" ? "#ffb86b" : undefined }}>
-            {saveState.message}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="span-2" style={{ display: "grid", gap: 12 }}>
-        <button className="primary-submit" disabled={isSyncing} onClick={handleSync} type="button">
-          {isSyncing ? "Senkronize ediliyor..." : "Sync Telegram Webhook"}
-        </button>
-        {syncState.message ? (
-          <p className="muted" style={{ color: syncState.kind === "error" ? "#ffb86b" : undefined }}>
-            {syncState.message}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="span-2" style={{ display: "grid", gap: 12 }}>
-        <button className="primary-submit" disabled={isSyncingCommands} onClick={handleSyncCommands} type="button">
-          {isSyncingCommands ? "Komutlar senkronize ediliyor..." : "Sync Telegram Commands"}
-        </button>
-        {commandState.message ? (
-          <p className="muted" style={{ color: commandState.kind === "error" ? "#ffb86b" : undefined }}>
-            {commandState.message}
-          </p>
-        ) : null}
-      </div>
-    </>
+    <div className="flow-actions">
+      <button className="solid-action" disabled={isPreparing} onClick={handlePrepare} type="button">
+        {isPreparing ? "Hazırlanıyor..." : "Telegram bağlantısını hazırla"}
+      </button>
+      <Link className="ghost-action" href="/content-calendar">
+        İçerik takvimine geç
+      </Link>
+      {state.message ? (
+        <p
+          className="muted"
+          style={{
+            color: state.kind === "error" ? "#c4543d" : "#45613b",
+            margin: 0,
+          }}
+        >
+          {state.message}
+        </p>
+      ) : null}
+    </div>
   );
 }
