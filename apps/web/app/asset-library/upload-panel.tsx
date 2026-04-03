@@ -8,6 +8,34 @@ type Props = {
   businessId: string;
 };
 
+const categoryOptions = [
+  {
+    value: "MEKAN",
+    label: "Mekân görselleri",
+    description: "Dış cephe, iç alan, masa düzeni ve genel görünüm fotoğrafları.",
+  },
+  {
+    value: "URUN",
+    label: "Ürün görselleri",
+    description: "En çok satılan ürünler, imza tabaklar ve yakın plan ürün fotoğrafları.",
+  },
+  {
+    value: "MENU",
+    label: "Menü görselleri",
+    description: "Basılı menü, dijital menü, fiyat panosu veya kampanya menüsü görselleri.",
+  },
+  {
+    value: "ATMOSFER",
+    label: "Atmosfer detayları",
+    description: "Işık, dekor, servis hissi, detay kadrajlar ve ambiyans kareleri.",
+  },
+  {
+    value: "EKIP",
+    label: "Ekip ve servis",
+    description: "Personel, servis anı, karşılama ve işletmenin insan tarafını gösteren kareler.",
+  },
+];
+
 type PreviewItem = {
   id: string;
   name: string;
@@ -121,6 +149,26 @@ export function UploadPanel({ businessId }: Props) {
         </div>
       ) : null}
 
+      <label className="span-2">
+        <span>Bu görseller hangi kategoriye ait?</span>
+        <select defaultValue="MEKAN" name="category">
+          {categoryOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <div className="span-2 category-help-grid">
+        {categoryOptions.map((option) => (
+          <article className="category-help-card" key={option.value}>
+            <strong>{option.label}</strong>
+            <p>{option.description}</p>
+          </article>
+        ))}
+      </div>
+
       <label>
         <span>Medya türü</span>
         <select defaultValue="IMAGE" name="mediaType">
@@ -133,8 +181,8 @@ export function UploadPanel({ businessId }: Props) {
         <input name="fileName" placeholder="örn. imza kahve, salon, vitrin" />
       </label>
       <label className="span-2">
-        <span>Etiketler</span>
-        <input name="tags" placeholder="ürün, menü, mekân, detay, atmosfer" />
+        <span>Ek etiketler</span>
+        <input name="tags" placeholder="örnek: tatlı, kahve, vitrin, akşam servisi" />
       </label>
       <div className="span-2">
         <p className="muted" style={{ margin: 0 }}>

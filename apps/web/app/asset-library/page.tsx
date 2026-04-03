@@ -74,8 +74,8 @@ export default async function AssetLibraryPage() {
           <div className="eyebrow">Adım 2 / 3</div>
           <h1>Görsellerini yükle.</h1>
           <p>
-            Burada sadece işletmeni anlatan görselleri eklersin. Karmaşık ayarları arkada biz
-            hallediyoruz; sen sadece doğru fotoğrafları yükle.
+            Burada görselleri kategori kategori yüklersin. Böylece sistem, hangi fotoğrafın mekânı
+            anlattığını hangi fotoğrafın ürünü anlattığını daha doğru öğrenir.
           </p>
         </div>
       </header>
@@ -85,7 +85,7 @@ export default async function AssetLibraryPage() {
           <div className="section-heading compact-heading">
             <div>
               <div className="eyebrow">Yeni Yükleme</div>
-              <h2>Yeni görsel veya video ekle</h2>
+              <h2>Görselleri kategorisine göre yükle</h2>
             </div>
           </div>
 

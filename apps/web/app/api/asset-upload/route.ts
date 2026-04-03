@@ -52,6 +52,23 @@ const parseTags = (value: string) =>
     .map((tag) => tag.trim())
     .filter(Boolean);
 
+const normalizeCategoryTag = (value: string) => {
+  switch (value) {
+    case "MEKAN":
+      return "mekan";
+    case "URUN":
+      return "urun";
+    case "MENU":
+      return "menu";
+    case "ATMOSFER":
+      return "atmosfer";
+    case "EKIP":
+      return "ekip";
+    default:
+      return "";
+  }
+};
+
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
@@ -59,7 +76,9 @@ export async function POST(request: Request) {
     const source = String(formData.get("source") || "panel_upload").trim();
     const mediaType = String(formData.get("mediaType") || "IMAGE").trim();
     const fileName = String(formData.get("fileName") || "").trim();
-    const tags = parseTags(String(formData.get("tags") || ""));
+    const category = String(formData.get("category") || "MEKAN").trim();
+    const categoryTag = normalizeCategoryTag(category);
+    const tags = Array.from(new Set([categoryTag, ...parseTags(String(formData.get("tags") || ""))].filter(Boolean)));
     const qualityScore = Number(String(formData.get("qualityScore") || "80")) || 80;
     const files = formData
       .getAll("assetFile")
