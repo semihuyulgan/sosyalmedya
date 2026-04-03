@@ -311,8 +311,8 @@ export default function HomePage() {
             İşletme kartı ve görsel kütüphanesi oluşturulduktan sonra sistem, markana uygun yeni
             görseller üretir. Gerekirse önce sana onaya gönderir.
           </p>
-          <Link className="landing-primary-button" href="/generate-studio">
-            Üretim stüdyosuna git
+          <Link className="landing-primary-button" href="/musteri-paneli">
+            Müşteri akışını gör
           </Link>
         </div>
       </section>

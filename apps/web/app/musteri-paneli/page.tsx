@@ -24,10 +24,10 @@ const adimlar = [
   },
   {
     sıra: "4",
-    baslik: "İlk üretimi başlat",
-    aciklama: "Yapay zekâ senin için ilk içerik görsellerini oluştursun.",
-    href: "/generate-studio",
-    cta: "Üretime Geç",
+    baslik: "Takvimi gözden geçir",
+    aciklama: "Hazırlanan içeriklerin hangi gün ve saatte paylaşılacağını gör.",
+    href: "/content-calendar",
+    cta: "Takvimi Aç",
   },
 ];
 
@@ -36,11 +36,6 @@ const yardimciBaglantilar = [
     baslik: "Onaylar",
     aciklama: "Yayına çıkmadan önce son onayı burada verirsin.",
     href: "/approval-center",
-  },
-  {
-    baslik: "İçerik Takvimi",
-    aciklama: "Hazırlanan içeriklerin yayın sırasını burada görürsün.",
-    href: "/content-calendar",
   },
 ];
 
@@ -72,15 +67,15 @@ export default function MusteriPaneliPage() {
           <h2>Önce işletmeni tanıtalım, sonra yapay zekâ senin için üretmeye başlasın.</h2>
           <p>
             İşletme bilgilerini ve görsellerini ekledikten sonra sistem senin yerine içerik ve
-            görsel üretmeye başlar.
+            görsel üretir, sana Telegram üzerinden onaya gönderir ve takvime yerleştirir.
           </p>
 
           <div className="customer-hero-actions">
             <Link className="solid-action" href="/business-profile">
               1. Adımı Başlat
             </Link>
-            <Link className="ghost-action" href="/asset-library">
-              Görselleri Yükle
+            <Link className="ghost-action" href="/content-calendar">
+              Takvimi Gör
             </Link>
           </div>
         </article>

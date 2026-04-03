@@ -177,8 +177,8 @@ export default async function TelegramCenterPage() {
           <div className="eyebrow">Telegram Bağlantısı</div>
           <h1>Telegram</h1>
           <p className="muted">
-            Bu ekranda Telegram bağlantını kurar, son mesajları görür ve sistemin Telegram
-            üzerinden nasıl çalıştığını takip edersin.
+            Bu ekranda Telegram bağlantını kurarsın. Sonrasında onaylar ve hızlı güncellemeler
+            Telegram üzerinden gelir.
           </p>
         </div>
 
@@ -191,6 +191,9 @@ export default async function TelegramCenterPage() {
           </Link>
           <Link className="link-chip" href="/content-calendar">
             İçerik Takvimi
+          </Link>
+          <Link className="link-chip" href="/asset-library">
+            Görseller
           </Link>
         </div>
       </header>

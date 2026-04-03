@@ -138,8 +138,8 @@ export default async function ContentCalendarPage() {
           <div className="eyebrow">İçerik Planı</div>
           <h1>İçerik Takvimi</h1>
           <p className="muted">
-            Burada hangi içeriğin ne zaman çıkacağını görürsün. Üretilen içerikler, onay süreci ve
-            yayın planı bu akışta birleşir.
+            Burada hangi içeriğin hangi gün ve saatte paylaşılacağını görürsün. Onay verdiğin
+            içerikler takvimde yerine oturur.
           </p>
         </div>
 
@@ -158,6 +158,9 @@ export default async function ContentCalendarPage() {
           </Link>
           <Link className="link-chip" href="/business-profile">
             İşletme Kartı
+          </Link>
+          <Link className="link-chip" href="/musteri-paneli">
+            Müşteri Paneli
           </Link>
         </div>
       </header>

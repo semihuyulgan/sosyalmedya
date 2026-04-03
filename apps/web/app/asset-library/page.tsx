@@ -113,8 +113,8 @@ export default async function AssetLibraryPage() {
                 <button className="solid-action" type="submit">
                   Görseli Yükle
                 </button>
-                <Link className="ghost-action" href="/generate-studio">
-                  Görselleri yükledim, üretime geç
+                <Link className="ghost-action" href="/telegram-center">
+                  Görselleri yükledim, Telegram’a geç
                 </Link>
               </div>
             </div>
