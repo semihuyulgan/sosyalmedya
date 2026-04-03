@@ -54,6 +54,14 @@ const getAssets = async (businessId: string) => {
   return (await response.json()) as AssetResponse;
 };
 
+const resolveAssetSrc = (storageKey: string) => {
+  if (!storageKey) return null;
+  if (storageKey.startsWith("http://") || storageKey.startsWith("https://") || storageKey.startsWith("/")) {
+    return storageKey;
+  }
+  return null;
+};
+
 export default async function AssetLibraryPage() {
   const workspace = await getWorkspace();
   const business = workspace.businesses[0];
@@ -72,7 +80,7 @@ export default async function AssetLibraryPage() {
         </div>
       </header>
 
-      <section className="single-flow-shell">
+      <section className="single-flow-shell narrow-flow-shell">
         <section className="customer-card simple-upload-card single-flow-card">
           <div className="section-heading compact-heading">
             <div>
@@ -88,7 +96,7 @@ export default async function AssetLibraryPage() {
             <input type="hidden" name="qualityScore" value="80" />
             <label>
               <span>Dosya yükle</span>
-              <input accept="image/*,video/*" name="assetFile" type="file" />
+              <input accept="image/*,video/*" multiple name="assetFile" type="file" />
             </label>
             <label>
               <span>Medya türü</span>
@@ -105,6 +113,11 @@ export default async function AssetLibraryPage() {
               <span>Etiketler</span>
               <input name="tags" placeholder="ürün, menü, mekân, detay, atmosfer" />
             </label>
+            <div className="span-2">
+              <p className="muted" style={{ margin: 0 }}>
+                Aynı anda birden fazla görsel seçebilirsin. Hepsi tek seferde yüklenecek.
+              </p>
+            </div>
             <div className="span-2">
               <div className="flow-actions">
                 <Link className="ghost-action" href="/business-profile">
@@ -131,45 +144,49 @@ export default async function AssetLibraryPage() {
       </section>
 
       <section className="simple-gallery-grid">
-        {assetLibrary.assets.map((asset) => (
-          <article className="customer-card simple-asset-card" key={asset.id}>
-            <div className="simple-asset-visual">
-              {asset.mediaType === "IMAGE" ? (
-                <img alt={asset.fileName} className="asset-preview" src={asset.storageKey} />
-              ) : (
-                <div className="asset-video-placeholder">
-                  <span>VIDEO</span>
-                  <strong>{asset.fileName}</strong>
-                </div>
-              )}
-            </div>
+        {assetLibrary.assets.map((asset) => {
+          const previewSrc = resolveAssetSrc(asset.storageKey);
 
-            <div className="simple-asset-body">
-              <div className="simple-asset-head">
-                <strong>{asset.fileName}</strong>
-                {asset.isFeatured ? <span className="customer-card-tag">Öne çıkan</span> : null}
+          return (
+            <article className="customer-card simple-asset-card" key={asset.id}>
+              <div className="simple-asset-visual">
+                {asset.mediaType === "IMAGE" && previewSrc ? (
+                  <img alt={asset.fileName} className="asset-preview" src={previewSrc} />
+                ) : (
+                  <div className="asset-video-placeholder">
+                    <span>{asset.mediaType === "IMAGE" ? "GÖRSEL" : "VIDEO"}</span>
+                    <strong>{asset.fileName}</strong>
+                  </div>
+                )}
               </div>
-              <p className="muted">
-                {asset.mediaType === "IMAGE" ? "Görsel" : "Video"} ·{" "}
-                {asset.source === "telegram_upload"
-                  ? "Telegram'dan geldi"
-                  : asset.source === "openai_generated"
-                    ? "Yapay zekâ tarafından üretildi"
-                    : "Panelden yüklendi"}
-              </p>
-              <div className="asset-tag-row">
-                {asset.tags.map((tag) => (
-                  <span className="asset-tag" key={tag.id}>
-                    {tag.tag}
-                  </span>
-                ))}
+
+              <div className="simple-asset-body">
+                <div className="simple-asset-head">
+                  <strong>{asset.fileName}</strong>
+                  {asset.isFeatured ? <span className="customer-card-tag">Öne çıkan</span> : null}
+                </div>
+                <p className="muted">
+                  {asset.mediaType === "IMAGE" ? "Görsel" : "Video"} ·{" "}
+                  {asset.source === "telegram_upload"
+                    ? "Telegram'dan geldi"
+                    : asset.source === "openai_generated"
+                      ? "Yapay zekâ tarafından üretildi"
+                      : "Panelden yüklendi"}
+                </p>
+                <div className="asset-tag-row">
+                  {asset.tags.map((tag) => (
+                    <span className="asset-tag" key={tag.id}>
+                      {tag.tag}
+                    </span>
+                  ))}
+                </div>
+                <span className="simple-asset-date">
+                  {new Date(asset.createdAt).toLocaleDateString("tr-TR")}
+                </span>
               </div>
-              <span className="simple-asset-date">
-                {new Date(asset.createdAt).toLocaleDateString("tr-TR")}
-              </span>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </section>
     </main>
   );

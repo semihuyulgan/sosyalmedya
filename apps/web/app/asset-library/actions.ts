@@ -17,6 +17,11 @@ const getFile = (formData: FormData, key: string) => {
   return value instanceof File && value.size > 0 ? value : null;
 };
 
+const getFiles = (formData: FormData, key: string) =>
+  formData
+    .getAll(key)
+    .filter((value): value is File => value instanceof File && value.size > 0);
+
 const parseTags = (value: string) =>
   value
     .split(",")
@@ -71,35 +76,73 @@ const saveUploadedFile = async (file: File) => {
 };
 
 export const createAsset = async (formData: FormData) => {
-  const uploadedFile = getFile(formData, "assetFile");
-  const uploaded = uploadedFile ? await saveUploadedFile(uploadedFile) : null;
+  const businessId = getValue(formData, "businessId");
+  const uploadedFiles = getFiles(formData, "assetFile");
+  const fallbackFile = getFile(formData, "assetFile");
+  const files = uploadedFiles.length ? uploadedFiles : fallbackFile ? [fallbackFile] : [];
+  const manualStorageKey = getValue(formData, "storageKey");
+  const manualFileName = getValue(formData, "fileName");
+  const manualMimeType = getValue(formData, "mimeType");
+  const manualMediaType = getValue(formData, "mediaType");
+  const source = getValue(formData, "source");
+  const qualityScore = Number(getValue(formData, "qualityScore") || 0) || undefined;
+  const tags = parseTags(getValue(formData, "tags"));
 
-  const payload = {
-    businessId: getValue(formData, "businessId"),
-    fileName: getValue(formData, "fileName") || uploaded?.fileName || "uploaded-asset",
-    storageKey: getValue(formData, "storageKey") || uploaded?.storageKey || "",
-    mimeType: getValue(formData, "mimeType") || uploaded?.mimeType || "application/octet-stream",
-    mediaType: getValue(formData, "mediaType") || uploaded?.mediaType || "IMAGE",
-    source: getValue(formData, "source") || (uploaded ? "local_upload" : undefined),
-    qualityScore: Number(getValue(formData, "qualityScore") || 0) || undefined,
-    tags: parseTags(getValue(formData, "tags")),
-  };
-
-  if (!payload.storageKey) {
-    throw new Error("Either a file upload or a storage key is required.");
+  if (!businessId) {
+    throw new Error("Business id is required.");
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/assets`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-    cache: "no-store",
-  });
+  if (!files.length && !manualStorageKey) {
+    throw new Error("En az bir dosya seçmelisin.");
+  }
 
-  if (!response.ok) {
-    throw new Error("Asset could not be created.");
+  const payloads = files.length
+    ? await Promise.all(
+        files.map(async (file, index) => {
+          const uploaded = await saveUploadedFile(file);
+          return {
+            businessId,
+            fileName:
+              manualFileName && files.length === 1
+                ? manualFileName
+                : manualFileName && files.length > 1
+                  ? `${manualFileName} ${index + 1}`
+                  : uploaded.fileName || `uploaded-asset-${index + 1}`,
+            storageKey: uploaded.storageKey,
+            mimeType: uploaded.mimeType || "application/octet-stream",
+            mediaType: uploaded.mediaType || manualMediaType || "IMAGE",
+            source: source || "local_upload",
+            qualityScore,
+            tags,
+          };
+        }),
+      )
+    : [
+        {
+          businessId,
+          fileName: manualFileName || "uploaded-asset",
+          storageKey: manualStorageKey,
+          mimeType: manualMimeType || "application/octet-stream",
+          mediaType: manualMediaType || "IMAGE",
+          source: source || undefined,
+          qualityScore,
+          tags,
+        },
+      ];
+
+  for (const payload of payloads) {
+    const response = await fetch(`${apiBaseUrl}/api/assets`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Görseller yüklenemedi.");
+    }
   }
 
   revalidatePath("/asset-library");
