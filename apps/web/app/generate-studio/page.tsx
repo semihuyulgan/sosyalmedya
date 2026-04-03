@@ -168,64 +168,14 @@ export default async function GenerateStudioPage() {
     <main className="customer-shell">
       <header className="customer-topbar">
         <div>
-          <div className="eyebrow">Yapay Zeka Üretimi</div>
-          <h1>Üretim Stüdyosu</h1>
+          <div className="eyebrow">Adım 3 / 3</div>
+          <h1>İlk üretimini başlat.</h1>
           <p>
             Burada yapay zekâya ne üretmesini istediğini seçersin. Formu doldur, kaydet ve üretim
             isteğini oluştur.
           </p>
         </div>
-
-        <div className="customer-topbar-actions">
-          <Link className="ghost-action" href="/musteri-paneli">
-            Müşteri Paneli
-          </Link>
-          <Link className="ghost-action" href="/">
-            Ana Sayfa
-          </Link>
-          <Link className="solid-action" href="/content-calendar">
-            Sonraki Adım: Takvime Geç
-          </Link>
-        </div>
       </header>
-
-      <section className="customer-summary-grid simple-summary-grid">
-        <article className="customer-summary-card">
-          <span>Toplam istek</span>
-          <strong>{studio.generationBriefs.length}</strong>
-          <p>Şimdiye kadar oluşturduğun üretim istekleri.</p>
-        </article>
-        <article className="customer-summary-card">
-          <span>Üretime hazır</span>
-          <strong>{studio.generationBriefs.filter((item) => item.status === "READY_FOR_GENERATION").length}</strong>
-          <p>Tek tıkla üretime gönderilebilecek istekler.</p>
-        </article>
-        <article className="customer-summary-card">
-          <span>Referans</span>
-          <strong>{profile?.references.filter((item) => item.isAnchor).length || 0}</strong>
-          <p>Sistemin öncelikli gördüğü ana görseller.</p>
-        </article>
-        <article className="customer-summary-card">
-          <span>Sahne kurgusu</span>
-          <strong>{profile?.sceneRecipes.length || 0}</strong>
-          <p>Hazır üretim şablonları.</p>
-        </article>
-      </section>
-
-      <section className="workflow-strip">
-        <div className="workflow-step">
-          <strong>1. İşletme kartını doldur</strong>
-          <p>İşletmenin kim olduğunu sistem anlasın.</p>
-        </div>
-        <div className="workflow-step">
-          <strong>2. Görsellerini yükle</strong>
-          <p>Mekân ve ürün fotoğraflarını ekle.</p>
-        </div>
-        <div className="workflow-step current">
-          <strong>3. İlk üretimi başlat</strong>
-          <p>Şimdi yeni görsel isteğini oluştur.</p>
-        </div>
-      </section>
 
       <section className="single-flow-shell">
         <form action={createGenerationBrief} className="customer-card simple-upload-card single-flow-card">
@@ -355,6 +305,9 @@ export default async function GenerateStudioPage() {
             </label>
             <div className="span-2">
               <div className="flow-actions">
+                <Link className="ghost-action" href="/asset-library">
+                  Önceki adım: Görseller
+                </Link>
                 <button className="solid-action" type="submit">
                   Kaydet ve üretim isteğini oluştur
                 </button>

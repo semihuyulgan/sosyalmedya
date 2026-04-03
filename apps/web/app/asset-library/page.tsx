@@ -58,72 +58,19 @@ export default async function AssetLibraryPage() {
   const workspace = await getWorkspace();
   const business = workspace.businesses[0];
   const assetLibrary = await getAssets(business.id);
-  const featuredCount = assetLibrary.assets.filter((asset) => asset.isFeatured).length;
-  const imageCount = assetLibrary.assets.filter((asset) => asset.mediaType === "IMAGE").length;
-  const videoCount = assetLibrary.assets.filter((asset) => asset.mediaType === "VIDEO").length;
 
   return (
     <main className="customer-shell">
       <header className="customer-topbar">
         <div>
-          <div className="eyebrow">Görsel Sistemi</div>
-          <h1>Görsel Kütüphanesi</h1>
+          <div className="eyebrow">Adım 2 / 3</div>
+          <h1>Görsellerini yükle.</h1>
           <p>
             Burada sadece işletmeni anlatan görselleri eklersin. Karmaşık ayarları arkada biz
             hallediyoruz; sen sadece doğru fotoğrafları yükle.
           </p>
         </div>
-
-        <div className="customer-topbar-actions">
-          <Link className="ghost-action" href="/musteri-paneli">
-            Müşteri Paneli
-          </Link>
-          <Link className="ghost-action" href="/">
-            Ana Sayfa
-          </Link>
-          <Link className="solid-action" href="/generate-studio">
-            Sonraki Adım: Üretime Geç
-          </Link>
-        </div>
       </header>
-
-      <section className="customer-summary-grid simple-summary-grid">
-        <article className="customer-summary-card">
-          <span>Toplam kayıt</span>
-          <strong>{assetLibrary.assets.length}</strong>
-          <p>Kütüphanedeki tüm görsel ve video sayısı.</p>
-        </article>
-        <article className="customer-summary-card">
-          <span>Öne çıkan</span>
-          <strong>{featuredCount}</strong>
-          <p>Markanı en iyi anlatan seçili görseller.</p>
-        </article>
-        <article className="customer-summary-card">
-          <span>Görsel</span>
-          <strong>{imageCount}</strong>
-          <p>Yapay zekânın üretimde kullanacağı fotoğraflar.</p>
-        </article>
-        <article className="customer-summary-card">
-          <span>Video</span>
-          <strong>{videoCount}</strong>
-          <p>Kısa video ve reels kaynakları.</p>
-        </article>
-      </section>
-
-      <section className="workflow-strip">
-        <div className="workflow-step current">
-          <strong>1. Görsellerini ekle</strong>
-          <p>Mekân, ürün, detay ve atmosfer fotoğraflarını yükle.</p>
-        </div>
-        <div className="workflow-step">
-          <strong>2. Telegram&apos;ı bağla</strong>
-          <p>İstersen güncellemeleri Telegram üzerinden yap.</p>
-        </div>
-        <div className="workflow-step">
-          <strong>3. İlk üretimi başlat</strong>
-          <p>Yapay zekâ işletmene uygun yeni görseller oluştursun.</p>
-        </div>
-      </section>
 
       <section className="single-flow-shell">
         <section className="customer-card simple-upload-card single-flow-card">
@@ -160,6 +107,9 @@ export default async function AssetLibraryPage() {
             </label>
             <div className="span-2">
               <div className="flow-actions">
+                <Link className="ghost-action" href="/business-profile">
+                  Önceki adım: İşletme Kartı
+                </Link>
                 <button className="solid-action" type="submit">
                   Görseli Yükle
                 </button>
@@ -176,7 +126,7 @@ export default async function AssetLibraryPage() {
         <div>
           <div className="eyebrow">Son Yüklenenler</div>
           <h2>Kütüphanendeki görseller</h2>
-          <p>Burada sadece yüklediğin görselleri görürsün. Karmaşık ayar alanlarını gizledik.</p>
+          <p>Yüklediklerin burada görünür. Beğenmediklerini sonra birlikte düzenleyebiliriz.</p>
         </div>
       </section>
 

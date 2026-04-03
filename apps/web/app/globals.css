@@ -34,11 +34,13 @@ body {
     linear-gradient(180deg, #040b15 0%, #09121f 48%, #0b1524 100%);
   color: var(--text);
   font-family:
-    "Aptos",
+    -apple-system,
+    BlinkMacSystemFont,
     "Inter",
-    "SF Pro Display",
+    "SF Pro Text",
     "Segoe UI",
     "Helvetica Neue",
+    Arial,
     sans-serif;
 }
 
@@ -1323,6 +1325,8 @@ textarea {
 .customer-shell {
   min-height: 100vh;
   padding: 28px 28px 64px;
+  max-width: 980px;
+  margin: 0 auto;
   background:
     radial-gradient(circle at top left, rgba(237, 247, 199, 0.75), transparent 28%),
     linear-gradient(180deg, #fbf7ef 0%, #fffdf8 100%);
@@ -1406,14 +1410,16 @@ textarea {
 .section-heading h2 {
   margin: 10px 0 14px;
   font-family:
-    "Aptos",
+    -apple-system,
+    BlinkMacSystemFont,
     "Inter",
-    "SF Pro Display",
+    "SF Pro Text",
     "Segoe UI",
     "Helvetica Neue",
+    Arial,
     sans-serif;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .marketing-copy h1 {
@@ -1678,7 +1684,7 @@ textarea {
 
 .marketing-feature-grid,
 .customer-summary-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .marketing-pricing-grid {
@@ -1736,7 +1742,14 @@ textarea {
 }
 
 .customer-topbar {
-  margin-bottom: 24px;
+  max-width: 760px;
+  margin: 0 auto 24px;
+  text-align: center;
+}
+
+.customer-topbar p {
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .customer-hero-grid {
@@ -1909,7 +1922,8 @@ textarea {
 }
 
 .simple-summary-grid {
-  margin-bottom: 18px;
+  max-width: 860px;
+  margin: 0 auto 18px;
 }
 
 .simple-library-layout {
@@ -1921,11 +1935,15 @@ textarea {
 
 .single-flow-shell {
   display: block;
-  margin-bottom: 24px;
+  max-width: 860px;
+  margin: 0 auto 24px;
 }
 
 .single-flow-card {
   width: 100%;
+  padding: 32px;
+  border-radius: 30px;
+  box-shadow: 0 18px 48px rgba(18, 34, 59, 0.08);
 }
 
 .flow-actions {
@@ -1945,12 +1963,15 @@ textarea {
 }
 
 .compact-heading {
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
 .compact-heading h2 {
-  margin: 8px 0 0;
+  margin: 8px 0 10px;
   color: #203330;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
 }
 
 .simple-help-list {
@@ -1962,13 +1983,16 @@ textarea {
 }
 
 .simple-gallery-heading {
-  margin-bottom: 18px;
+  max-width: 860px;
+  margin: 0 auto 18px;
 }
 
 .simple-gallery-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+  max-width: 860px;
+  margin: 0 auto;
 }
 
 .simple-asset-card {
@@ -2293,15 +2317,17 @@ textarea {
 
 .profile-topbar h1 {
   font-family:
-    "Aptos",
+    -apple-system,
+    BlinkMacSystemFont,
     "Inter",
-    "SF Pro Display",
+    "SF Pro Text",
     "Segoe UI",
     "Helvetica Neue",
+    Arial,
     sans-serif;
   font-size: clamp(2.2rem, 4vw, 3.8rem);
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .topbar-actions {

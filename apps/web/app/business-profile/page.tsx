@@ -125,8 +125,6 @@ const firstJsonValue = (value: string | null | undefined) => {
   }
 };
 
-const goalLabel = (value: string) => hedefler.find((item) => item.value === value)?.label || value;
-
 export default async function BusinessProfilePage() {
   const business = await getWorkspaceBusiness();
   const brandProfile = business.brandProfiles[0];
@@ -136,64 +134,14 @@ export default async function BusinessProfilePage() {
     <main className="customer-shell">
       <header className="customer-topbar">
         <div>
-          <div className="eyebrow">İşletme Kartı</div>
+          <div className="eyebrow">Adım 1 / 3</div>
           <h1>İşletmeni birkaç adımda tanıtalım.</h1>
           <p>
             Bu bilgiler sayesinde sistem işletmeni daha iyi tanır, daha doğru içerik üretir ve
             sosyal medyanı daha doğru yönetir.
           </p>
         </div>
-
-        <div className="customer-topbar-actions">
-          <Link className="ghost-action" href="/musteri-paneli">
-            Müşteri Paneli
-          </Link>
-          <Link className="ghost-action" href="/asset-library">
-            Görseller
-          </Link>
-          <Link className="solid-action" href="/generate-studio">
-            Sonraki Adım: Üretim
-          </Link>
-        </div>
       </header>
-
-      <section className="customer-summary-grid simple-summary-grid">
-        <article className="customer-summary-card">
-          <span>İşletme</span>
-          <strong>{business.name}</strong>
-          <p>İşletmenin temel kimliği ve hedefi burada tanımlanır.</p>
-        </article>
-        <article className="customer-summary-card">
-          <span>Sektör</span>
-          <strong>{business.category}</strong>
-          <p>Sistemin seni hangi örneklerle kıyaslayacağını belirler.</p>
-        </article>
-        <article className="customer-summary-card">
-          <span>Ana hedef</span>
-          <strong>{goalLabel(business.primaryGoal)}</strong>
-          <p>İçeriklerin hangi sonuca hizmet edeceğini buradan anlarız.</p>
-        </article>
-        <article className="customer-summary-card">
-          <span>İletişim</span>
-          <strong>{business.telegramControlEnabled ? "Telegram açık" : "Panel odaklı"}</strong>
-          <p>İstersen panelden, istersen Telegram üzerinden ilerleyebilirsin.</p>
-        </article>
-      </section>
-
-      <section className="workflow-strip">
-        <div className="workflow-step current">
-          <strong>1. İşletmeni anlat</strong>
-          <p>İşletmenin ne olduğunu ve nasıl konuştuğunu seç.</p>
-        </div>
-        <div className="workflow-step">
-          <strong>2. İletişim bilgilerini ekle</strong>
-          <p>Müşterilerin sana nasıl ulaşacağını belirt.</p>
-        </div>
-        <div className="workflow-step">
-          <strong>3. Yayın tercihlerini seç</strong>
-          <p>Yayın saati ve kullanım şeklini belirle.</p>
-        </div>
-      </section>
 
       <section className="single-flow-shell">
         <form action={updateBusinessProfile} className="customer-card simple-upload-card single-flow-card">
@@ -464,6 +412,9 @@ export default async function BusinessProfilePage() {
 
           <div className="business-form-footer">
             <div className="flow-actions">
+              <Link className="ghost-action" href="/musteri-paneli">
+                Panele dön
+              </Link>
               <button className="solid-action" type="submit">
                 Kaydet
               </button>
